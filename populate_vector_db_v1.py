@@ -7,6 +7,7 @@ from langchain_core.documents import Document
 import chromadb
 from database_v1 import get_action_schema, get_ui_schema, get_api_schema
 
+
 # Load environment variables
 load_dotenv()
 print(os.getenv("OPENAI_API_KEY"))

@@ -12,6 +12,7 @@ def get_action_schema():
         }
     ]
 
+
 def get_ui_schema():
     return [
         {

@@ -1,7 +1,7 @@
 
 from openai import OpenAI
 
-client = OpenAI(api_key="")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def get_gpt_response(history):

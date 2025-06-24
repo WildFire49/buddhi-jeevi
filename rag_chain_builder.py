@@ -3,6 +3,7 @@ import json
 from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
+from nlp_processor import NLProcessor
 from langchain_core.runnables import RunnablePassthrough
 from langchain_community.vectorstores import ElasticsearchStore
 from langchain_chroma import Chroma
@@ -60,6 +61,10 @@ class RAGChainBuilder:
                 embedding_function=self.embeddings
             )
             self.llm = LLMManager(model_name=llm_model_name).llm
+            
+            # Initialize NLProcessor for language detection and processing
+            self.nlp_processor = NLProcessor()
+            
             self.is_initialized = True
             print(f"RAGChainBuilder initialized with model: {llm_model_name}")
             self.rag_chain = self._build_chain()
@@ -118,6 +123,18 @@ class RAGChainBuilder:
         Public method to get the constructed RAG chain.
         """
         return self.rag_chain
+        
+    def process_input(self, text: str):
+        """
+        Process input text through NLProcessor before passing to RAG chain.
+        
+        Args:
+            text: Input text from user
+            
+        Returns:
+            Tuple of (processed_text, detected_language)
+        """
+        return self.nlp_processor.process_text_input(text)
 
     def _get_workflow_step(self, step_id):
         """
@@ -161,13 +178,23 @@ class RAGChainBuilder:
             print(f"Error retrieving workflow step from ChromaDB: {e}")
             return None
 
-    def get_action_directly(self, question: str):
+    def get_action_directly(self, question: str, detected_language: str = None):
         """
         Get action directly from vector store without LLM processing
+        
+        Args:
+            question: The user's question or prompt
+            detected_language: Optional detected language from NLProcessor
         """
         try:
-            # Directly check for specific step requests in the question
+            if not question:
+                return None
+                
             lower_question = question.lower()
+            
+            # Log the detected language if provided
+            if detected_language and detected_language != "english":
+                print(f"Processing query in detected language: {detected_language}")
             
             # Check for specific workflow steps in the question
             if "mobile otp" in lower_question or "otp validation" in lower_question:

@@ -3,9 +3,11 @@ import re
 import string
 import uuid
 import json
-from typing import Any, Dict, List, Optional
+import os
+from typing import Any, Dict, List, Optional, Union
 from rag_chain_builder import RAGChainBuilder
 from tools import VectorDBTools
+from fastapi import UploadFile, File, Form, HTTPException, Depends
 
 from fastapi import FastAPI, HTTPException
 from langchain_core.messages import HumanMessage
@@ -44,6 +46,10 @@ class ChatRequest(BaseModel):
     data: Optional[Dict[str, Any]] = Field(
         None,
         description="Key-value pair object for form-data type requests.",
+    )
+    language: Optional[str] = Field(
+        None,
+        description="User's preferred language if known. Will be auto-detected if not provided.",
     )
 
 # --- Pydantic Models for API ---
@@ -89,23 +95,33 @@ class ChatResponse(BaseModel):
     response: Any = Field(..., description="The agent's response - can be string or object.")
     ui_tags: List[str] = Field([], description="A list of UI component tags for the frontend.")
 
-# --- API Endpoint ---
-@app.post("/chat")
-async def chat(request: ChatRequest):
+# --- Helper Functions ---
+def process_and_respond(prompt: str, session_id: str, detected_language: str = None):
     """
-    Main endpoint to chat with the loan onboarding agent.
-    It manages the conversation state based on the session_id.
+    Process a prompt and generate a response using the RAG chain.
+    
+    Args:
+        prompt: The text prompt to process
+        session_id: The session ID for the conversation
+        detected_language: Optional pre-detected language
+        
+    Returns:
+        ChatResponse object with the agent's response
     """
-    session_id = request.session_id or str(uuid.uuid4())
-
-    # Validate request data based on type
-    if request.type.upper() == "FORM_DATA" and request.data is None:
-        raise HTTPException(status_code=400, detail="Data field is required for FORM_DATA requests.")
-    elif request.type.upper() == "PROMPT" and request.prompt is None:
-        raise HTTPException(status_code=400, detail="Prompt field is required for PROMPT requests.")
-
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Empty prompt received")
+        
+    # Process the prompt through NLProcessor if language not already detected
+    if not detected_language:
+        processed_prompt, detected_language = chaiBuilder.process_input(prompt)
+    else:
+        processed_prompt = prompt
+    
+    # Log the language detection result
+    print(f"Detected language: {detected_language}")
+    
     # Try to get action directly from vector store first
-    action = chaiBuilder.get_action_directly(request.prompt)
+    action = chaiBuilder.get_action_directly(processed_prompt, detected_language)
     
     if action:
         # Return the exact action structure
@@ -116,7 +132,7 @@ async def chat(request: ChatRequest):
         )
 
     # If no direct action found, use the RAG chain
-    response = chaiBuilder.get_chain().invoke(request.prompt)
+    response = chaiBuilder.get_chain().invoke(processed_prompt)
     
     # Try to parse response as JSON if it looks like JSON
     try:
@@ -133,6 +149,57 @@ async def chat(request: ChatRequest):
             response=response,
             ui_tags=[]
         )
+
+# --- API Endpoints ---
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    """
+    Main endpoint to chat with the loan onboarding agent using text prompts.
+    It manages the conversation state based on the session_id.
+    """
+    session_id = request.session_id or str(uuid.uuid4())
+
+    # Validate request data based on type
+    if request.type.upper() == "FORM_DATA" and request.data is None:
+        raise HTTPException(status_code=400, detail="Data field is required for FORM_DATA requests.")
+    elif request.type.upper() == "PROMPT" and request.prompt is None:
+        raise HTTPException(status_code=400, detail="Prompt field is required for PROMPT requests.")
+    
+    return process_and_respond(request.prompt, session_id)
+    
+@app.post("/chat/audio")
+async def chat_audio(
+    audio: UploadFile = File(...),
+    session_id: Optional[str] = Form(None)
+):
+    """
+    Endpoint to chat with the loan onboarding agent using audio input.
+    The audio will be transcribed and processed through the NLProcessor.
+    """
+    try:
+        # Generate session ID if not provided
+        session_id = session_id or str(uuid.uuid4())
+        
+        # Process the audio file
+        transcribed_text, detected_language = chaiBuilder.nlp_processor.process_audio_input(
+            audio.file, 
+            filename=audio.filename
+        )
+        
+        if not transcribed_text:
+            raise HTTPException(
+                status_code=400, 
+                detail="Could not transcribe audio. Please try again or use text input."
+            )
+            
+        print(f"Transcribed: '{transcribed_text}'")
+        
+        # Process the transcribed text and respond
+        return process_and_respond(transcribed_text, session_id, detected_language)
+        
+    except Exception as e:
+        print(f"Error processing audio: {e}")
+        raise HTTPException(status_code=500, detail=f"Error processing audio: {str(e)}")
 
 @app.post("/submit")
 async def submit_data(request: DataSubmitRequest):
@@ -223,5 +290,10 @@ async def submit_data(request: DataSubmitRequest):
 # Start the server when this file is run directly
 if __name__ == "__main__":
     import uvicorn
+    import os
+    
+    # Create temp directory for audio files if it doesn't exist
+    os.makedirs("temp_audio", exist_ok=True)
+    
     print("Starting server on http://localhost:8000")
     uvicorn.run(app, host="0.0.0.0", port=8000)

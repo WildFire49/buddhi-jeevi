@@ -1,21 +1,11 @@
 import json
 import os
-from dotenv import load_dotenv
-from langchain_openai import OpenAIEmbeddings
-from langchain_chroma import Chroma
-from langchain_core.documents import Document
 import chromadb
+from chromadb.utils import embedding_functions
 from database_v1 import get_action_schema, get_ui_schema, get_api_schema
 
-
-# Load environment variables
-load_dotenv()
-print(os.getenv("OPENAI_API_KEY"))
-# Initialize OpenAI embeddings
-embeddings = OpenAIEmbeddings(
-    openai_api_key=os.getenv("OPENAI_API_KEY"),
-    model="text-embedding-3-small"
-)
+# Use ChromaDB's default embedding function instead of OpenAI
+embedding_function = embedding_functions.DefaultEmbeddingFunction()
 
 def populate_vector_db():
     """Populate the vector database with action schemas"""
@@ -31,24 +21,30 @@ def populate_vector_db():
     except Exception as e:
         print(f"Collection doesn't exist or couldn't be deleted: {e}")
     
-    # Create a new collection
-    chroma_client.create_collection(name=collection_name)
+    # Create a new collection with the default embedding function
+    collection = chroma_client.create_collection(
+        name=collection_name,
+        embedding_function=embedding_function
+    )
     print(f"Created new collection: {collection_name}")
     
-    # Initialize vector store with the collection
-    vector_store = Chroma(
-        client=chroma_client,
-        collection_name=collection_name,
-        embedding_function=embeddings
-    )
+    # Helper function to ensure all metadata values are simple types
+    def sanitize_metadata(metadata):
+        """Convert any complex types in metadata to JSON strings"""
+        sanitized = {}
+        for key, value in metadata.items():
+            if isinstance(value, (dict, list, tuple)):
+                sanitized[key] = json.dumps(value)
+            else:
+                sanitized[key] = value
+        return sanitized
     
     # Get all schemas from database
     actions = get_action_schema()
     ui_schemas = get_ui_schema()
     api_schemas = get_api_schema()
     
-    # Convert actions to documents for vector storage
-    documents = []
+    # Initialize lists for vector storage
     ids = []
     texts = []
     metadatas = []
@@ -75,16 +71,9 @@ def populate_vector_db():
             "next_action_text": action.get('next_action_text', ''),
             "ui_id": action.get('ui_id', ''),
             "api_detail_id": action.get('api_detail_id', ''),
-            "full_action": json.dumps(action)  # Store the complete action as JSON string
+            "full_action": action  # Will be converted to JSON string by sanitize_metadata
         }   
-        metadatas.append(metadata)
-        
-        # Also create a Document object for LangChain's add_documents method
-        doc = Document(
-            page_content=text_content,
-            metadata=metadata
-        )
-        documents.append(doc)
+        metadatas.append(sanitize_metadata(metadata))
     
     # Process UI schema
     print(f"Processing {len(ui_schemas)} UI schemas...")
@@ -103,17 +92,10 @@ def populate_vector_db():
             "ui_id": ui_schema.get('ui_id', ''),
             "desc_for_llm": ui_schema.get('desc_for_llm', ''),
             "ui_type": ui_schema.get('ui_type', ''),
-            "ui_components": ui_schema.get('ui_components', []),
-            "full_ui": json.dumps(ui_schema)  # Store the complete UI schema as JSON string
+            "ui_components": ui_schema.get('ui_components', []),  # Will be converted to JSON string by sanitize_metadata
+            "full_ui": ui_schema  # Will be converted to JSON string by sanitize_metadata
         }   
-        metadatas.append(metadata)
-        
-        # Also create a Document object for LangChain's add_documents method
-        doc = Document(
-            page_content=text_content,
-            metadata=metadata
-        )
-        documents.append(doc)
+        metadatas.append(sanitize_metadata(metadata))
     
     # Process API schema
     print(f"Processing {len(api_schemas)} API schemas...")
@@ -133,50 +115,42 @@ def populate_vector_db():
             "desc_for_llm": api_schema.get('desc_for_llm', ''),
             "endpoint": api_schema.get('endpoint', ''),
             "method": api_schema.get('method', ''),
-            "params": json.dumps(api_schema.get('params', {})),
-            "full_api": json.dumps(api_schema)  # Store the complete API schema as JSON string
+            "params": api_schema.get('params', {}),  # Will be converted to JSON string by sanitize_metadata
+            "full_api": api_schema  # Will be converted to JSON string by sanitize_metadata
         }   
-        metadatas.append(metadata)
-        
-        # Also create a Document object for LangChain's add_documents method
-        doc = Document(
-            page_content=text_content,
-            metadata=metadata
-        )
-        documents.append(doc)
+        metadatas.append(sanitize_metadata(metadata))
     
     # The action schema processing is already done above
     
-    # Add documents to vector store
+    # Add documents to vector store using ChromaDB client directly
     try:
-        # First try using the LangChain Chroma add_documents method
-        vector_store.add_documents(documents)
-        print(f"Added {len(documents)} documents to vector store using LangChain")
+        # Add documents directly to the collection
+        collection.add(
+            ids=ids,
+            documents=texts,
+            metadatas=metadatas
+        )
+        print(f"Added {len(texts)} documents to vector store using ChromaDB client directly")
     except Exception as e:
-        print(f"Error adding documents via LangChain: {e}")
-        try:
-            # Fallback to using the ChromaDB client directly
-            collection = chroma_client.get_collection(name=collection_name)
-            collection.add(
-                ids=ids,
-                embeddings=None,  # Let ChromaDB generate embeddings
-                documents=texts,
-                metadatas=metadatas
-            )
-            print(f"Added {len(texts)} documents to vector store using ChromaDB client directly")
-        except Exception as e2:
-            print(f"Error adding documents via ChromaDB client: {e2}")
+        print(f"Error adding documents via ChromaDB client: {e}")
+        print("Detailed error information:")
+        import traceback
+        traceback.print_exc()
     
     print(f"\nPopulation complete! Collection '{collection_name}' is ready for use.")
-    print(f"Total documents added: {len(documents)}")
+    print(f"Total documents added: {len(texts)}")
     
     # Test a simple query to verify the data was added correctly
     try:
-        results = vector_store.similarity_search("JLG_S0_A1_LOGIN", k=2)
-        print(f"\nTest query results (searching for 'validate OTP'):\n")
-        for doc in results:
-            print(f"- {doc.page_content}")
-            print(f"  Action ID: {doc.metadata.get('action_id', 'N/A')}")
+        results = collection.query(
+            query_texts=["JLG_S0_A1_LOGIN"],
+            n_results=2
+        )
+        print(f"\nTest query results (searching for 'JLG_S0_A1_LOGIN'):\n")
+        for i, doc in enumerate(results['documents'][0]):
+            print(f"- {doc}")
+            metadata = results['metadatas'][0][i]
+            print(f"  Action ID: {metadata.get('action_id', 'N/A')}")
     except Exception as e:
         print(f"Error testing query: {e}")
 

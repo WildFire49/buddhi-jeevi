@@ -74,15 +74,15 @@ class NextActionItem(BaseModel):
     suggestion_text: str
 
 class DataSubmitResponse(BaseModel):
-    session_id: str = Field(..., description="The session ID for the ongoing conversation.")
-    status: bool = Field(..., description="Whether the submission was successful.")
-    message: str = Field(..., description="A message describing the result of the submission.")
-    action_id: str = Field(..., description="The ID of the action that was performed.")
-    errors: Optional[List[ErrorItem]] = Field([], description="List of errors that occurred during processing.")
-    ui_tags: Optional[Dict[str, Any]] = Field({}, description="UI component tags for the frontend.")
-    next_action_metadata: Optional[List[NextActionItem]] = Field([], description="Metadata about the next possible actions.")
-
-
+    session_id: str
+    status: str
+    message: str
+    errors: List[str] = []
+    ui_data: Dict[str, Any] = {}  # UI schema data
+    api_data: Dict[str, Any] = {}  # API schema data
+    action_data: Dict[str, Any] = {}  # Action schema data
+    next_action: Dict[str, Any] = {}  # Next action metadata
+    next_actions: List[NextActionItem] = []  # List of next action items
 
 class ChatResponse(BaseModel):
     session_id: str = Field(..., description="The session ID for the ongoing conversation.")
@@ -146,12 +146,14 @@ async def submit_data(request: DataSubmitRequest):
     if not request.data:
         return DataSubmitResponse(
             session_id=session_id,
-            status=False,
+            status="failure",
             message="Data field is required for submissions.",
-            action_id=action_id,
-            errors=[ErrorItem(key="data", error="This field is required")],
-            ui_tags={},
-            next_action_metadata=[]
+            errors=["Data field is required"],
+            ui_data={},
+            api_data={},
+            action_data={},
+            next_action={},
+            next_actions=[]
         )
     
     # Convert the list of KeyValuePair to a dictionary for processing if needed
@@ -160,37 +162,92 @@ async def submit_data(request: DataSubmitRequest):
     # Search for relevant data in the vector database based on action_id
     vector_results = vector_tools.search_by_action_id(action_id)
     
-    # Process the results
+    # Process the results by schema type
     action_data = []
+    ui_data = []
+    api_data = []
+    
     if vector_results:
         for result in vector_results:
-            action_data.append({
+            schema_type = result.get("schema_type", "unknown")
+            item_data = {
                 "id": result.get("id"),
                 "content": result.get("content"),
                 "metadata": result.get("metadata")
-            })
+            }
+            
+            # Sort results by schema type
+            if schema_type == "action":
+                action_data.append(item_data)
+            elif schema_type == "ui":
+                ui_data.append(item_data)
+            elif schema_type == "api":
+                api_data.append(item_data)
+            else:
+                # If schema type is unknown, add to action_data as fallback
+                action_data.append(item_data)
     
     # Here you can process the data as needed
     # For example, store it in a database, use it to update the RAG system, etc.
     
-    # Determine next actions based on vector search results
+    # Create next_actions list from the next_action data
     next_actions = []
+    next_action = {}
     
-    # If we found relevant actions in the vector database, suggest them
+    # Process action data
     if action_data:
-        # Extract potential next actions from the metadata if available
-        for item in action_data:
-            metadata = item.get("metadata", {})
-            next_action_id = metadata.get("next_action_id")
-            next_action_text = metadata.get("next_action_text")
-            
-            if next_action_id and next_action_text:
-                next_actions.append(
-                    NextActionItem(
-                        next_action_id=next_action_id,
-                        suggestion_text=next_action_text
-                    )
+        # Get the first result's metadata (assuming it's the most relevant)
+        metadata = action_data[0].get("metadata", {})
+        
+        # Extract next action if available
+        if "next_action_id" in metadata:
+            next_action = {
+                "id": metadata.get("next_action_id"),
+                "text": metadata.get("next_action_text", "")
+            }
+            next_actions = [
+                NextActionItem(
+                    next_action_id=next_action["id"],
+                    suggestion_text=next_action["text"]
                 )
+            ]
+    
+    # Process UI data
+    if ui_data:
+        ui_metadata = ui_data[0].get("metadata", {})
+        try:
+            # Extract UI components if available
+            if "ui_components" in ui_metadata:
+                ui_components = json.loads(ui_metadata.get("ui_components", "[]"))
+                ui_data_processed = {
+                    "ui_id": ui_metadata.get("ui_id", ""),
+                    "ui_type": ui_metadata.get("ui_type", ""),
+                    "components": ui_components
+                }
+            # If full UI data is available, use it
+            if "full_ui" in ui_metadata:
+                ui_data_processed = json.loads(ui_metadata["full_ui"])
+        except json.JSONDecodeError:
+            ui_data_processed = {"error": "Invalid UI data format"}
+    
+    # Process API data
+    if api_data:
+        api_metadata = api_data[0].get("metadata", {})
+        try:
+            # Extract API details if available
+            api_data_processed = {
+                "api_id": api_metadata.get("api_detail_id", ""),
+                "endpoint": api_metadata.get("endpoint", ""),
+                "method": api_metadata.get("method", "")
+            }
+            # If params are available, add them
+            if "params" in api_metadata:
+                api_data_processed["params"] = json.loads(api_metadata.get("params", "{}"))
+            # If full API data is available, use it
+            if "full_api" in api_metadata:
+                api_data_processed = json.loads(api_metadata["full_api"])
+        except json.JSONDecodeError:
+            api_data_processed = {"error": "Invalid API data format"}
     
     # If no next actions were found in the vector database, provide default options
     if not next_actions:
@@ -205,23 +262,22 @@ async def submit_data(request: DataSubmitRequest):
             )
         ]
     
+    # Prepare the response with all schema data
     return DataSubmitResponse(
         session_id=session_id,
-        status=True,
-        message=f"Data received for action: {action_id}",
-        action_id=action_id,
+        status="success",
+        message="Data submitted successfully",
         errors=[],
-        ui_tags={
-            "show_confirmation": True, 
-            "data": data_dict,
-            "action_data": action_data  # Include the vector search results
-        },
-        next_action_metadata=next_actions
+        ui_data=ui_data_processed,  # Include UI schema data
+        api_data=api_data_processed,  # Include API schema data
+        action_data=action_data[0].get("metadata", {}) if action_data else {},  # Include action schema data
+        next_action=next_action,  # Include next action data
+        next_actions=next_actions  # Include next actions list
     )
 
 
 # Start the server when this file is run directly
 if __name__ == "__main__":
     import uvicorn
-    print("Starting server on http://localhost:8000")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    print("Starting server on http://localhost:8002")
+    uvicorn.run(app, host="0.0.0.0", port=8002)

@@ -56,6 +56,8 @@ def populate_vector_db():
                 "action_id": action['action_id'],
                 # "stage_name": action['stage_name'],
                 "action_type": action['action_type'],
+                "ui_tags": action['ui_tags'],
+                "next_action_id": action['next_action_id'],
                 "full_action": json.dumps(action)  # Store the complete action as JSON string in metadata
             }
         )

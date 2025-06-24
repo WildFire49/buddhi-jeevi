@@ -62,7 +62,7 @@ class VectorDBTools:
             List[Dict[str, Any]]: List of matching documents with their metadata
         """
         try:
-            # First try an exact metadata filter search
+            # First try an exact metadata filter search for action schema
             results = self.vector_store.get(
                 where={"action_id": action_id}
             )
@@ -74,8 +74,41 @@ class VectorDBTools:
                     formatted_results.append({
                         "id": results['ids'][i],
                         "content": results['documents'][i] if 'documents' in results else None,
-                        "metadata": results['metadatas'][i] if 'metadatas' in results else {}
+                        "metadata": results['metadatas'][i] if 'metadatas' in results else {},
+                        "schema_type": "action"
                     })
+                
+                # Now look for related UI schema
+                action_metadata = results['metadatas'][0] if results['metadatas'] else {}
+                ui_id = action_metadata.get('ui_id')
+                if ui_id:
+                    ui_results = self.vector_store.get(
+                        where={"ui_id": ui_id}
+                    )
+                    if ui_results and len(ui_results['ids']) > 0:
+                        for i in range(len(ui_results['ids'])):
+                            formatted_results.append({
+                                "id": ui_results['ids'][i],
+                                "content": ui_results['documents'][i] if 'documents' in ui_results else None,
+                                "metadata": ui_results['metadatas'][i] if 'metadatas' in ui_results else {},
+                                "schema_type": "ui"
+                            })
+                
+                # Look for related API schema
+                api_id = action_metadata.get('api_detail_id')
+                if api_id:
+                    api_results = self.vector_store.get(
+                        where={"api_detail_id": api_id}
+                    )
+                    if api_results and len(api_results['ids']) > 0:
+                        for i in range(len(api_results['ids'])):
+                            formatted_results.append({
+                                "id": api_results['ids'][i],
+                                "content": api_results['documents'][i] if 'documents' in api_results else None,
+                                "metadata": api_results['metadatas'][i] if 'metadatas' in api_results else {},
+                                "schema_type": "api"
+                            })
+                
                 return formatted_results
             
             # If no exact match, try a similarity search with the action_id as query
@@ -87,10 +120,21 @@ class VectorDBTools:
             # Format the results from similarity search
             formatted_results = []
             for doc in results:
+                schema_type = "unknown"
+                if "type" in doc.metadata:
+                    schema_type = doc.metadata["type"]
+                elif "action_id" in doc.metadata:
+                    schema_type = "action"
+                elif "ui_id" in doc.metadata:
+                    schema_type = "ui"
+                elif "api_detail_id" in doc.metadata:
+                    schema_type = "api"
+                
                 formatted_results.append({
                     "id": getattr(doc, "id", None),
                     "content": doc.page_content,
-                    "metadata": doc.metadata
+                    "metadata": doc.metadata,
+                    "schema_type": schema_type
                 })
             
             return formatted_results
@@ -130,3 +174,8 @@ class VectorDBTools:
         except Exception as e:
             print(f"Error searching vector database: {e}")
             return []
+# if __name__ == '__main__':
+#     res1 = VectorDBTools().search_by_action_id('JLG_S0_A3_MARK_ATTENDANCE_API')
+#     # res2 = VectorDBTools().search_by_text('JLG_S0_A1_LOGIN')
+#     print(res1)
+    # print(res2)

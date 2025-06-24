@@ -5,11 +5,10 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_community.vectorstores import ElasticsearchStore
+from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from llm_client import LLMManager 
-from langchain.vectorstores import Weaviate
-import weaviate 
-# from weaviate import WeaviateClient
+import chromadb
 
 # Load environment variables
 load_dotenv()
@@ -46,25 +45,19 @@ class RAGChainBuilder:
         # The hasattr check prevents re-initialization on subsequent calls to get the instance
         if not hasattr(self, 'is_initialized'):
 
-            client = weaviate.connect_to_local(
-                host="localhost",  # Use a string to specify the host
-                port=8080,
-            )
-           
-            # .connect_to_local(
-            #     port=8080,
-            #     grpc_port=50051,  # optional
-            #     secure=False
-            # )
+            # Initialize ChromaDB client
+            client = chromadb.HttpClient(host='3.6.132.24', port=8000)
+            
             self.embeddings = OpenAIEmbeddings(
                 openai_api_key=os.getenv("OPENAI_API_KEY"),
                 model="text-embedding-3-small"
             )
-            self.vector_store = Weaviate(
+            
+            # Initialize Chroma vector store with onboarding_flow collection
+            self.vector_store = Chroma(
                 client=client,
-                index_name="ActionStep",         # Name of your collection/class
-                text_key="description_for_llm",  # Field to search
-                embedding=self.embeddings
+                collection_name="onboarding_flow",    # Use the onboarding_flow collection
+                embedding_function=self.embeddings
             )
             self.llm = LLMManager(model_name=llm_model_name).llm
             self.is_initialized = True

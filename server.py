@@ -72,7 +72,7 @@ async def chat(request: ChatRequest):
         )
 
     # If no direct action found, use the RAG chain
-    response = chaiBuilder.get_chain().invoke({"question": request.prompt})
+    response = chaiBuilder.get_chain().invoke(request.prompt)
     
     # Try to parse response as JSON if it looks like JSON
     try:

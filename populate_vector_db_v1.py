@@ -1,22 +1,65 @@
 import json
 import os
+import logging
+import numpy as np
 import chromadb
 from dotenv import load_dotenv
 from chromadb.utils import embedding_functions
-from  langchain_openai import OpenAIEmbeddings
-from database_v1 import get_action_schema, get_ui_schema, get_api_schema
+from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from database_v2 import get_action_schema, get_ui_schema, get_api_schema
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Use ChromaDB's default embedding function instead of OpenAI
 embedding_function = embedding_functions.DefaultEmbeddingFunction()
 load_dotenv()
 
+# Wrapper class for embedding models to match ChromaDB's interface
+class ChromaEmbeddingWrapper:
+    def __init__(self, embedding_model):
+        self.embedding_model = embedding_model
+    
+    def __call__(self, input):
+        """ChromaDB expects __call__ with (self, input) signature and numpy arrays as output"""
+        if isinstance(input, str):
+            input = [input]
+        # Get embeddings as list of floats
+        embeddings = self.embedding_model.embed_documents(input)
+        # Convert to numpy arrays as required by ChromaDB
+        return [np.array(embedding) for embedding in embeddings]
+
+def getEmbedding(embedding_type="huggingface"):
+    embeddings = None
+    if embedding_type.lower() == "openai":
+        # Initialize OpenAI embeddings
+        openai_api_key = os.getenv("OPENAI_API_KEY")
+        if not openai_api_key:
+            raise ValueError("OPENAI_API_KEY environment variable not set for OpenAI embeddings.")
+        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model="nomic-embed-text")
+        logger.info("Initialized OpenAI embeddings")
+    else:
+        # Default to HuggingFace embeddings
+        cache_folder = os.getenv("TRANSFORMERS_CACHE", "./.embeddings_cache")
+        embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2",
+            cache_folder=cache_folder,
+            model_kwargs={'device': 'cpu'}  # Ensure CPU usage for better Docker compatibility
+        )
+        logger.info(f"Initialized HuggingFace embeddings with cache folder: {cache_folder}")
+    
+    # Wrap the embedding model to match ChromaDB's interface
+    return ChromaEmbeddingWrapper(embeddings)
+            
+
 def populate_vector_db():
     """Populate the vector database with action schemas"""
-    collection_name = "onboarding_flow_v3"  # Use the requested collection name
+    collection_name = "onboarding_flow_v5"  # Use the requested collection name
 
     # Initialize OpenAI embeddings
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model="nomic-embed-text")
+    embeddings = getEmbedding(embedding_type="huggingface")
 
     # Initialize ChromaDB client
     chroma_client = chromadb.HttpClient(host='3.6.132.24', port=8000)

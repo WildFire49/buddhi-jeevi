@@ -85,7 +85,12 @@ async def chat(request: ChatRequest):
         ui_components = []
         if isinstance(response_content, dict) and "ui_components" in response_content:
             ui_components = response_content.get("ui_components", [])
-            print(f"Found {len(ui_components)} UI components")
+            # Ensure ui_components is a list before trying to get its length
+            if ui_components is not None:
+                print(f"Found {len(ui_components)} UI components")
+            else:
+                print("UI components is None, using empty list")
+                ui_components = []
         
         # Extract action IDs if they exist
         action_id = None

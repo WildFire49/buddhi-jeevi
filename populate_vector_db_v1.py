@@ -9,7 +9,7 @@ embedding_function = embedding_functions.DefaultEmbeddingFunction()
 
 def populate_vector_db():
     """Populate the vector database with action schemas"""
-    collection_name = "onboarding_flow_v1"  # Use the requested collection name
+    collection_name = "onboarding_flow_v3"  # Use the requested collection name
     
     # Initialize ChromaDB client
     chroma_client = chromadb.HttpClient(host='3.6.132.24', port=8000)
@@ -53,7 +53,7 @@ def populate_vector_db():
     print(f"Processing {len(actions)} action schemas...")
     for i, action in enumerate(actions):
         # Create a text representation for embedding
-        action_id = action.get('action_id', f"action_{i}")
+        action_id = action.get('id', f"action_{i}")
         text_content = f"ACTION: {action_id}: {action.get('desc_for_llm', 'No description')}"
         
         # Add to lists for batch addition
@@ -63,35 +63,39 @@ def populate_vector_db():
         # Prepare metadata
         metadata = {
             "type": "action",
-            "action_id": action.get('action_id', ''),
+            "action_id": action.get('id', ''),
             "stage_name": action.get('stage_name', ''),
             "desc_for_llm": action.get('desc_for_llm', ''),
             "action_type": action.get('action_type', ''),
-            "next_action_id": action.get('next_action_id', ''),
-            "next_action_text": action.get('next_action_text', ''),
+            "next_err_action_id": action.get('next_err_action_id', ''),
+            "next_success_action_id": action.get('next_success_action_id', ''),
             "ui_id": action.get('ui_id', ''),
-            "api_detail_id": action.get('api_detail_id', ''),
             "full_action": action  # Will be converted to JSON string by sanitize_metadata
-        }   
+        }
+        
+        # Handle api_detail_id separately - if it's None, don't include it
+        api_detail_id = action.get('api_detail_id')
+        if api_detail_id is not None:
+            metadata["api_detail_id"] = api_detail_id   
         metadatas.append(sanitize_metadata(metadata))
     
     # Process UI schema
     print(f"Processing {len(ui_schemas)} UI schemas...")
     for i, ui_schema in enumerate(ui_schemas):
         # Create a text representation for embedding
-        ui_id = ui_schema.get('ui_id', f"ui_{i}")
-        text_content = f"UI: {ui_id}: {ui_schema.get('desc_for_llm', 'No description')}"
+        id = ui_schema.get('id', f"ui_{i}")
+        text_content = f"UI: {id}"
         
         # Add to lists for batch addition
-        ids.append(f"ui_{i}_{ui_id}")
+        ids.append(f"ui_{i}_{id}")
         texts.append(text_content)
         
         # Prepare metadata
         metadata = {
-            "type": "ui",
-            "ui_id": ui_schema.get('ui_id', ''),
-            "desc_for_llm": ui_schema.get('desc_for_llm', ''),
-            "ui_type": ui_schema.get('ui_type', ''),
+            "type": ui_schema.get('type', 'UI'),
+            "id": ui_schema.get('id', ''),
+            "screen_id": ui_schema.get('screen_id', ''),
+            "session_id": ui_schema.get('session_id', ''),
             "ui_components": ui_schema.get('ui_components', []),  # Will be converted to JSON string by sanitize_metadata
             "full_ui": ui_schema  # Will be converted to JSON string by sanitize_metadata
         }   
@@ -101,21 +105,24 @@ def populate_vector_db():
     print(f"Processing {len(api_schemas)} API schemas...")
     for i, api_schema in enumerate(api_schemas):
         # Create a text representation for embedding
-        api_id = api_schema.get('api_detail_id', f"api_{i}")
-        text_content = f"API: {api_id}: {api_schema.get('desc_for_llm', 'No description')}"
+        api_id = api_schema.get('id', f"api_{i}")
+        text_content = f"API: {api_id}"
         
         # Add to lists for batch addition
         ids.append(f"api_{i}_{api_id}")
         texts.append(text_content)
         
         # Prepare metadata
+        # Extract API details from the first item in api_details array if it exists
+        api_details = api_schema.get('api_details', [])
+        api_detail = api_details[0] if api_details else {}
+        
         metadata = {
-            "type": "api",
-            "api_detail_id": api_schema.get('api_detail_id', ''),
-            "desc_for_llm": api_schema.get('desc_for_llm', ''),
-            "endpoint": api_schema.get('endpoint', ''),
-            "method": api_schema.get('method', ''),
-            "params": api_schema.get('params', {}),  # Will be converted to JSON string by sanitize_metadata
+            "type": api_schema.get('type', 'API'),
+            "id": api_schema.get('id', ''),
+            "endpoint_path": api_detail.get('endpoint_path', ''),
+            "http_method": api_detail.get('http_method', ''),
+            "request_payload_template": api_detail.get('request_payload_template', {}),  # Will be converted to JSON string by sanitize_metadata
             "full_api": api_schema  # Will be converted to JSON string by sanitize_metadata
         }   
         metadatas.append(sanitize_metadata(metadata))

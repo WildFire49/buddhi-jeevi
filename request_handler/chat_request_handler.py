@@ -43,6 +43,7 @@ def process_chat(request: ChatRequest):
         
         **Instructions:**
         Based on the context above, provide a JSON object with the following keys:
+
         - "ui_components": The COMPLETE UI components structure from the context. This is very important - if you detect intent related to prospect information, customer data, or KYC, you MUST include the full UI component structure, not just references.
         - "id": action_id. If the user is asking about prospect info, use the corresponding prospect info ID.
         - "ui_id": ui_id. For prospect info or KYC related queries, use the appropriate ui_id (e.g., ui_prospect_info_001).
@@ -60,6 +61,22 @@ def process_chat(request: ChatRequest):
         Format your response in a clear, structured way that will be easy for the user to understand.
         If a piece of information is not available in the context, use a null value for that key.
         Only output the JSON object, with no additional text or explanation.
+        
+            "id": "user-details",
+            "stage_name": "User Details Screen",
+            "desc_for_llm": "User details collection screen for customer name and mobile number.",
+            "action_type": "USER_DETAILS_SCREEN",
+            "next_err_action_id": "details-error-screen",
+            "next_success_action_id": "dashboard-screen",
+            "ui_id": "ui_user_details_001",
+            "api_detail_id": "api_user_details_001"
+        
+        
+           "id": "ui_welcome_screen_001",
+            "type": "UI",
+            "session_id": "session_welcome_001",
+            "screen_id": "welcome_screen",
+            "ui_components":[]
     """
     
     prompt = ChatPromptTemplate.from_messages([

@@ -36,24 +36,29 @@ def process_chat(request: ChatRequest):
     
     system_prompt = """
         You are an expert AI assistant for a loan onboarding application.
-        Your task is to analyze the user's query and provide helpful information based on the retrieved context.
+        Your task is to analyze the user's query, understand the semantic intent, and provide helpful information based on the retrieved context.
         
         **Context:**
         {context}
         
         **Instructions:**
         Based on the context above, provide a JSON object with the following keys:
-        - "ui_components": The UI components associated with the action ui_components will be bind with ui_id.
-        - "id": action_id.
-        - "ui_id": ui_id.
+
+        - "ui_components": The COMPLETE UI components structure from the context. This is very important - if you detect intent related to prospect information, customer data, or KYC, you MUST include the full UI component structure, not just references.
+        - "id": action_id. If the user is asking about prospect info, use the corresponding prospect info ID.
+        - "ui_id": ui_id. For prospect info or KYC related queries, use the appropriate ui_id (e.g., ui_prospect_info_001).
         - "screen_id": screen_id.
         - "type": type.
         - "title": add some suited text related to title.
-        - based on ui_id value it should fetch mathed id and must return ui_components
         - next_success_action_id: The ID of the next action to be performed.
         - next_err_action_id: The ID of the next action to be performed.
+        
+        IMPORTANT INSTRUCTION FOR UI SCHEMAS:
+        - When a user asks about prospect information, adding customer data, or KYC processes (even without mentioning exact IDs), you MUST return the complete UI schema with all components.
+        - Do not just return a description or reference - return the ENTIRE ui_components structure as found in the context.
+        - Match on semantic intent, not just explicit ID mentions. For example, "add prospect info", "secondary kyc", "customer information" should all retrieve the complete UI schema.
+        
         Format your response in a clear, structured way that will be easy for the user to understand.
-
         If a piece of information is not available in the context, use a null value for that key.
         Only output the JSON object, with no additional text or explanation.
         

@@ -4,6 +4,7 @@ def get_action_schema():
         "id": "welcome",
         "stage_name": "Welcome Screen",
         "desc_for_llm": "Simple welcome screen with app name and proceed button., hey, hello, goodmornig",
+        "suggestion": ["Do you want to start onboarding", "My Customer List"],
         "action_type": "WELCOME_SCREEN",
         "next_err_action_id": "error-screen",
         "next_success_action_id": "login-screen",
@@ -60,36 +61,9 @@ def get_ui_schema():
                                 "text": "Welcome to MiFix",
                                 "text_size": "24sp",
                                 "text_color": "#000000",
-                                "text_style": "bold",
+                                "text_style": "bold", 
                                 "text_align": "center",
                                 "margin_bottom": "48dp"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "id": "button_container",
-                    "component_type": "column",
-                    "properties": {
-                        "padding": "16dp",
-                        "horizontal_alignment": "stretch"
-                    },
-                    "children": [
-                        {
-                            "id": "proceed_button",
-                            "component_type": "button",
-                            "properties": {
-                                "text": "Proceed",
-                                "background_color": "#007AFF",
-                                "text_color": "#FFFFFF",
-                                "text_size": "16sp",
-                                "text_style": "bold",
-                                "corner_radius": "8dp",
-                                "padding": "16dp",
-                                "action": {
-                                    "type": "navigate_to",
-                                    "screen": "login-screen"
-                                }
                             }
                         }
                     ]

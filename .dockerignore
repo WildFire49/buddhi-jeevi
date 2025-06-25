@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+env/
+venv/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.eggs/
+*.egg-info/
+*.egg
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+
+#embeddings
+.embeddings_cache

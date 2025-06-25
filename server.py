@@ -4,8 +4,8 @@ import os
 from dotenv import load_dotenv
 from rag_chain_builder import RAGChainBuilder
 from tools import VectorDBTools
+from middleware import validate_api_key
 
-from fastapi import FastAPI, HTTPException
 from schemas import (
     ChatRequest, DataSubmitRequest, DataSubmitResponse,
     NextActionItem, ChatResponse, KeyValuePair
@@ -15,6 +15,10 @@ from request_handler.chat_request_handler import process_chat
 
 # Load environment variables
 load_dotenv()
+from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from langchain_core.messages import HumanMessage
+from pydantic import BaseModel, Field
 
 # Determine which LLM to use based on environment variables or default to Ollama
 LLM_TYPE = os.getenv("LLM_TYPE", "ollama").lower()  # "ollama" or "openai"
@@ -33,6 +37,18 @@ app = FastAPI(
     description="An API for interacting with the loan onboarding conversational agent.",
     version="1.0.0",
 )
+
+# --- CORS Middleware ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust in production to specific origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- API Key Validation Middleware ---
+app.middleware("http")(validate_api_key)
 
 # --- In-memory state management ---
 # In a production app, you'd use Redis, a DB, or another persistent store.

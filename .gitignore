@@ -4,4 +4,3 @@ __pycache__
 .embeddings_cache
 .venv
 .vscode
-.vscode

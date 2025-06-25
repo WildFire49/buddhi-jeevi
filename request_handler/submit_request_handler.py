@@ -44,9 +44,9 @@ def submit_data(request: DataSubmitRequest):
         Critical Instruction: Unique ID Generation
         For every UI component found within "ui_components" and "next_action_ui_components", you must generate a new, unique "id".
 
-        The generated "id" must be a string formatted as: {current_epoch_timestamp}_descriptive_name.
+        The generated "id" must be a string formatted as: {current_timestamp}_descriptive_name.
 
-        {current_epoch_timestamp}: Generate the current Unix epoch timestamp.
+        {current_timestamp}: Generate the current Unix epoch timestamp.
 
         descriptive_name: Create this name by using existing value which you have to update
 

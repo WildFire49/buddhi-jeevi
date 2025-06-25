@@ -23,10 +23,10 @@ pip-delete-this-directory.txt
 *.egg-info/
 *.egg
 
+# Embeddings cache (will be pre-downloaded in Docker)
+.embeddings_cache/
+
 # IDE / Editor
 .idea/
 .vscode/
 *.swp
-
-#embeddings
-.embeddings_cache

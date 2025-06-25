@@ -37,11 +37,13 @@ class RAGChainBuilder:
                 print("Initialized OpenAI embeddings")
             else:
                 # Default to HuggingFace embeddings
+                cache_folder = os.getenv("TRANSFORMERS_CACHE", "./.embeddings_cache")
                 self.embeddings = HuggingFaceEmbeddings(
                     model_name="sentence-transformers/all-MiniLM-L6-v2",
-                    cache_folder="./.embeddings_cache"
+                    cache_folder=cache_folder,
+                    model_kwargs={'device': 'cpu'}  # Ensure CPU usage for better Docker compatibility
                 )
-                print("Initialized HuggingFace embeddings")
+                print(f"Initialized HuggingFace embeddings with cache folder: {cache_folder}")
             
             # Initialize ChromaDB client
             print("Connecting to ChromaDB at 3.6.132.24:8000")

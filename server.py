@@ -6,8 +6,10 @@ import json
 from typing import Any, Dict, List, Optional
 from rag_chain_builder import RAGChainBuilder
 from tools import VectorDBTools
+from middleware import validate_api_key
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import HumanMessage
 from pydantic import BaseModel, Field
 
@@ -22,6 +24,18 @@ app = FastAPI(
     description="An API for interacting with the loan onboarding conversational agent.",
     version="1.0.0",
 )
+
+# --- CORS Middleware ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust in production to specific origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- API Key Validation Middleware ---
+app.middleware("http")(validate_api_key)
 
 # --- In-memory state management ---
 # In a production app, you'd use Redis, a DB, or another persistent store.

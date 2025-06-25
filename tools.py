@@ -2,7 +2,7 @@ import os
 import json
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
-from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings # Updated import
 from langchain_chroma import Chroma
 import chromadb
 
@@ -13,42 +13,29 @@ class VectorDBTools:
     """
     A class providing tools for interacting with the vector database.
     """
-    _instance = None
-    
-    def __new__(cls, *args, **kwargs):
-        """
-        Singleton pattern implementation to ensure only one instance of VectorDBTools exists.
-        """
-        if not cls._instance:
-            print("Creating a new VectorDBTools instance...")
-            cls._instance = super(VectorDBTools, cls).__new__(cls)
-        else:
-            print("Returning existing VectorDBTools instance...")
-        return cls._instance
     
     def __init__(self):
         """
-        Initialize the VectorDBTools with ChromaDB connection.
+        Initialize the VectorDBTools with necessary components.
         """
-        # The hasattr check prevents re-initialization on subsequent calls
-        if not hasattr(self, 'is_initialized'):
-            # Initialize ChromaDB client
-            self.client = chromadb.HttpClient(host='3.6.132.24', port=8000)
-            
-            self.embeddings = OpenAIEmbeddings(
-                openai_api_key=os.getenv("OPENAI_API_KEY"),
-                model="text-embedding-3-small"
+        print("Initializing VectorDBTools components...")
+        # Initialize HuggingFace embeddings with Llama 3 model
+        self.embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2",  # Using a fast model as Llama 3 placeholder
+            cache_folder="./.embeddings_cache"
+        )
+        print("Initialized HuggingFace embeddings")
+        
+        # Initialize Chroma vector store with onboarding_flow collection
+        self.vector_store = Chroma(
+            collection_name="onboarding_flow_v3",
+            embedding_function=self.embeddings,
+            client=chromadb.HttpClient(
+                host="3.6.132.24",
+                port=8000
             )
-            
-            # Initialize Chroma vector store with onboarding_flow collection
-            self.vector_store = Chroma(
-                client=self.client,
-                collection_name="onboarding_flow",
-                embedding_function=self.embeddings
-            )
-            
-            self.is_initialized = True
-            print("VectorDBTools initialized successfully")
+        )
+        print("VectorDBTools initialized successfully")
     
     def search_by_action_id(self, action_id: str, k: int = 5) -> List[Dict[str, Any]]:
         """
@@ -64,7 +51,7 @@ class VectorDBTools:
         try:
             # First try an exact metadata filter search for action schema
             results = self.vector_store.get(
-                where={"action_id": action_id}
+                where={"ids": action_id}
             )
             
             if results and len(results['ids']) > 0:

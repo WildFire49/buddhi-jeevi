@@ -1,13 +1,12 @@
 import os
 import json
 from dotenv import load_dotenv
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import SimpleJsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-from langchain_community.vectorstores import ElasticsearchStore
+from langchain_huggingface import HuggingFaceEmbeddings # Updated import
 from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
-from llm_client import LLMManager 
+from llm_client import LLMManager, OllamaLLMManager, OpenAILLMManager
 import chromadb
 
 # Load environment variables
@@ -15,54 +14,59 @@ load_dotenv()
 
 class RAGChainBuilder:
     """
-    A Singleton class to build and provide a single instance of the RAG chain.
-    This prevents re-initializing models and retrievers unnecessarily.
+    A class to build and provide a RAG chain for retrieval augmented generation.
     """
-    _instance = None
 
-    def __new__(cls, *args, **kwargs):
-        """
-        The __new__ method is called before __init__ and is used to control
-        the object creation process. This is the standard way to implement a Singleton.
-        """
-        if not cls._instance:
-            print("Creating a new RAGChainBuilder instance...")
-            # Create a new instance of the class
-            cls._instance = super(RAGChainBuilder, cls).__new__(cls)
-        else:
-            print("Returning existing RAGChainBuilder instance...")
-        return cls._instance
-
-    def __init__(self, llm_model_name: str = "gpt-3.5-turbo"):
+    def __init__(self, llm_type="ollama", model_name="llama3"):
         """
         Initializes the RAGChainBuilder's attributes.
-        This will only run the first time the instance is created.
-
+        
         Args:
-            vector_store (FAISS): The vector store to retrieve context from.
-            llm_model_name (str): The name of the OpenAI chat model to use for generation.
+            llm_type (str): Type of LLM to use ('ollama' or 'openai')
+            model_name (str): Name of the model to use
         """
-        # The hasattr check prevents re-initialization on subsequent calls to get the instance
-        if not hasattr(self, 'is_initialized'):
-
+        try:
+            # Initialize embeddings from HuggingFace using the updated package
+            self.embeddings = HuggingFaceEmbeddings(
+                model_name="sentence-transformers/all-MiniLM-L6-v2",
+                cache_folder="./.embeddings_cache"
+            )
+            print("Initialized HuggingFace embeddings")
+            
             # Initialize ChromaDB client
+            print("Connecting to ChromaDB at 3.6.132.24:8000")
             client = chromadb.HttpClient(host='3.6.132.24', port=8000)
             
-            self.embeddings = OpenAIEmbeddings(
-                openai_api_key=os.getenv("OPENAI_API_KEY"),
-                model="text-embedding-3-small"
-            )
+            # Check if the collection exists
+            collection_name = "onboarding_flow_v3"
+            collections = client.list_collections()
+            collection_names = [c.name for c in collections]
+            print(f"Available collections: {collection_names}")
+            
+            if collection_name not in collection_names:
+                print(f"Warning: Collection '{collection_name}' not found in ChromaDB")
             
             # Initialize Chroma vector store with onboarding_flow collection
             self.vector_store = Chroma(
                 client=client,
-                collection_name="onboarding_flow",    # Use the onboarding_flow collection
+                collection_name=collection_name,
                 embedding_function=self.embeddings
             )
-            self.llm = LLMManager(model_name=llm_model_name).llm
-            self.is_initialized = True
-            print(f"RAGChainBuilder initialized with model: {llm_model_name}")
-            self.rag_chain = self._build_chain()
+            print(f"Successfully connected to ChromaDB collection '{collection_name}'")
+        except Exception as e:
+            print(f"Error initializing RAGChainBuilder: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            self.vector_store = None
+            
+        # Initialize the appropriate LLM based on the type
+        if llm_type.lower() == "openai":
+            llm_manager = OpenAILLMManager(model_name=model_name)
+        else:  # Default to Ollama
+            llm_manager = OllamaLLMManager(model_name=model_name)
+            
+        self.llm = llm_manager.llm
+        print(f"RAGChainBuilder initialized with {llm_type} model: {model_name}")
 
     def _format_context(self, docs):
         """Format retrieved documents for the prompt"""
@@ -70,48 +74,47 @@ class RAGChainBuilder:
             return "No relevant actions found."
         
         # Get the most relevant document
-        doc = docs[0]
-        if 'full_action' in doc.metadata:
-            return doc.metadata['full_action']
-        return doc.page_content
+        # doc = docs[0]
+        # if 'full_action' in doc.metadata:
+        #     return doc.metadata['full_action']
+        return docs
 
-    def _build_chain(self):
+    
+    def run_prompt_with_context(self, query: str, prompt: ChatPromptTemplate):
         """
-        A private method to construct the RAG chain.
+        Run a custom prompt with retrieved context from ChromaDB. and fetch ui_components and api_details.
+        and next_action_id.
+
+        :param query: The natural language question to query vector store.
+        :param prompt: ChatPromptTemplate object.
+        :return: LLM response python based json structure.
         """
-        prompt = ChatPromptTemplate.from_template("""
-        You are an expert assistant for a financial services application called as MiFix which deals in Onboarding and Collections of money in Joint Liabiltity Group. 
-        Based on the user's question, you need to return the most relevant workflow step or action.
-        
-        If the user is asking about a specific workflow step or the onboarding process in general, 
-        return the complete workflow step structure as a JSON object.
-        
-        If the context contains a relevant action but not the complete workflow structure,
-        return it as a JSON object with this format: {{ "action": "action_description" }}
-        
-        If no relevant action or workflow step is found, respond with a helpful message.
+        # "Input to ChatPromptTemplate is missing variables {'query'}.  Expected: ['context', 'query'] Received: ['action_id', 'context']\nNote: if you intended {query} to be part of the string and not a variable, please escape it with double curly braces like: '{{query}}'.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/INVALID_PROMPT_INPUT "
+        try:
+            # Step 1: Retrieve relevant documents from ChromaDB
+            results = self.vector_store.similarity_search(query, k=3)
 
-        CONTEXT:
-        {context}
+            # Step 2: Format the most relevant result
+            context = self._format_context(results)
 
-        QUESTION:
-        {question}
-
-        RESPONSE:
-        """)
-        
-        chain = (
-            {
-                "context": self.vector_store.as_retriever() | self._format_context, 
-                "question": RunnablePassthrough()
+            # Step 3: Prepare the inputs for the chain
+            inputs = {
+                "query": query,
+                "context": context,
             }
-            | prompt
-            | self.llm
-            | StrOutputParser()
-        )
-        
-        print("RAG chain built successfully.")
-        return chain
+
+            # Step 4: Run the LLM with the prompt
+            chain = (
+                prompt
+                | self.llm
+                |SimpleJsonOutputParser()
+            )
+            response = chain.invoke(inputs)
+            return response
+
+        except Exception as e:
+            print(f"Error running prompt with context: {e}")
+            return None
     
     def get_chain(self):
         """

@@ -2,7 +2,8 @@ import os
 import json
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEmbeddings # Updated import
+from langchain_openai import OpenAIEmbeddings # New import for OpenAI embeddings
+from langchain_huggingface import HuggingFaceEmbeddings # Import for fallback embeddings
 from langchain_chroma import Chroma
 import chromadb
 
@@ -19,23 +20,56 @@ class VectorDBTools:
         Initialize the VectorDBTools with necessary components.
         """
         print("Initializing VectorDBTools components...")
-        # Initialize HuggingFace embeddings with Llama 3 model
-        self.embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",  # Using a fast model as Llama 3 placeholder
-            cache_folder="./.embeddings_cache"
-        )
-        print("Initialized HuggingFace embeddings")
+        
+        # Try to initialize embeddings with error handling and fallbacks
+        try:
+            
+            openai_api_key = os.getenv("OPENAI_API_KEY")
+
+            # Try to initialize with the specified model
+            self.embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model="nomic-embed-text")
+
+            print("Initialized OpenAI  embeddings successfully")
+        
+        except Exception as e:
+            print(f"Error initializing primary embeddings model: {e}")
+            print("Trying alternative embedding model...")
+            
+            model_name = "sentence-transformers/all-MiniLM-L6-v2"
+            cache_folder = "./.embeddings_cache"
+            
+            # Check if we have a local copy of the model in the cache folder
+            if os.path.exists(os.path.join(cache_folder, model_name.replace('/', '_'))):
+                print(f"Using locally cached model from {cache_folder}")
+            else:
+                print(f"Model not found in {cache_folder}, will try to download")
+            
+            try:
+                
+                # Try a different model as fallback
+                self.embeddings = HuggingFaceEmbeddings(
+                    model_name="distilbert-base-uncased",
+                    cache_folder="./.embeddings_cache"
+                )
+                print("Initialized fallback embeddings model")
+            except Exception as e2:
+                print(f"Error initializing fallback embeddings model: {e2}")
+                raise RuntimeError("Failed to initialize any embedding models. Please ensure internet connectivity or pre-download the models.") from e2
         
         # Initialize Chroma vector store with onboarding_flow collection
-        self.vector_store = Chroma(
-            collection_name="onboarding_flow_v3",
-            embedding_function=self.embeddings,
-            client=chromadb.HttpClient(
-                host="3.6.132.24",
-                port=8000
+        try:
+            self.vector_store = Chroma(
+                collection_name="onboarding_flow_v3",
+                embedding_function=self.embeddings,
+                client=chromadb.HttpClient(
+                    host="3.6.132.24",
+                    port=8000
+                )
             )
-        )
-        print("VectorDBTools initialized successfully")
+            print("VectorDBTools initialized successfully")
+        except Exception as e:
+            print(f"Error connecting to Chroma DB: {e}")
+            raise RuntimeError("Failed to connect to vector database. Please check your connection and credentials.") from e
     
     def search_by_action_id(self, action_id: str, k: int = 5) -> List[Dict[str, Any]]:
         """

@@ -1,16 +1,23 @@
 import json
 import os
 import chromadb
+from dotenv import load_dotenv
 from chromadb.utils import embedding_functions
+from  langchain_openai import OpenAIEmbeddings
 from database_v1 import get_action_schema, get_ui_schema, get_api_schema
 
 # Use ChromaDB's default embedding function instead of OpenAI
 embedding_function = embedding_functions.DefaultEmbeddingFunction()
+load_dotenv()
 
 def populate_vector_db():
     """Populate the vector database with action schemas"""
     collection_name = "onboarding_flow_v3"  # Use the requested collection name
-    
+
+    # Initialize OpenAI embeddings
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model="nomic-embed-text")
+
     # Initialize ChromaDB client
     chroma_client = chromadb.HttpClient(host='3.6.132.24', port=8000)
     
@@ -24,7 +31,7 @@ def populate_vector_db():
     # Create a new collection with the default embedding function
     collection = chroma_client.create_collection(
         name=collection_name,
-        embedding_function=embedding_function
+        embedding_function=embeddings
     )
     print(f"Created new collection: {collection_name}")
     

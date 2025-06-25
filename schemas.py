@@ -54,7 +54,7 @@ class DataSubmitResponse(BaseModel):
 class ChatResponse(BaseModel):
     session_id: str = Field(..., description="The session ID for the ongoing conversation.")
     response: Any = Field(..., description="The agent's response - can be string or object.")
-    ui_tags: List[Any] = Field([], description="A list of UI components or tags for the frontend.")
+    ui_tags: Any = Field([], description="A list of UI components or tags for the frontend.")
     action_id: Optional[str] = Field(None, description="The ID of the action being performed.")
     next_success_action_id: Optional[str] = Field(None, description="The ID of the next action to be performed on success.")
     next_err_action_id: Optional[str] = Field(None, description="The ID of the next action to be performed on error.")

@@ -91,7 +91,7 @@ async def chat(request: ChatRequest):
         action_id = None
         next_success_action_id = None
         next_err_action_id = None
-        
+        title= None
         if isinstance(response_content, dict):
             action_id = response_content.get("id")
             next_success_action_id = response_content.get("next_success_action_id")
@@ -226,6 +226,6 @@ async def submit_endpoint(request: DataSubmitRequest):
 # Start the server when this file is run directly
 if __name__ == "__main__":
     import uvicorn
-    PORT = os.getenv("PORT", "8005")
+    PORT = os.getenv("PORT", "8002")
     uvicorn.run(app, host="0.0.0.0", port=int(PORT))
     print("Starting server on http://localhost:" + PORT)

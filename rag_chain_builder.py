@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 from langchain_core.output_parsers import SimpleJsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-from langchain_huggingface import HuggingFaceEmbeddings # Updated import
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings # New import for OpenAI embeddings
 from langchain_chroma import Chroma
 from llm_client import LLMManager, OllamaLLMManager, OpenAILLMManager
 import chromadb
@@ -17,21 +18,30 @@ class RAGChainBuilder:
     A class to build and provide a RAG chain for retrieval augmented generation.
     """
 
-    def __init__(self, llm_type="ollama", model_name="llama3"):
+    def __init__(self, llm_type="ollama", model_name="llama3", embedding_type="huggingface"):
         """
         Initializes the RAGChainBuilder's attributes.
         
         Args:
             llm_type (str): Type of LLM to use ('ollama' or 'openai')
             model_name (str): Name of the model to use
+            embedding_type (str): Type of embeddings to use ('huggingface' or 'openai')
         """
         try:
-            # Initialize embeddings from HuggingFace using the updated package
-            self.embeddings = HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-MiniLM-L6-v2",
-                cache_folder="./.embeddings_cache"
-            )
-            print("Initialized HuggingFace embeddings")
+            if embedding_type.lower() == "openai":
+                # Initialize OpenAI embeddings
+                openai_api_key = os.getenv("OPENAI_API_KEY")
+                if not openai_api_key:
+                    raise ValueError("OPENAI_API_KEY environment variable not set for OpenAI embeddings.")
+                self.embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model="nomic-embed-text")
+                print("Initialized OpenAI embeddings")
+            else:
+                # Default to HuggingFace embeddings
+                self.embeddings = HuggingFaceEmbeddings(
+                    model_name="sentence-transformers/all-MiniLM-L6-v2",
+                    cache_folder="./.embeddings_cache"
+                )
+                print("Initialized HuggingFace embeddings")
             
             # Initialize ChromaDB client
             print("Connecting to ChromaDB at 3.6.132.24:8000")

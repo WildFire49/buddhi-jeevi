@@ -1,8 +1,8 @@
 import os
 import json
 import chromadb
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_huggingface import HuggingFaceEmbeddings # Updated import
+from langchain_openai import OpenAIEmbeddings # New import for OpenAI embeddings
+
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -169,11 +169,10 @@ def upload_workflow_to_chroma():
     try:
         # Initialize ChromaDB client
         client = chromadb.HttpClient(host='3.6.132.24', port=8000)
-        
+        openai_api_key = os.getenv("OPENAI_API_KEY")
         # Initialize HuggingFace embeddings with Llama 3 model
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",  # Using a fast model as Llama 3 placeholder
-        )
+        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key, model="nomic-embed-text")
+
         
         # Check if collection exists, if not create it
         try:

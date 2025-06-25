@@ -201,8 +201,6 @@ async def submit_endpoint(request: DataSubmitRequest):
                 )
             ]
         
-        
-        
         # Prepare the response with all schema data
         return DataSubmitResponse(
             session_id=session_id,

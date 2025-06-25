@@ -92,7 +92,7 @@ class RAGChainBuilder:
         return docs
 
     
-    def run_prompt_with_context(self, query: str, prompt: ChatPromptTemplate):
+    def run_prompt_with_context(self, query: str, prompt: ChatPromptTemplate, variables: dict = None):
         """
         Run a custom prompt with retrieved context from ChromaDB. and fetch ui_components and api_details.
         and next_action_id.
@@ -114,6 +114,10 @@ class RAGChainBuilder:
                 "query": query,
                 "context": context,
             }
+            
+            # Merge variables dictionary if provided
+            if variables:
+                inputs.update(variables)
 
             # Step 4: Run the LLM with the prompt
             chain = (

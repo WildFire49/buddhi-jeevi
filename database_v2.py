@@ -137,7 +137,10 @@ def get_ui_schema():
                                 "padding": "16dp",
                                 "action": {
                                     "type": "navigate_to",
-                                    "screen": "login-screen"
+                                    "screen": "login-screen",
+                                    "action_id": "welcome",
+                                    "next_success_action_id": "video-consent",
+                                    "next_err_action_id": "welcome"
                                 }
                             }
                         }
@@ -211,9 +214,12 @@ def get_ui_schema():
                                 "padding": "16dp",
                                 "enabled": True,
                                 "action": {
-                                    "type": "submit_form",
+                                    "type": "navigate_to",
                                     "endpoint": "/api/accept-consent",
-                                    "method": "POST"
+                                    "method": "POST",
+                                    "action_id": "welcome",
+                                    "next_success_action_id": "mobile-verification",
+                                    "next_err_action_id": "welcome"
                                 }
                             }
                         }
@@ -653,13 +659,13 @@ def get_ui_schema():
                                         "padding": "16dp",
                                         "margin_bottom": "16dp",
                                         "action": {
-                                            "type": "submit_form",
+                                            "type": "navigate_to",
                                             "endpoint": "/api/select-flow",
                                             "method": "POST",
                                             "collect_fields": ["flow_choice"],
-                                            "extra_payload": {
-                                                "flow_choice": "onboarding"
-                                            }
+                                            "action_id": "select-flow",
+                                            "next_success_action_id": "video-consent",
+                                            "next_err_action_id": "select-flow"
                                         }
                                     }
                                 },
@@ -674,13 +680,15 @@ def get_ui_schema():
                                         "corner_radius": "8dp",
                                         "padding": "16dp",
                                         "action": {
-                                            "type": "submit_form",
+                                            "type": "navigate_to",
                                             "endpoint": "/api/select-flow",
                                             "method": "POST",
-                                            "collect_fields": ["flow_choice"],
                                             "extra_payload": {
                                                 "flow_choice": "collections"
-                                            }
+                                            },
+                                            "action_id": "select-flow",
+                                            "next_success_action_id": "video-consent",
+                                            "next_err_action_id": "select-flow"
                                         }
                                     }
                                 }
@@ -771,7 +779,10 @@ def get_ui_schema():
                                             "type": "submit_form",
                                             "endpoint": "/api/submit-prospect-info",
                                             "method": "POST",
-                                            "collect_fields": ["document_dropdown"]
+                                            "collect_fields": ["document_dropdown"],
+                                            "action_id": "prospect-info",
+                                            "next_success_action_id": "video-consent",
+                                            "next_err_action_id": "prospect-info"
                                         }
                                     }
                                 }

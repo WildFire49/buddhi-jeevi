@@ -142,7 +142,7 @@ async def submit_handler(request: Request, submit_request: DataSubmitRequest):
             status="success",
             message="Submit successful",
             errors=[],
-            ui_data=ui_components,
+            ui_components=ui_components,
             next_action_ui_components=next_action_ui_components
         )
         
@@ -162,7 +162,7 @@ async def submit_handler(request: Request, submit_request: DataSubmitRequest):
             status="failure",
             message=f"Error processing submission: {str(e)}",
             errors=[str(e)],
-            ui_data=[],
+            ui_components=[],
             next_action_ui_components=[]
         )
         return send_api_response(request, error_response, 500, request_data)

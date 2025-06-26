@@ -278,9 +278,9 @@ async def submit_endpoint(request_obj: Request, submit_request: DataSubmitReques
                 print("UI components is neither dict nor list, using empty array")
                 ui_data = []
             
-            # Transform to consistent frontend structure
-            ui_data = transform_ui_schema_to_frontend_structure(ui_data)
-            print(f"Transformed UI components to frontend structure")
+            # For submit API, we need a flat structure without nested components
+            ui_data = transform_ui_schema_to_flat_structure(ui_data)
+            print(f"Transformed UI components to flat structure for submit API")
         
         # Ensure next_action_ui_components is always an array
         next_action_ui_components = []
@@ -299,9 +299,9 @@ async def submit_endpoint(request_obj: Request, submit_request: DataSubmitReques
                 print("Next action UI components is neither dict nor list, using empty array")
                 next_action_ui_components = []
             
-            # Transform to consistent frontend structure
-            next_action_ui_components = transform_ui_schema_to_frontend_structure(next_action_ui_components)
-            print(f"Transformed next action UI components to frontend structure")
+            # For submit API, we need a flat structure without nested components
+            next_action_ui_components = transform_ui_schema_to_flat_structure(next_action_ui_components)
+            print(f"Transformed next action UI components to flat structure for submit API")
         
         # Create the response object
         response = DataSubmitResponse(
@@ -655,6 +655,52 @@ def transform_nested_components(nested_components):
     return transformed
 
 # app.add_middleware(APILoggerMiddleware)
+def transform_ui_schema_to_flat_structure(ui_components):
+    """
+    Transform UI components to a flat structure for the submit API.
+    Returns components directly without nesting them under a 'components' array.
+    """
+    if not ui_components:
+        return []
+    
+    # If we have a list of components, process each one
+    if isinstance(ui_components, list):
+        # Check if these are already flat components
+        if all(isinstance(comp, dict) and "component_type" in comp for comp in ui_components):
+            return ui_components
+        
+        # Otherwise, we need to extract and flatten
+        flat_components = []
+        for component in ui_components:
+            # If this is a container with nested ui_components, extract them
+            if isinstance(component, dict):
+                if "ui_components" in component:
+                    # Extract the nested components
+                    nested = component.get("ui_components", [])
+                    flat_components.extend(transform_ui_schema_to_flat_structure(nested))
+                elif "components" in component:
+                    # Extract from components array
+                    nested = component.get("components", [])
+                    flat_components.extend(transform_ui_schema_to_flat_structure(nested))
+                else:
+                    # It's a single component, add it directly
+                    flat_components.append(component)
+        
+        return flat_components
+    
+    # If we have a single component object with nested components
+    elif isinstance(ui_components, dict):
+        if "ui_components" in ui_components:
+            return transform_ui_schema_to_flat_structure(ui_components["ui_components"])
+        elif "components" in ui_components:
+            return transform_ui_schema_to_flat_structure(ui_components["components"])
+        else:
+            # It's a single component
+            return [ui_components]
+    
+    # Fallback
+    return []
+
 # Start the server when this file is run directly
 
 if __name__ == "__main__":

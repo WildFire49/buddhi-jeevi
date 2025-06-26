@@ -51,6 +51,16 @@ def get_action_schema():
         "api_detail_id": "api_otp_verification_001"
     },
     {
+        "id":"primary-kyc",
+        "stage_name":"Primary KYC",
+        "desc_for_llm":"Screen to enter Customer Primary KYC (Voter ID or PAN) using a document dropdown and Upload KYC Image. User wants to confirm primary KYC using a document dropdown.",
+        "action_type":"PRIMARY_KYC_SCREEN",
+        "next_err_action_id":"primary-kyc",
+        "next_success_action_id":"prospect-info",
+        "ui_id":"ui_primary_kyc_001",
+        "api_detail_id":"api_primary_kyc_001"
+    },
+    {
         "id": "prospect-info",
         "stage_name": "Prospect Info",
         "desc_for_llm": "Screen to confirm secondary KYC using a document dropdown. User wants to confirm secondary KYC using a document dropdown.",
@@ -726,6 +736,99 @@ def get_ui_schema():
             ]
         },
         {
+            "id": "ui_primary_kyc_001",
+            "session_id": "session_primary_kyc_001",
+            "screen_id": "primary_kyc_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF"
+                    },
+                    "children": [
+                        {
+                            "id": "instruction_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Upload PAN Card",
+                                "text_size": "20sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "pan_number_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter PAN Number",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "max_length": 10,
+                                "validation": {
+                                    "required": True,
+                                    "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
+                                    "custom_error": "Please enter a valid PAN number (e.g., ABCDE1234F)"
+                                }
+                            }
+                        },
+                        {
+                            "id": "pan_card_upload",
+                            "component_type": "image_capture",
+                            "properties": {
+                                "title": "PAN Card Image",
+                                "instructions": "Take a clear photo of your PAN card",
+                                "max_images": 2,
+                                "min_images": 1,
+                                "page_limit": 1,
+                                "allow_gallery": True,
+                                "require_document_type": False,
+                                "margin_bottom": "24dp",
+                                "document_types": [
+                                    {
+                                        "value": "pan",
+                                        "label": "PAN Card",
+                                        "max_pages": 2
+                                    }
+                                ],
+                                "validation": {
+                                    "required": True
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit PAN Card",
+                                "background_color": "#4CAF50",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/pan/upload",
+                                    "method": "POST",
+                                    "collect_fields": ["pan_number_input", "pan_card_upload"],
+                                    "action_id": "primary-kyc",
+                                    "next_success_action_id": "prospect-info",
+                                    "next_err_action_id": "primary-kyc"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "ui_prospect_info_001",
             "session_id": "session_prospect_info_001",
             "screen_id": "prospect_info_screen",
@@ -735,7 +838,7 @@ def get_ui_schema():
                     "component_type": "column",
                     "properties": {
                         "padding": "20dp",
-                        "background_color": "#FFFFFF",
+                        "background_color"  : "#FFFFFF",
                         "vertical_arrangement": "top",
                         "horizontal_alignment": "stretch"
                     },
@@ -899,6 +1002,20 @@ def get_api_schema():
                     "endpoint_path": "/api/select-flow",
                     "request_payload_template": {
                         "flow_choice": "{{flow_choice}}"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "api_primary_kyc_001",
+            "type": "API",
+            "api_details": [
+                {
+                    "http_method": "POST",
+                    "endpoint_path": "/api/pan/upload",
+                    "request_payload_template": {
+                        "pan_number": "{{pan_number_input}}",
+                        "pan_card_image": "{{pan_card_upload}}"
                     }
                 }
             ]

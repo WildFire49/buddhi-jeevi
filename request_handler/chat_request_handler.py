@@ -109,6 +109,25 @@ def process_chat(request: ChatRequest):
                 "ui_tags": ["no_context_found"]
             }
         
+        ui_id = llm_response.get("ui_id")
+        if ui_id:
+            try:
+                from utils.ui_component_utils import fetch_ui_component_by_id
+                
+                ui_component = fetch_ui_component_by_id(ui_id)
+                
+                if ui_component:
+                    # If UI component found, add it to the response
+                    llm_response["ui_components"] = ui_component.ui_components
+                    llm_response["ui_type"] = ui_component.type
+                    llm_response["ui_id"] = ui_component.id
+                    llm_response["screen_id"] = ui_component.screen_id
+                else:
+                    # Log if UI component not found
+                    print(f"UI component with id {ui_id} not found in database")
+            except Exception as e:
+                print(f"Error retrieving UI component: {str(e)}")
+                # Continue even if there's an error retrieving the UI component
        
         return {
             "response": llm_response,

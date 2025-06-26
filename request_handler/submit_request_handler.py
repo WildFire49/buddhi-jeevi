@@ -37,7 +37,9 @@ def submit_data(request: DataSubmitRequest):
         **Instructions:**
         Based on the context above, provide a JSON object with the following keys:
         - "ui_components": The UI components associated with the action. ui_components should be a list only
+        - "ui_id": The UI data associated with the action. ui_data should be a list only
         - "next_action_ui_components": The UI components associated with the next action ui so that i can send user next_action_ui_components to render next ui. next_action_ui_components should be a list only
+        - "next_action_ui_id": The UI data associated with the next action
         - "api_details": The API endpoint details for the action.
         - "next_action_id": The ID of the next action to be performed.
         - based on the next_action_id also return ui_components for next_action
@@ -62,20 +64,27 @@ def submit_data(request: DataSubmitRequest):
             return {}
         
         # Extract components from the LLM response dictionary
-        ui_components = llm_response.get('ui_components', [])
         api_details = llm_response.get('api_details', [])
         next_action_id = llm_response.get('next_action_id')
-        next_action_ui_components = llm_response.get('next_action_ui_components', [])
+        ui_id = llm_response.get('ui_id')
+        next_action_ui_id = llm_response.get('next_action_ui_id')
+        next_action_ui_components = []
+        if isinstance(next_action_ui_id, list):
+            next_action_ui_id = next_action_ui_id[0]
         
-        data = request.data
-        response = api_executor(api_details, data)
-        print("api_executor", response)
-       
+        from utils.ui_component_utils import fetch_ui_component_by_id
+        if next_action_ui_id:
+            next_action_ui = fetch_ui_component_by_id(next_action_ui_id) 
+            if next_action_ui:
+                next_action_ui_components = next_action_ui.ui_components
+        
         processed_results = {
-            "ui_components": ui_components,
+            "ui_components": next_action_ui_components,
             "next_action_ui_components": next_action_ui_components,
             "api_details": api_details,
-            "next_action_id": next_action_id
+            "next_action_id": next_action_id,
+            "ui_id": ui_id,
+            "next_action_ui_id": next_action_ui_id
         }
         
         print(f"Found {len(processed_results)} results for action_id {action_id}")

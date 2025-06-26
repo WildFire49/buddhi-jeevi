@@ -6,19 +6,9 @@ def get_action_schema():
         "desc_for_llm": "Simple welcome screen with app name and proceed button., hey, hello, goodmornig",
         "action_type": "WELCOME_SCREEN",
         "next_err_action_id": "welcome",
-        "next_success_action_id": "video-consent",
+        "next_success_action_id": "select-flow",
         "ui_id": "ui_welcome_screen_001",
         "api_detail_id": None
-    },
-    {
-        "id": "video-consent",
-        "stage_name": "Video Consent",
-        "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing.",
-        "action_type": "VIDEO_CONSENT_SCREEN",
-        "next_err_action_id": "video-consent",
-        "next_success_action_id": "mobile-verification",
-        "ui_id": "ui_video_consent_001",
-        "api_detail_id": "api_video_consent_001"
     },
     {
         "id": "select-flow",
@@ -29,6 +19,16 @@ def get_action_schema():
         "next_success_action_id": "video-consent",
         "ui_id": "ui_select_flow_001",
         "api_detail_id": "api_select_flow_001"
+    },
+    {
+        "id": "video-consent",
+        "stage_name": "Video Consent",
+        "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing.",
+        "action_type": "VIDEO_CONSENT_SCREEN",
+        "next_err_action_id": "video-consent",
+        "next_success_action_id": "mobile-verification",
+        "ui_id": "ui_video_consent_001",
+        "api_detail_id": "api_video_consent_001"
     },
     {
         "id": "mobile-verification",
@@ -187,7 +187,7 @@ def get_ui_schema():
                             "id": "video_player",
                             "component_type": "video",
                             "properties": {
-                                "video_url": "https://example.com/consent-video.mp4",
+                                "video_url": "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4",
                                 "thumbnail_url": "https://example.com/video-thumbnail.jpg",
                                 "background_color": "#000000",
                                 "corner_radius": "12dp",

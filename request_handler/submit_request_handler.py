@@ -36,29 +36,11 @@ def submit_data(request: DataSubmitRequest):
 
         **Instructions:**
         Based on the context above, provide a JSON object with the following keys:
-        - "ui_components": The UI components associated with the action.
+        - "ui_components": The UI components associated with the action. ui_components should be a list only
+        - "next_action_ui_components": The UI components associated with the next action ui so that i can send user next_action_ui_components to render next ui. next_action_ui_components should be a list only
         - "api_details": The API endpoint details for the action.
         - "next_action_id": The ID of the next action to be performed.
         - based on the next_action_id also return ui_components for next_action
-        
-        Critical Instruction: Unique ID Generation
-        For every UI component found within "ui_components" and "next_action_ui_components", you must generate a new, unique "id".
-
-        The generated "id" must be a string formatted as: {current_timestamp}_descriptive_name.
-
-        {current_timestamp}: Generate the current Unix epoch timestamp.
-
-        descriptive_name: Create this name by using existing value which you have to update
-
-        Examples of how to generate IDs:
-
-        If a component is a button with the label "Submit Application", its generated ID should be similar to: "1719331800_submit_application_button"
-
-        If a component is an input field with the placeholder "Enter your first name", its generated ID should be similar to: "1719331800_enter_your_first_name_input"
-
-        If a component is a title with the text "Login Page", its generated ID should be similar to: "1719331800_login_page_title"
-
-
         Only output the JSON object, with no additional text or explanation.
         """
 
@@ -71,11 +53,9 @@ def submit_data(request: DataSubmitRequest):
         # Initialize RAG builder with the configured LLM type and model
         rag_builder = RAGChainBuilder(llm_type=LLM_TYPE, model_name=LLM_MODEL)
         print(f"Using {LLM_TYPE} model {LLM_MODEL} for processing action_id: {action_id}")
-        current_timestamp_str = datetime.datetime.now().strftime("%d%m%H%M%S")
-
         # Get the response from the LLM as a dictionary
         llm_response = rag_builder.run_prompt_with_context(
-            action_id, prompt, {"current_timestamp": current_timestamp_str}
+            action_id, prompt, {}
         )
         if not llm_response or not isinstance(llm_response, dict):
             print(f"No valid response from LLM: {llm_response}")
@@ -90,9 +70,10 @@ def submit_data(request: DataSubmitRequest):
         data = request.data
         response = api_executor(api_details, data)
         print("api_executor", response)
-        # Process results into the expected format
+       
         processed_results = {
-            "ui_components": next_action_ui_components,
+            "ui_components": ui_components,
+            "next_action_ui_components": next_action_ui_components,
             "api_details": api_details,
             "next_action_id": next_action_id
         }
@@ -113,10 +94,10 @@ def api_executor(api_details: dict, submited_data: list):
             for item in submited_data:
                 if isinstance(item, KeyValuePair):
                     # Access attributes of KeyValuePair using attribute notation
-                    converted_data[item.key] = item.value
+                    converted_data[item.key.split("$")[0]] = item.value
                 elif isinstance(item, dict) and 'key' in item and 'value' in item:
                     # Fallback for dictionary format
-                    converted_data[item['key']] = item['value']
+                    converted_data[item.key.split("$")[0]] = item['value']
     
         print(f"Converted submitted data: {converted_data}")
         

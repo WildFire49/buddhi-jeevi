@@ -219,16 +219,16 @@ async def submit_endpoint(request_obj: Request, submit_request: DataSubmitReques
     }
     
     # Process the submitted data
-    if not submit_request.data:
-        error_response = DataSubmitResponse(
-            session_id=session_id,
-            status="failure",
-            message="Data field is required for submissions.",
-            errors=["Data field is required"],
-            ui_data={},
-            next_action_ui_components=[]
-        )
-        return send_api_response(request_obj, error_response, 400, request_data=request_data)
+    # if not submit_request.data:
+    #     error_response = DataSubmitResponse(
+    #         session_id=session_id,
+    #         status="failure",
+    #         message="Data field is required for submissions.",
+    #         errors=["Data field is required"],
+    #         ui_data=[],
+    #         next_action_ui_components=[]
+    #     )
+    #     return send_api_response(request_obj, error_response, 400, request_data=request_data)
     
     try:
         # Convert the list of KeyValuePair to a dictionary for processing if needed

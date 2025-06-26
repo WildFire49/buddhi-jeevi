@@ -303,6 +303,12 @@ async def submit_endpoint(request_obj: Request, submit_request: DataSubmitReques
             next_action_ui_components = transform_ui_schema_to_flat_structure(next_action_ui_components)
             print(f"Transformed next action UI components to flat structure for submit API")
         
+        # For submit API, replace ui_data with next_action_ui_components
+        if next_action_ui_components and len(next_action_ui_components) > 0:
+            # Replace ui_data with next_action_ui_components
+            ui_data = next_action_ui_components
+            print(f"Replaced ui_data with {len(next_action_ui_components)} next action UI components")
+        
         # Create the response object
         response = DataSubmitResponse(
             session_id=session_id,

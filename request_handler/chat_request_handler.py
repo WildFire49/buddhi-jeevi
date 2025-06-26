@@ -2,7 +2,20 @@ import sys
 import os
 import json
 import traceback
+import requests
+import logging
 from dotenv import load_dotenv
+
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("chat_request_handler.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger("chat_request_handler")
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -22,6 +35,7 @@ LLM_MODEL = os.getenv("LLM_MODEL", "llama3" if LLM_TYPE == "ollama" else "gpt-3.
 def process_chat(request: ChatRequest):
     """
     Process a chat request and generate a response using the RAG chain.
+    First translates any non-English input to English using translation_api.py.
     
     Args:
         request: The ChatRequest object containing the prompt and session information
@@ -30,9 +44,43 @@ def process_chat(request: ChatRequest):
         A dictionary containing the response and UI tags
     """
     prompt_text = request.prompt
+    logger.info(f"Received chat request with prompt: '{prompt_text}'")
+    
     if not prompt_text:
-        print("No prompt provided in request")
+        logger.warning("Empty prompt received")
         return {"response": "Please provide a prompt or question.", "ui_tags": []}
+    
+    # First, pass the prompt to the translation API to handle non-English inputs
+    try:
+        translation_url = "http://localhost:8004/translate"  # Updated to use port 8004 where translation API is running
+        logger.info(f"Sending prompt to translation API at {translation_url}")
+        
+        # Prepare the request for translation service
+        translation_request = {
+            "tool": "chat",
+            "type": "translation",
+            "input": {"text": prompt_text, "chat_history": []}
+        }
+        logger.debug(f"Translation request: {json.dumps(translation_request)}")
+        
+        response = requests.post(translation_url, json=translation_request)
+        logger.info(f"Translation API response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            translation_result = response.json()
+            logger.debug(f"Translation result: {json.dumps(translation_result)}")
+            
+            detected_lang = translation_result.get("input", {}).get("detected_lang")
+            logger.info(f"Detected language: {detected_lang}")
+            
+            if detected_lang != "english":
+                original_prompt = prompt_text
+                prompt_text = translation_result.get("input", {}).get("english_input", prompt_text)
+                logger.info(f"Translated prompt from '{detected_lang}': '{original_prompt}' -> '{prompt_text}'")
+        else:
+            logger.error(f"Translation API error status {response.status_code}: {response.text}")
+    except Exception as e:
+        logger.error(f"Translation API error: {str(e)}")  # Continue with original prompt if translation fails
     
     system_prompt = """
         You are an expert AI assistant for a loan onboarding application.
@@ -86,29 +134,36 @@ def process_chat(request: ChatRequest):
     
     try:
         # Initialize RAG builder with the configured LLM type and model
+        logger.info(f"Using LLM type: {LLM_TYPE}, model: {LLM_MODEL}")
         rag_builder = RAGChainBuilder(llm_type=LLM_TYPE, model_name=LLM_MODEL)
-        print(f"Using {LLM_TYPE} model {LLM_MODEL} for processing chat prompt: {prompt_text[:50]}...")
+        logger.info(f"Initializing RAGChainBuilder")
         
         # First try to get a direct action match from the vector store
-        # direct_action = rag_builder.get_action_directly(prompt_text)
-        # if direct_action:
-        #     print("Found direct action match in vector store")
-        #     return {
-        #         "response": direct_action,
-        #         "ui_tags": ["action_match", "direct_response"]
-        #     }
+        logger.info(f"Attempting direct action retrieval with prompt: '{prompt_text}'")
+        direct_action = rag_builder.get_action_directly(prompt_text)
+        
+        if direct_action:
+            logger.info(f"Found direct action match in vector store: {json.dumps(direct_action)}")
+            return {
+                "response": direct_action,
+                "ui_tags": ["action_match", "direct_response"]
+            }
         
         # If no direct match, use the RAG chain to generate a response
+        logger.info("No direct action found, using RAG chain with system prompt")
         llm_response = rag_builder.run_prompt_with_context(prompt_text, prompt)
         
         # Check if we got a valid response
         if not llm_response:
-            print("No valid response from LLM")
+            logger.info("No valid response from LLM")
             return {
                 "response": "I couldn't find a good answer to your question. Could you please rephrase or provide more details?",
                 "ui_tags": ["no_context_found"]
             }
         
+        # For non-English users, we might want to translate the response back to their language
+        # This would require additional integration with the translation API
+        # but for now we'll return the English response
        
         return {
             "response": llm_response,

@@ -1,0 +1,1021 @@
+2025-06-26 13:26:52,776 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:26:52,777 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
+2025-06-26 13:26:53,208 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:26:53,230 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:26:53,472 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:26:53,500 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:26:53,752 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:26:53,772 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:26:54,017 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:26:54,043 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:26:54,279 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:26:54,299 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:26:54,554 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:26:54,797 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:26:54,817 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:26:55,374 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:26:55,399 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:26:55,654 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:26:55,924 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:26:56,222 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:26:56,251 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:26:56,281 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:26:56,281 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:26:56,281 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:26:56,281 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:26:56,281 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:26:56,314 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13eb7cc20>
+2025-06-26 13:26:56,314 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,314 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,314 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,314 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,314 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,349 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,350 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,350 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,350 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,350 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,350 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,350 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:26:56,356 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:26:56,356 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:26:56,356 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:26:56,356 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:26:56,356 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:26:56,392 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13eb78b90>
+2025-06-26 13:26:56,392 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,392 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,392 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,392 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,392 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,429 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,429 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,429 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,429 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,429 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,429 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,430 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,430 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,430 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,430 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,430 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,466 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,466 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,466 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,466 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,466 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,466 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,471 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,471 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,471 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,471 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,472 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,505 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,505 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,506 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,506 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,506 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,506 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,507 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:26:56,507 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,507 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:26:56,507 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,507 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:26:56,543 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,544 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,544 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:26:56,544 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,544 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,544 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,641 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:26:56,645 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:26:56,645 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:26:56,645 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:26:56,645 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:26:56,645 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:26:56,680 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f363890>
+2025-06-26 13:26:56,680 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,680 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,680 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,680 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,680 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,715 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,715 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,715 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,715 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,715 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,715 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,715 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:26:56,719 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:26:56,719 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:26:56,719 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:26:56,719 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:26:56,719 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:26:56,752 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13eb66c40>
+2025-06-26 13:26:56,753 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,753 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,753 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,753 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,753 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,787 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,787 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,787 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,787 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,787 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,787 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,787 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,788 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,788 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,788 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,788 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:26:56,821 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,821 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,821 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:26:56,821 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,821 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,821 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,822 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:26:56,822 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:26:56,822 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:26:56,822 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:26:56,822 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:26:56,856 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 07:56:56 GMT')])
+2025-06-26 13:26:56,856 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:26:56,856 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:26:56,856 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:26:56,856 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:26:56,856 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:26:56,974 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): us.i.posthog.com:443
+2025-06-26 13:26:57,856 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+2025-06-26 13:28:33,270 - chat_request_handler - INFO - Received chat request with prompt: 'मुझे लोन के बारे में जानकारी चाहिए'
+2025-06-26 13:28:33,270 - chat_request_handler - INFO - Sending prompt to translation API at http://localhost:8004/translate
+2025-06-26 13:28:33,270 - chat_request_handler - DEBUG - Translation request: {"tool": "chat", "type": "translation", "input": {"text": "\u092e\u0941\u091d\u0947 \u0932\u094b\u0928 \u0915\u0947 \u092c\u093e\u0930\u0947 \u092e\u0947\u0902 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u091a\u093e\u0939\u093f\u090f", "chat_history": []}}
+2025-06-26 13:28:33,271 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:8004
+2025-06-26 13:28:41,060 - chat_request_handler - ERROR - Translation API error: HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /translate (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x13f8192b0>, 'Connection to localhost timed out. (connect timeout=None)'))
+2025-06-26 13:28:41,061 - chat_request_handler - INFO - Using LLM type: openai, model: gpt-3.5-turbo
+2025-06-26 13:28:41,063 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:28:41,308 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:28:41,332 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:28:41,596 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:28:41,618 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:28:41,863 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:28:41,883 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:28:42,130 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:28:42,152 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:28:42,387 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:28:42,408 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:28:42,645 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:28:42,883 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:28:42,905 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:28:43,176 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:28:43,200 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:28:43,496 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:28:43,805 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:28:44,113 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:28:44,120 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:28:44,134 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:28:44,134 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:28:44,134 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:28:44,134 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:28:44,135 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:28:44,169 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f5e5220>
+2025-06-26 13:28:44,169 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:28:44,169 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:28:44,169 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:28:44,169 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:28:44,169 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:28:44,204 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 07:58:44 GMT')])
+2025-06-26 13:28:44,204 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:28:44,204 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:28:44,204 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:28:44,205 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:28:44,205 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:28:44,205 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:28:44,216 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:28:44,216 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:28:44,216 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:28:44,216 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:28:44,216 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:28:44,250 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f5edeb0>
+2025-06-26 13:28:44,251 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:28:44,251 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:28:44,251 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:28:44,251 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:28:44,251 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:28:44,284 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 07:58:44 GMT')])
+2025-06-26 13:28:44,284 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:28:44,284 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:28:44,284 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:28:44,284 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:28:44,284 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:28:44,285 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:28:44,285 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:28:44,285 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:28:44,285 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:28:44,285 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:28:44,318 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 07:58:44 GMT')])
+2025-06-26 13:28:44,318 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:28:44,318 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:28:44,318 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:28:44,318 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:28:44,318 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:28:44,321 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:28:44,321 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:28:44,321 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:28:44,321 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:28:44,321 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:28:44,355 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 07:58:44 GMT')])
+2025-06-26 13:28:44,355 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:28:44,355 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:28:44,355 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:28:44,355 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:28:44,355 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:28:44,356 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:28:44,356 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:28:44,356 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:28:44,356 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:28:44,356 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:28:44,390 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 07:58:44 GMT')])
+2025-06-26 13:28:44,390 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:28:44,390 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:28:44,390 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:28:44,391 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:28:44,391 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:28:44,391 - chat_request_handler - INFO - Initializing RAGChainBuilder
+2025-06-26 13:28:44,392 - chat_request_handler - INFO - Attempting direct action retrieval with prompt: 'मुझे लोन के बारे में जानकारी चाहिए'
+2025-06-26 13:28:44,505 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:28:44,505 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:28:44,505 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:28:44,505 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:28:44,505 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:28:44,543 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'13625'), (b'date', b'Thu, 26 Jun 2025 07:58:44 GMT')])
+2025-06-26 13:28:44,543 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections/35b2c58b-e436-4360-9370-29facf23bf42/query "HTTP/1.1 200 OK"
+2025-06-26 13:28:44,543 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:28:44,544 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:28:44,544 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:28:44,544 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:28:44,544 - chat_request_handler - INFO - Found direct action match in vector store: {"id": "user-details", "stage_name": "User Details Screen", "desc_for_llm": "User details collection screen for customer name and mobile number.", "action_type": "USER_DETAILS_SCREEN", "next_err_action_id": "details-error-screen", "next_success_action_id": "dashboard-screen", "ui_id": "ui_user_details_001", "api_detail_id": "api_user_details_001"}
+2025-06-26 13:28:44,900 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+2025-06-26 13:29:00,147 - chat_request_handler - INFO - Received chat request with prompt: 'mujhe prospect info chaiyeh'
+2025-06-26 13:29:00,147 - chat_request_handler - INFO - Sending prompt to translation API at http://localhost:8004/translate
+2025-06-26 13:29:00,147 - chat_request_handler - DEBUG - Translation request: {"tool": "chat", "type": "translation", "input": {"text": "mujhe prospect info chaiyeh", "chat_history": []}}
+2025-06-26 13:29:00,148 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:8004
+2025-06-26 13:29:07,935 - chat_request_handler - ERROR - Translation API error: HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /translate (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x13f869a90>, 'Connection to localhost timed out. (connect timeout=None)'))
+2025-06-26 13:29:07,935 - chat_request_handler - INFO - Using LLM type: openai, model: gpt-3.5-turbo
+2025-06-26 13:29:07,937 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:29:08,278 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:29:08,302 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:29:08,994 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:29:09,015 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:29:09,250 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:29:09,269 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:29:09,518 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:29:09,541 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:29:09,803 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:29:09,825 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:29:10,063 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:29:10,312 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:29:10,334 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:29:10,619 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:29:10,640 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:29:10,885 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:29:11,249 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:29:11,498 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:29:11,502 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:29:11,513 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:29:11,513 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:29:11,513 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:29:11,513 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:29:11,514 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:29:11,548 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f859260>
+2025-06-26 13:29:11,548 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:11,548 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:11,548 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:29:11,548 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:11,548 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:11,582 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 07:59:11 GMT')])
+2025-06-26 13:29:11,582 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:29:11,583 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:29:11,583 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:11,583 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:11,583 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:11,583 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:29:11,595 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:29:11,595 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:29:11,595 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:29:11,595 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:29:11,595 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:29:11,629 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f859d00>
+2025-06-26 13:29:11,629 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:11,629 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:11,629 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:29:11,629 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:11,629 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:11,663 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 07:59:11 GMT')])
+2025-06-26 13:29:11,663 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:29:11,664 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:29:11,664 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:11,664 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:11,664 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:11,664 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:11,664 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:11,665 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:29:11,665 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:11,665 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:11,697 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 07:59:11 GMT')])
+2025-06-26 13:29:11,698 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:29:11,698 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:29:11,698 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:11,698 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:11,698 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:11,699 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:11,699 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:11,700 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:29:11,700 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:11,700 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:11,734 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 07:59:11 GMT')])
+2025-06-26 13:29:11,734 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:29:11,734 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:29:11,734 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:11,735 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:11,735 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:11,736 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:29:11,736 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:11,736 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:29:11,736 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:11,736 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:29:11,771 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 07:59:11 GMT')])
+2025-06-26 13:29:11,771 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:29:11,771 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:29:11,772 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:11,772 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:11,772 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:11,773 - chat_request_handler - INFO - Initializing RAGChainBuilder
+2025-06-26 13:29:11,773 - chat_request_handler - INFO - Attempting direct action retrieval with prompt: 'mujhe prospect info chaiyeh'
+2025-06-26 13:29:11,795 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:29:11,796 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:11,796 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:29:11,796 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:11,796 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:29:11,833 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'11359'), (b'date', b'Thu, 26 Jun 2025 07:59:11 GMT')])
+2025-06-26 13:29:11,833 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections/35b2c58b-e436-4360-9370-29facf23bf42/query "HTTP/1.1 200 OK"
+2025-06-26 13:29:11,833 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:29:11,834 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:11,834 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:11,834 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:11,834 - chat_request_handler - INFO - Found direct action match in vector store: {"action": "API: api_prospect_info_001 /api/submit-prospect-info POST"}
+2025-06-26 13:29:12,360 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+2025-06-26 13:29:25,381 - chat_request_handler - INFO - Received chat request with prompt: 'mujhe prospect info template chaiyeh'
+2025-06-26 13:29:25,381 - chat_request_handler - INFO - Sending prompt to translation API at http://localhost:8004/translate
+2025-06-26 13:29:25,381 - chat_request_handler - DEBUG - Translation request: {"tool": "chat", "type": "translation", "input": {"text": "mujhe prospect info template chaiyeh", "chat_history": []}}
+2025-06-26 13:29:25,383 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:8004
+2025-06-26 13:29:33,216 - chat_request_handler - ERROR - Translation API error: HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /translate (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x13f869090>, 'Connection to localhost timed out. (connect timeout=None)'))
+2025-06-26 13:29:33,216 - chat_request_handler - INFO - Using LLM type: openai, model: gpt-3.5-turbo
+2025-06-26 13:29:33,217 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:29:33,576 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:29:33,599 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:29:33,851 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:29:33,872 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:29:34,109 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:29:34,131 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:29:34,697 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:29:34,722 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:29:34,960 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:29:34,981 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:29:35,246 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:29:35,619 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:29:35,643 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:29:35,929 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:29:35,951 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:29:36,200 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:29:36,542 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:29:36,851 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:29:36,855 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:29:36,865 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:29:36,865 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:29:36,865 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:29:36,865 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:29:36,866 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:29:36,903 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f5f6450>
+2025-06-26 13:29:36,903 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:36,904 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:36,904 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:29:36,904 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:36,904 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:36,938 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 07:59:36 GMT')])
+2025-06-26 13:29:36,939 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:29:36,939 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:29:36,939 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:36,939 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:36,939 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:36,939 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:29:36,949 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:29:36,949 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:29:36,949 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:29:36,949 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:29:36,950 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:29:36,984 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f5f5350>
+2025-06-26 13:29:36,984 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:36,984 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:36,984 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:29:36,984 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:36,984 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:37,017 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 07:59:36 GMT')])
+2025-06-26 13:29:37,018 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:29:37,018 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:29:37,018 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:37,018 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:37,018 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:37,018 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:37,018 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:37,019 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:29:37,019 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:37,019 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:37,052 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 07:59:36 GMT')])
+2025-06-26 13:29:37,052 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:29:37,052 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:29:37,052 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:37,052 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:37,052 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:37,054 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:37,054 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:37,054 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:29:37,054 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:37,054 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:29:37,088 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 07:59:36 GMT')])
+2025-06-26 13:29:37,088 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:29:37,089 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:29:37,089 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:37,089 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:37,089 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:37,090 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:29:37,090 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:37,090 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:29:37,090 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:37,090 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:29:37,124 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 07:59:36 GMT')])
+2025-06-26 13:29:37,124 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:29:37,124 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:29:37,124 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:37,124 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:37,124 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:37,125 - chat_request_handler - INFO - Initializing RAGChainBuilder
+2025-06-26 13:29:37,125 - chat_request_handler - INFO - Attempting direct action retrieval with prompt: 'mujhe prospect info template chaiyeh'
+2025-06-26 13:29:37,146 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:29:37,146 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:29:37,146 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:29:37,146 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:29:37,146 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:29:37,182 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'11358'), (b'date', b'Thu, 26 Jun 2025 07:59:36 GMT')])
+2025-06-26 13:29:37,183 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections/35b2c58b-e436-4360-9370-29facf23bf42/query "HTTP/1.1 200 OK"
+2025-06-26 13:29:37,183 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:29:37,184 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:29:37,184 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:29:37,184 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:29:37,184 - chat_request_handler - INFO - Found direct action match in vector store: {"id": "prospect-info", "stage_name": "Prospect Info", "desc_for_llm": "Screen to confirm secondary KYC using a document dropdown.", "action_type": "PROSPECT_INFO_SCREEN", "next_err_action_id": "prospect-info", "next_success_action_id": "video-consent", "ui_id": "ui_prospect_info_001", "api_detail_id": "api_prospect_info_001"}
+2025-06-26 13:29:37,847 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+2025-06-26 13:30:34,006 - chat_request_handler - INFO - Received chat request with prompt: 'mujhe video consent karna hai'
+2025-06-26 13:30:34,006 - chat_request_handler - INFO - Sending prompt to translation API at http://localhost:8004/translate
+2025-06-26 13:30:34,006 - chat_request_handler - DEBUG - Translation request: {"tool": "chat", "type": "translation", "input": {"text": "mujhe video consent karna hai", "chat_history": []}}
+2025-06-26 13:30:34,008 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:8004
+2025-06-26 13:30:41,831 - chat_request_handler - ERROR - Translation API error: HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /translate (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x13f5e76f0>, 'Connection to localhost timed out. (connect timeout=None)'))
+2025-06-26 13:30:41,831 - chat_request_handler - INFO - Using LLM type: openai, model: gpt-3.5-turbo
+2025-06-26 13:30:41,832 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:30:42,083 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:30:42,105 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:30:42,338 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:30:42,358 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:30:42,634 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:30:42,656 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:30:42,891 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:30:42,911 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:30:43,145 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:30:43,166 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:30:43,427 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:30:43,715 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:30:43,739 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:30:44,016 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:30:44,039 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:30:44,306 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:30:44,639 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:30:44,894 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:30:44,898 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:30:44,909 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:30:44,909 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:30:44,909 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:30:44,909 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:30:44,909 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:30:44,943 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f83d220>
+2025-06-26 13:30:44,943 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:30:44,943 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:30:44,943 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:30:44,944 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:30:44,944 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:30:44,976 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 08:00:44 GMT')])
+2025-06-26 13:30:44,977 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:30:44,977 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:30:44,977 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:30:44,977 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:30:44,977 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:30:44,978 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:30:44,988 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:30:44,988 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:30:44,988 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:30:44,988 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:30:44,989 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:30:45,023 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f83c7d0>
+2025-06-26 13:30:45,023 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:30:45,024 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:30:45,024 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:30:45,024 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:30:45,024 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:30:45,057 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 08:00:44 GMT')])
+2025-06-26 13:30:45,057 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:30:45,057 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:30:45,057 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:30:45,057 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:30:45,057 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:30:45,058 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:30:45,058 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:30:45,058 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:30:45,058 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:30:45,058 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:30:45,090 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 08:00:44 GMT')])
+2025-06-26 13:30:45,091 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:30:45,091 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:30:45,091 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:30:45,091 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:30:45,091 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:30:45,092 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:30:45,092 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:30:45,092 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:30:45,092 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:30:45,092 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:30:45,126 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 08:00:44 GMT')])
+2025-06-26 13:30:45,127 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:30:45,127 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:30:45,128 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:30:45,128 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:30:45,128 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:30:45,128 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:30:45,128 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:30:45,128 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:30:45,128 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:30:45,129 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:30:45,162 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 08:00:44 GMT')])
+2025-06-26 13:30:45,163 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:30:45,163 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:30:45,163 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:30:45,163 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:30:45,163 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:30:45,163 - chat_request_handler - INFO - Initializing RAGChainBuilder
+2025-06-26 13:30:45,164 - chat_request_handler - INFO - Attempting direct action retrieval with prompt: 'mujhe video consent karna hai'
+2025-06-26 13:30:45,181 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:30:45,182 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:30:45,182 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:30:45,182 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:30:45,182 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:30:45,219 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4147'), (b'date', b'Thu, 26 Jun 2025 08:00:44 GMT')])
+2025-06-26 13:30:45,219 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections/35b2c58b-e436-4360-9370-29facf23bf42/query "HTTP/1.1 200 OK"
+2025-06-26 13:30:45,220 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:30:45,220 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:30:45,220 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:30:45,220 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:30:45,220 - chat_request_handler - INFO - Found direct action match in vector store: {"id": "video-consent", "stage_name": "Video Consent", "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing.", "action_type": "VIDEO_CONSENT_SCREEN", "next_err_action_id": "video-consent", "next_success_action_id": "mobile-verification", "ui_id": "ui_video_consent_001", "api_detail_id": "api_video_consent_001"}
+2025-06-26 13:30:45,562 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+2025-06-26 13:31:14,649 - chat_request_handler - INFO - Received chat request with prompt: 'video consent'
+2025-06-26 13:31:14,650 - chat_request_handler - INFO - Sending prompt to translation API at http://localhost:8004/translate
+2025-06-26 13:31:14,650 - chat_request_handler - DEBUG - Translation request: {"tool": "chat", "type": "translation", "input": {"text": "video consent", "chat_history": []}}
+2025-06-26 13:31:14,650 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:8004
+2025-06-26 13:31:22,474 - chat_request_handler - ERROR - Translation API error: HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /translate (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x13f838640>, 'Connection to localhost timed out. (connect timeout=None)'))
+2025-06-26 13:31:22,475 - chat_request_handler - INFO - Using LLM type: openai, model: gpt-3.5-turbo
+2025-06-26 13:31:22,476 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:31:23,156 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:31:23,179 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:31:23,423 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:31:23,444 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:31:24,157 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:31:24,179 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:31:24,436 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:31:24,458 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:31:24,721 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:31:24,741 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:31:24,993 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:31:25,291 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:31:25,312 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:31:25,602 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:31:25,625 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:31:25,862 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:31:26,215 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:31:26,491 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:31:26,495 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:31:26,505 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:31:26,505 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:31:26,505 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:31:26,505 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:31:26,506 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:31:26,540 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13fa00ad0>
+2025-06-26 13:31:26,540 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:26,541 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:26,541 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:31:26,541 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:26,541 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:26,575 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 08:01:26 GMT')])
+2025-06-26 13:31:26,576 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:31:26,576 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:31:26,576 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:26,576 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:26,576 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:26,576 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:31:26,587 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:31:26,587 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:31:26,587 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:31:26,587 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:31:26,588 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:31:26,622 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13fa019b0>
+2025-06-26 13:31:26,622 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:26,623 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:26,623 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:31:26,623 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:26,623 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:26,657 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 08:01:26 GMT')])
+2025-06-26 13:31:26,657 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:31:26,657 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:31:26,657 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:26,657 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:26,658 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:26,658 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:26,658 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:26,658 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:31:26,659 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:26,659 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:26,691 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 08:01:26 GMT')])
+2025-06-26 13:31:26,692 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:31:26,692 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:31:26,692 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:26,692 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:26,692 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:26,694 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:26,694 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:26,695 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:31:26,695 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:26,695 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:26,728 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 08:01:26 GMT')])
+2025-06-26 13:31:26,729 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:31:26,729 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:31:26,729 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:26,729 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:26,729 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:26,731 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:31:26,731 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:26,731 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:31:26,731 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:26,731 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:31:26,766 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 08:01:26 GMT')])
+2025-06-26 13:31:26,767 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:31:26,767 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:31:26,767 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:26,767 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:26,767 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:26,768 - chat_request_handler - INFO - Initializing RAGChainBuilder
+2025-06-26 13:31:26,768 - chat_request_handler - INFO - Attempting direct action retrieval with prompt: 'video consent'
+2025-06-26 13:31:26,793 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:31:26,793 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:26,793 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:31:26,793 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:26,793 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:31:26,832 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4149'), (b'date', b'Thu, 26 Jun 2025 08:01:26 GMT')])
+2025-06-26 13:31:26,832 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections/35b2c58b-e436-4360-9370-29facf23bf42/query "HTTP/1.1 200 OK"
+2025-06-26 13:31:26,832 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:31:26,833 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:26,833 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:26,833 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:26,833 - chat_request_handler - INFO - Found direct action match in vector store: {"id": "video-consent", "stage_name": "Video Consent", "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing.", "action_type": "VIDEO_CONSENT_SCREEN", "next_err_action_id": "video-consent", "next_success_action_id": "mobile-verification", "ui_id": "ui_video_consent_001", "api_detail_id": "api_video_consent_001"}
+2025-06-26 13:31:27,147 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+2025-06-26 13:31:36,932 - chat_request_handler - INFO - Received chat request with prompt: 'video-consent'
+2025-06-26 13:31:36,932 - chat_request_handler - INFO - Sending prompt to translation API at http://localhost:8004/translate
+2025-06-26 13:31:36,933 - chat_request_handler - DEBUG - Translation request: {"tool": "chat", "type": "translation", "input": {"text": "video-consent", "chat_history": []}}
+2025-06-26 13:31:36,934 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:8004
+2025-06-26 13:31:44,716 - chat_request_handler - ERROR - Translation API error: HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /translate (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x13f8d9fd0>, 'Connection to localhost timed out. (connect timeout=None)'))
+2025-06-26 13:31:44,716 - chat_request_handler - INFO - Using LLM type: openai, model: gpt-3.5-turbo
+2025-06-26 13:31:44,717 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:31:45,055 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:31:45,075 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:31:45,335 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:31:45,363 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:31:45,598 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:31:45,621 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:31:45,880 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:31:45,900 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:31:46,164 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:31:46,184 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:31:46,444 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:31:46,796 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:31:46,816 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:31:47,100 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:31:47,120 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:31:47,383 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:31:47,682 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:31:48,026 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:31:48,029 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:31:48,035 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:31:48,035 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:31:48,035 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:31:48,035 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:31:48,035 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:31:48,069 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f5f1d90>
+2025-06-26 13:31:48,069 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:48,069 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:48,069 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:31:48,069 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:48,069 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:48,103 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 08:01:48 GMT')])
+2025-06-26 13:31:48,103 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:31:48,103 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:31:48,103 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:48,103 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:48,103 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:48,103 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:31:48,111 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:31:48,111 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:31:48,111 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:31:48,111 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:31:48,111 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:31:48,145 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f884290>
+2025-06-26 13:31:48,145 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:48,146 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:48,146 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:31:48,146 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:48,146 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:48,179 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 08:01:48 GMT')])
+2025-06-26 13:31:48,179 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:31:48,179 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:31:48,179 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:48,179 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:48,179 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:48,180 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:48,180 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:48,180 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:31:48,180 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:48,180 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:48,212 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 08:01:48 GMT')])
+2025-06-26 13:31:48,213 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:31:48,213 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:31:48,213 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:48,213 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:48,213 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:48,214 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:48,214 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:48,214 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:31:48,214 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:48,214 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:31:48,248 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 08:01:48 GMT')])
+2025-06-26 13:31:48,249 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:31:48,249 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:31:48,249 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:48,249 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:48,249 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:48,249 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:31:48,250 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:48,250 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:31:48,250 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:48,250 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:31:48,284 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 08:01:48 GMT')])
+2025-06-26 13:31:48,284 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:31:48,284 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:31:48,284 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:48,284 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:48,284 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:48,285 - chat_request_handler - INFO - Initializing RAGChainBuilder
+2025-06-26 13:31:48,285 - chat_request_handler - INFO - Attempting direct action retrieval with prompt: 'video-consent'
+2025-06-26 13:31:48,305 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:31:48,305 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:31:48,305 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:31:48,305 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:31:48,305 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:31:48,344 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4148'), (b'date', b'Thu, 26 Jun 2025 08:01:48 GMT')])
+2025-06-26 13:31:48,344 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections/35b2c58b-e436-4360-9370-29facf23bf42/query "HTTP/1.1 200 OK"
+2025-06-26 13:31:48,344 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:31:48,344 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:31:48,344 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:31:48,344 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:31:48,345 - chat_request_handler - INFO - Found direct action match in vector store: {"id": "video-consent", "stage_name": "Video Consent", "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing.", "action_type": "VIDEO_CONSENT_SCREEN", "next_err_action_id": "video-consent", "next_success_action_id": "mobile-verification", "ui_id": "ui_video_consent_001", "api_detail_id": "api_video_consent_001"}
+2025-06-26 13:31:48,573 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+2025-06-26 13:32:09,779 - chat_request_handler - INFO - Received chat request with prompt: 'video consent'
+2025-06-26 13:32:09,780 - chat_request_handler - INFO - Sending prompt to translation API at http://localhost:8004/translate
+2025-06-26 13:32:09,780 - chat_request_handler - DEBUG - Translation request: {"tool": "chat", "type": "translation", "input": {"text": "video consent", "chat_history": []}}
+2025-06-26 13:32:09,781 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:8004
+2025-06-26 13:32:17,607 - chat_request_handler - ERROR - Translation API error: HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /translate (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x13fae06b0>, 'Connection to localhost timed out. (connect timeout=None)'))
+2025-06-26 13:32:17,608 - chat_request_handler - INFO - Using LLM type: openai, model: gpt-3.5-turbo
+2025-06-26 13:32:17,610 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:32:17,926 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:32:17,948 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:32:18,197 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:32:18,217 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:32:18,478 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:32:18,502 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:32:18,765 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:32:18,786 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:32:19,047 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:32:19,070 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:32:19,321 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:32:19,568 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:32:19,590 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:32:19,973 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:32:19,995 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:32:20,259 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:32:20,548 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:32:20,800 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:32:20,802 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:32:20,808 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:32:20,808 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:32:20,808 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:32:20,808 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:32:20,809 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:32:20,842 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f884ad0>
+2025-06-26 13:32:20,842 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:20,842 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:20,842 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:32:20,842 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:20,842 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:20,875 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 08:02:20 GMT')])
+2025-06-26 13:32:20,875 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:32:20,875 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:32:20,875 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:20,875 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:20,875 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:20,876 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:32:20,882 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:32:20,882 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:32:20,882 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:32:20,882 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:32:20,883 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:32:20,916 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f58afc0>
+2025-06-26 13:32:20,916 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:20,916 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:20,916 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:32:20,916 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:20,916 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:20,950 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 08:02:20 GMT')])
+2025-06-26 13:32:20,950 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:32:20,950 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:32:20,950 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:20,950 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:20,950 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:20,951 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:20,951 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:20,951 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:32:20,951 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:20,951 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:20,984 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 08:02:20 GMT')])
+2025-06-26 13:32:20,984 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:32:20,984 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:32:20,984 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:20,985 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:20,985 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:20,986 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:20,986 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:20,986 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:32:20,987 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:20,987 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:21,022 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 08:02:20 GMT')])
+2025-06-26 13:32:21,023 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:32:21,023 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:32:21,023 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:21,023 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:21,023 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:21,024 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:32:21,024 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:21,024 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:32:21,024 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:21,024 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:32:21,058 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 08:02:20 GMT')])
+2025-06-26 13:32:21,059 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:32:21,060 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:32:21,060 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:21,060 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:21,060 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:21,061 - chat_request_handler - INFO - Initializing RAGChainBuilder
+2025-06-26 13:32:21,061 - chat_request_handler - INFO - Attempting direct action retrieval with prompt: 'video consent'
+2025-06-26 13:32:21,085 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:32:21,085 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:21,085 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:32:21,085 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:21,086 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:32:21,124 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4149'), (b'date', b'Thu, 26 Jun 2025 08:02:20 GMT')])
+2025-06-26 13:32:21,124 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections/35b2c58b-e436-4360-9370-29facf23bf42/query "HTTP/1.1 200 OK"
+2025-06-26 13:32:21,124 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:32:21,124 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:21,124 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:21,125 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:21,125 - chat_request_handler - INFO - Found direct action match in vector store: {"id": "video-consent", "stage_name": "Video Consent", "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing.", "action_type": "VIDEO_CONSENT_SCREEN", "next_err_action_id": "video-consent", "next_success_action_id": "mobile-verification", "ui_id": "ui_video_consent_001", "api_detail_id": "api_video_consent_001"}
+2025-06-26 13:32:21,588 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15
+2025-06-26 13:32:24,581 - chat_request_handler - INFO - Received chat request with prompt: 'video consent template'
+2025-06-26 13:32:24,581 - chat_request_handler - INFO - Sending prompt to translation API at http://localhost:8004/translate
+2025-06-26 13:32:24,582 - chat_request_handler - DEBUG - Translation request: {"tool": "chat", "type": "translation", "input": {"text": "video consent template", "chat_history": []}}
+2025-06-26 13:32:24,583 - urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:8004
+2025-06-26 13:32:32,405 - chat_request_handler - ERROR - Translation API error: HTTPConnectionPool(host='localhost', port=8004): Max retries exceeded with url: /translate (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x13fae1590>, 'Connection to localhost timed out. (connect timeout=None)'))
+2025-06-26 13:32:32,406 - chat_request_handler - INFO - Using LLM type: openai, model: gpt-3.5-turbo
+2025-06-26 13:32:32,408 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-06-26 13:32:32,646 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:32:32,671 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:32:32,930 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json HTTP/1.1" 307 0
+2025-06-26 13:32:32,951 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config_sentence_transformers.json HTTP/1.1" 200 0
+2025-06-26 13:32:33,200 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md HTTP/1.1" 307 0
+2025-06-26 13:32:33,219 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/README.md HTTP/1.1" 200 0
+2025-06-26 13:32:33,480 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json HTTP/1.1" 307 0
+2025-06-26 13:32:33,500 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/modules.json HTTP/1.1" 200 0
+2025-06-26 13:32:33,758 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json HTTP/1.1" 307 0
+2025-06-26 13:32:33,778 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/sentence_bert_config.json HTTP/1.1" 200 0
+2025-06-26 13:32:34,026 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/adapter_config.json HTTP/1.1" 404 0
+2025-06-26 13:32:34,309 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json HTTP/1.1" 307 0
+2025-06-26 13:32:34,332 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/config.json HTTP/1.1" 200 0
+2025-06-26 13:32:34,629 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json HTTP/1.1" 307 0
+2025-06-26 13:32:34,652 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "HEAD /api/resolve-cache/models/sentence-transformers/all-MiniLM-L6-v2/c9745ed1d9f207416be6d2e6f8de32d1f16199bf/tokenizer_config.json HTTP/1.1" 200 0
+2025-06-26 13:32:34,964 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/tree/main/additional_chat_templates?recursive=False&expand=False HTTP/1.1" 404 64
+2025-06-26 13:32:35,263 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2/revision/main HTTP/1.1" 200 6867
+2025-06-26 13:32:35,643 - urllib3.connectionpool - DEBUG - https://huggingface.co:443 "GET /api/models/sentence-transformers/all-MiniLM-L6-v2 HTTP/1.1" 200 6867
+2025-06-26 13:32:35,648 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:32:35,659 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:32:35,659 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:32:35,659 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:32:35,659 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:32:35,660 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:32:35,694 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f58a410>
+2025-06-26 13:32:35,694 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:35,694 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:35,694 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:32:35,694 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:35,694 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:35,728 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'73'), (b'date', b'Thu, 26 Jun 2025 08:02:35 GMT')])
+2025-06-26 13:32:35,728 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/auth/identity "HTTP/1.1 200 OK"
+2025-06-26 13:32:35,729 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:32:35,729 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:35,729 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:35,729 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:35,730 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-06-26 13:32:35,740 - chromadb.config - DEBUG - Starting component System
+2025-06-26 13:32:35,741 - chromadb.config - DEBUG - Starting component Posthog
+2025-06-26 13:32:35,741 - chromadb.config - DEBUG - Starting component OpenTelemetryClient
+2025-06-26 13:32:35,741 - chromadb.config - DEBUG - Starting component FastAPI
+2025-06-26 13:32:35,741 - httpcore.connection - DEBUG - connect_tcp.started host='3.6.132.24' port=8000 local_address=None timeout=None socket_options=None
+2025-06-26 13:32:35,776 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x13f8e2670>
+2025-06-26 13:32:35,776 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:35,777 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:35,777 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:32:35,777 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:35,777 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:35,810 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'25'), (b'date', b'Thu, 26 Jun 2025 08:02:35 GMT')])
+2025-06-26 13:32:35,811 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant "HTTP/1.1 200 OK"
+2025-06-26 13:32:35,811 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:32:35,811 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:35,811 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:35,811 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:35,812 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:35,812 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:35,812 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:32:35,812 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:35,812 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:35,847 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'97'), (b'date', b'Thu, 26 Jun 2025 08:02:35 GMT')])
+2025-06-26 13:32:35,847 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database "HTTP/1.1 200 OK"
+2025-06-26 13:32:35,847 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:32:35,847 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:35,848 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:35,848 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:35,849 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:35,850 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:35,850 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2025-06-26 13:32:35,850 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:35,850 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2025-06-26 13:32:35,886 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4885'), (b'date', b'Thu, 26 Jun 2025 08:02:35 GMT')])
+2025-06-26 13:32:35,887 - httpx - INFO - HTTP Request: GET http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:32:35,887 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2025-06-26 13:32:35,887 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:35,887 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:35,887 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:35,889 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:32:35,889 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:35,889 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:32:35,889 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:35,889 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:32:35,923 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'386'), (b'date', b'Thu, 26 Jun 2025 08:02:35 GMT')])
+2025-06-26 13:32:35,924 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections "HTTP/1.1 200 OK"
+2025-06-26 13:32:35,924 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:32:35,924 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:35,924 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:35,924 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:35,926 - chat_request_handler - INFO - Initializing RAGChainBuilder
+2025-06-26 13:32:35,926 - chat_request_handler - INFO - Attempting direct action retrieval with prompt: 'video consent template'
+2025-06-26 13:32:35,947 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-06-26 13:32:35,947 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-06-26 13:32:35,947 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-06-26 13:32:35,947 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-06-26 13:32:35,947 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-06-26 13:32:35,986 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'content-type', b'application/json'), (b'content-length', b'4147'), (b'date', b'Thu, 26 Jun 2025 08:02:35 GMT')])
+2025-06-26 13:32:35,986 - httpx - INFO - HTTP Request: POST http://3.6.132.24:8000/api/v2/tenants/default_tenant/databases/default_database/collections/35b2c58b-e436-4360-9370-29facf23bf42/query "HTTP/1.1 200 OK"
+2025-06-26 13:32:35,986 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-06-26 13:32:35,986 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-06-26 13:32:35,987 - httpcore.http11 - DEBUG - response_closed.started
+2025-06-26 13:32:35,987 - httpcore.http11 - DEBUG - response_closed.complete
+2025-06-26 13:32:35,987 - chat_request_handler - INFO - Found direct action match in vector store: {"id": "video-consent", "stage_name": "Video Consent", "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing.", "action_type": "VIDEO_CONSENT_SCREEN", "next_err_action_id": "video-consent", "next_success_action_id": "mobile-verification", "ui_id": "ui_video_consent_001", "api_detail_id": "api_video_consent_001"}
+2025-06-26 13:32:36,486 - urllib3.connectionpool - DEBUG - https://us.i.posthog.com:443 "POST /batch/ HTTP/1.1" 200 15

@@ -21,5 +21,19 @@ elasticsearch>=8.10.0
 # OpenAI API
 openai>=1.3.0
 
-# Other dependencies
+# NLP Translation packages
+whisper
+torch
+transformers
 sentence-transformers>=2.2.2
+gtts
+pydub
+numpy
+tqdm
+playsound
+soundfile
+librosa
+python-multipart
+sounddevice
+indic-transliteration
+torchaudio

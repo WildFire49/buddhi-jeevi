@@ -217,9 +217,9 @@ def get_ui_schema():
                                     "type": "navigate_to",
                                     "endpoint": "/api/accept-consent",
                                     "method": "POST",
-                                    "action_id": "welcome",
+                                    "action_id": "video-consent",
                                     "next_success_action_id": "mobile-verification",
-                                    "next_err_action_id": "welcome"
+                                    "next_err_action_id": "video-consent"
                                 }
                             }
                         }

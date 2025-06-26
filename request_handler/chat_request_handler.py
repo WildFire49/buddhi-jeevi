@@ -2,6 +2,8 @@ import sys
 import os
 import json
 import traceback
+import requests
+import logging
 from dotenv import load_dotenv
 
 # Add parent directory to path to allow imports
@@ -10,6 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from schemas import ChatRequest, ChatResponse
 from rag_chain_builder import RAGChainBuilder
 from langchain_core.prompts import ChatPromptTemplate
+from request_handler.mcp_agent_handler import MCPAgentHandler
 
 # Load environment variables
 load_dotenv()
@@ -19,9 +22,17 @@ LLM_TYPE = os.getenv("LLM_TYPE", "ollama").lower()  # "ollama" or "openai"
 LLM_MODEL = os.getenv("LLM_MODEL", "llama3" if LLM_TYPE == "ollama" else "gpt-3.5-turbo")
 
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Initialize MCP agent handler
+mcp_agent_handler = MCPAgentHandler()
+
 def process_chat(request: ChatRequest):
     """
-    Process a chat request and generate a response using the RAG chain.
+    Process a chat request and generate a response using either the RAG chain or MCP agent.
+    Intelligently routes between workflow steps and dashboard metrics based on query context.
     
     Args:
         request: The ChatRequest object containing the prompt and session information
@@ -30,8 +41,10 @@ def process_chat(request: ChatRequest):
         A dictionary containing the response and UI tags
     """
     prompt_text = request.prompt
+    session_id = request.session_id or "default-session"
+    
     if not prompt_text:
-        print("No prompt provided in request")
+        logger.warning("No prompt provided in request")
         return {"response": "Please provide a prompt or question.", "ui_tags": []}
     
     system_prompt = """
@@ -85,17 +98,69 @@ def process_chat(request: ChatRequest):
     ])
     
     try:
-        # Initialize RAG builder with the configured LLM type and model
-        rag_builder = RAGChainBuilder(llm_type=LLM_TYPE, model_name=LLM_MODEL)
-        print(f"Using {LLM_TYPE} model {LLM_MODEL} for processing chat prompt: {prompt_text[:50]}...")
+        # First check if this should be routed to the MCP dashboard agent
+        if mcp_agent_handler.should_route_to_mcp_agent(prompt_text):
+            logger.info(f"Routing query to MCP agent: {prompt_text}")
+            
+            # Prepare custom metadata based on query content if needed
+            metadata = None
+            
+            # Extract query-specific metadata that might be useful to the agent
+            # This allows for dynamic, context-aware metadata construction
+            if any(term in prompt_text.lower() for term in ["credit", "loan", "borrower", "approval"]):
+                metadata = {
+                    "queryCategory": "credit_decision",
+                    "includeRiskMetrics": True
+                }
+            elif any(term in prompt_text.lower() for term in ["report", "pdf", "export", "document"]):
+                metadata = {
+                    "format": "pdf",
+                    "includeCharts": True
+                }
+            
+            # Process through MCP agent handler with optional metadata
+            mcp_response = mcp_agent_handler.process_query(prompt_text, session_id, metadata)
+            
+            # If successfully routed to MCP, return the appropriate data
+            if mcp_response.get("routed_to_mcp") and mcp_response.get("status") == "success":
+                logger.info(f"Successfully retrieved data from MCP agent: {mcp_response.get('agent_name')}")
+                
+                # Customize response based on agent type
+                agent_name = mcp_response.get("agent_name", "mcp_agent")
+                response_message = "Data retrieved"
+                ui_tags = ["mcp_data"]
+                action_id = "mcp_view"
+                
+                if "dashboard" in agent_name:
+                    response_message = "Dashboard data retrieved"
+                    ui_tags = ["dashboard_data"]
+                    action_id = "dashboard_view"
+                elif "credit" in agent_name:
+                    response_message = "Credit evaluation retrieved"
+                    ui_tags = ["credit_data"]
+                    action_id = "credit_view"
+                elif "reporting" in agent_name:
+                    response_message = "Report generated"
+                    ui_tags = ["report_data"]
+                    action_id = "report_view"
+                
+                # Format response for the client
+                return {
+                    "response": {
+                        "message": response_message,
+                        "data": mcp_response.get("data", {}),
+                        "source": agent_name
+                    },
+                    "ui_tags": ui_tags,
+                    "session_id": session_id,
+                    "action_id": action_id
+                }
+            else:
+                # If there was an error with the MCP agent, log it but continue with normal processing
+                logger.warning(f"MCP agent routing failed: {mcp_response.get('message')}, falling back to regular workflow")
         
-        # First try to get a direct action match from the vector store
-        # direct_action = rag_builder.get_action_directly(prompt_text)
-        # if direct_action:
-        #     print("Found direct action match in vector store")
-        #     return {
-        #         "response": direct_action,
-        #         "ui_tags": ["action_match", "direct_response"]
+        # If not routed to MCP or MCP failed, proceed with normal RAG processing
+        logger.info(f"Processing query through workflow RAG: {prompt_text}")
         #     }
         
         # If no direct match, use the RAG chain to generate a response

@@ -12,10 +12,11 @@ from schemas import (
 )
 from request_handler.submit_request_handler import submit_data
 from request_handler.chat_request_handler import process_chat
+from request_handler.mcp_agent_handler import MCPAgentHandler
 
 # Load environment variables
 load_dotenv()
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import HumanMessage
 from pydantic import BaseModel, Field
@@ -46,6 +47,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Initialize MCP agent handler
+mcp_agent_handler = MCPAgentHandler()
 
 # --- API Key Validation Middleware ---
 app.middleware("http")(validate_api_key)
@@ -190,6 +194,46 @@ async def submit_endpoint(request: DataSubmitRequest):
             next_action_ui_components=[]
         )
 
+
+# MCP dashboard agent endpoint
+class MCPQueryRequest(BaseModel):
+    question: str
+    session_id: Optional[str] = None
+
+@app.post("/mcp-dashboard-query")
+def mcp_dashboard_query(request: MCPQueryRequest):
+    """Direct endpoint to query the MCP dashboard agent for statistical data."""
+    try:
+        session_id = request.session_id or str(uuid.uuid4())
+        
+        # Process through MCP agent handler
+        mcp_response = mcp_agent_handler.process_query(request.question, session_id)
+        
+        # If successfully routed to MCP, return the dashboard data
+        if mcp_response.get("routed_to_mcp") and mcp_response.get("status") == "success":
+            return {
+                "status": "success",
+                "message": "Dashboard data retrieved",
+                "data": mcp_response.get("data", {}),
+                "session_id": session_id
+            }
+        else:
+            # If there was an error with the MCP agent
+            return {
+                "status": "error",
+                "message": mcp_response.get("message", "Failed to retrieve dashboard data"),
+                "error": mcp_response.get("error"),
+                "session_id": session_id
+            }
+    except Exception as e:
+        print(f"Error processing MCP dashboard query: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        
+        raise HTTPException(
+            status_code=500,
+            detail=f"An error occurred while processing your request: {str(e)}"
+        )
 
 # Start the server when this file is run directly
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from geminiClient import get_gemini_response
+from nlp.geminiClient import get_gemini_response
 
 LANG_NAME_MAP = {
     "hi": "Hindi",

@@ -9,11 +9,11 @@ import whisper
 from sentence_transformers import SentenceTransformer
 import chromadb
 from indic_transliteration.sanscript import transliterate
-from llm_client import get_gpt_response
-from asr_client import transcribe_audio
-from translator import translate_to_english, translate_back
-from tts import speak_text
-from tts import synthesize_and_save_audio
+from nlp.llm_client import get_gpt_response
+from nlp.asr_client import transcribe_audio
+from nlp.translator import translate_to_english, translate_back
+from nlp.tts import speak_text
+from nlp.tts import synthesize_and_save_audio
 
 # Language name to code mapping (for Indic AI / translation)
 LANG_CODE_MAP = {
@@ -76,7 +76,7 @@ def transcribe(file_path="input.wav"):
 # --------------- Step 3: Detect Language ----------------
 def detect_language(text):
     print(text)
-    client = chromadb.HttpClient(host="3.6.132.24", port=8002)
+    client = chromadb.HttpClient(host="3.6.132.24", port=8000)
 
     collection = client.get_or_create_collection("language_embeddings")
     embedder = SentenceTransformer("all-MiniLM-L6-v2")

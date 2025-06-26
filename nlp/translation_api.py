@@ -18,11 +18,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger("translation_api")
 
-from lang_identifier import transcribe, detect_language
-from translator import translate_to_english, translate_back
-from llm_client import get_gpt_response
-from asr_client import transcribe_audio
-from tts import synthesize_and_save_audio
+from nlp.lang_identifier import transcribe, detect_language
+from nlp.translator import translate_to_english, translate_back
+from nlp.llm_client import get_gpt_response
+from nlp.asr_client import transcribe_audio
+from nlp.tts import synthesize_and_save_audio
 
 LANG_CODE_MAP = {
     "english": "en",
@@ -123,6 +123,7 @@ async def handle_translate(req: TranslationRequest):
                 "detected_lang": "english",
                 "translated_text": reply,
                 "english_input": input_text,
+                "english_response": reply,  # Add English response explicitly
                 "audio_response_path": audio_url
             }
         }
@@ -164,6 +165,7 @@ async def handle_translate(req: TranslationRequest):
             "target_lang": lang_code,
             "detected_lang": detected_lang,
             "english_input": english_input,
+            "english_response": reply_english,  # Add English response explicitly
             "translated_text": reply_regional,
             "audio_response_path": audio_url
         }

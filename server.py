@@ -76,28 +76,40 @@ async def chat(request: ChatRequest):
     try:
         # Process the chat request using our handler
         print(f"Processing chat request with prompt: {request.prompt[:50]}...")
-        result = process_chat(request)
+        response_content = process_chat(request)
         
-        # Extract the response and UI components
-        response_content = result.get("response", {})
+        # Debug the full response content
+        print(f"Full response content from chat_request_handler: {response_content}")
+        print(f"Response content type: {type(response_content)}")
         
-        # Extract UI components if they exist in the response
-        ui_components = []
+        if isinstance(response_content, dict):
+            print(f"Response content keys: {response_content.keys()}")
+            for key, value in response_content.items():
+                print(f"Key: {key}, Value type: {type(value)}, Value: {value if not isinstance(value, str) or len(str(value)) < 100 else value[:100] + '...'}")
+        else:
+            print(f"Response content is not a dict: {response_content}")
+        
+        # Extract UI components if they exist
+        ui_components = None
         if isinstance(response_content, dict) and "ui_components" in response_content:
-            ui_components = response_content.get("ui_components", [])
-            # Ensure ui_components is a list before trying to get its length
-            if ui_components is not None:
-                print(f"Found {len(ui_components)} UI components")
+            ui_components = response_content.get("ui_components")
+            if ui_components:
+                print(f"Found UI components with ID: {ui_components.get('id', 'unknown')}")
             else:
-                print("UI components is None, using empty list")
-                ui_components = []
+                print("UI components is None")
+                ui_components = None
         
         # Extract action IDs if they exist
         action_id = None
         next_success_action_id = None
         next_err_action_id = None
-        title= None
+        title = None
+        
+        # Debug the response content
+        print(f"Response content keys: {response_content.keys() if isinstance(response_content, dict) else 'Not a dict'}")
+        
         if isinstance(response_content, dict):
+            # Directly extract action IDs from the top level
             action_id = response_content.get("id")
             next_success_action_id = response_content.get("next_success_action_id")
             next_err_action_id = response_content.get("next_err_action_id")
@@ -106,16 +118,62 @@ async def chat(request: ChatRequest):
         # Log the response type for debugging
         print(f"Response type: {type(response_content)}, Action ID: {action_id}")
         
-        # Return the formatted response
-        return ChatResponse(
-            session_id=session_id,
-            response=response_content,
-            ui_tags=update_component_ids(ui_components),
-            action_id=action_id,
-            next_success_action_id=next_success_action_id,
-            next_err_action_id=next_err_action_id,
-            title=title 
-        )
+        # Pass through all data from the NLP layer
+        if isinstance(response_content, dict):
+            # Extract all the fields we need
+            response_text = response_content.get("response", "")
+            english_response = response_content.get("english_response", None)
+            nlp_response = response_content.get("nlp_response", None)
+            detected_language = response_content.get("detected_language", None)
+            audio_url = response_content.get("audio_url", None)
+            nlp_ui_tags = response_content.get("ui_tags", [])
+            
+            # Re-extract action IDs from the response content as they might be at the top level
+            # This ensures we get the action IDs even if they weren't extracted earlier
+            action_id = response_content.get("id", action_id)
+            next_success_action_id = response_content.get("next_success_action_id", next_success_action_id)
+            next_err_action_id = response_content.get("next_err_action_id", next_err_action_id)
+            title = response_content.get("title", title)
+            
+            print(f"Final extracted values - Action ID: {action_id}, Next Success: {next_success_action_id}, Next Error: {next_err_action_id}")
+            print(f"English Response: {english_response}, NLP Response: {nlp_response is not None}")
+            
+            # Set UI tags
+            combined_ui_tags = nlp_ui_tags
+            if ui_components:
+                combined_ui_tags.append("ui_components")
+            
+            # Return the formatted response with all data from NLP layer
+            return ChatResponse(
+                session_id=session_id,
+                response=response_text,
+                english_response=english_response,
+                detected_language=detected_language,
+                audio_url=audio_url,
+                nlp_response=nlp_response,
+                ui_tags=combined_ui_tags,
+                ui_components=ui_components if ui_components else None,
+                action_id=action_id,
+                next_success_action_id=next_success_action_id,
+                next_err_action_id=next_err_action_id,
+                title=title 
+            )
+        else:
+            # Handle non-dict responses
+            return ChatResponse(
+                session_id=session_id,
+                response=response_content,
+                english_response=None,
+                detected_language=None,
+                audio_url=None,
+                nlp_response=None,
+                ui_tags=["ui_components"] if ui_components else [],
+                ui_components=ui_components,
+                action_id=action_id,
+                next_success_action_id=next_success_action_id,
+                next_err_action_id=next_err_action_id,
+                title=title 
+            )
     except Exception as e:
         print(f"Error processing chat request: {str(e)}")
         import traceback
@@ -125,10 +183,16 @@ async def chat(request: ChatRequest):
         return ChatResponse(
             session_id=session_id,
             response=f"An error occurred while processing your request: {str(e)}",
+            english_response=f"Error: {str(e)}",  # Include English version of the error
+            detected_language=None,
+            audio_url=None,
+            nlp_response=None,
             ui_tags=[],
+            ui_components=None,
             action_id=None,
             next_success_action_id=None,
-            next_err_action_id=None
+            next_err_action_id=None,
+            title=None
         )
 
 @app.post("/submit")

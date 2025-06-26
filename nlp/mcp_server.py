@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import JSONResponse
 import tempfile
-from lang_identifier import get_response, detect_language, transcribe # import as needed
+from .lang_identifier import get_response, detect_language, transcribe # import as needed
 
 app = FastAPI()
 

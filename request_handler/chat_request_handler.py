@@ -23,6 +23,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from schemas import ChatRequest, ChatResponse
 from rag_chain_builder import RAGChainBuilder
 from langchain_core.prompts import ChatPromptTemplate
+from database_v2 import get_ui_schema
 
 # Load environment variables
 load_dotenv()
@@ -31,11 +32,45 @@ load_dotenv()
 LLM_TYPE = os.getenv("LLM_TYPE", "ollama").lower()  # "ollama" or "openai"
 LLM_MODEL = os.getenv("LLM_MODEL", "llama3" if LLM_TYPE == "ollama" else "gpt-3.5-turbo")
 
+# Cache for UI components
+_ui_schema_cache = None
+
+def get_ui_components_by_id(ui_id):
+    """
+    Retrieve UI components by UI ID from the database
+    
+    Args:
+        ui_id: The UI ID to look for
+        
+    Returns:
+        The UI components structure or None if not found
+    """
+    global _ui_schema_cache
+    
+    # Initialize cache if needed
+    if _ui_schema_cache is None:
+        try:
+            _ui_schema_cache = get_ui_schema()
+            logger.info(f"Loaded {len(_ui_schema_cache)} UI schemas into cache")
+        except Exception as e:
+            logger.error(f"Error loading UI schemas: {e}")
+            return None
+    
+    # Find the UI components by ID
+    for schema in _ui_schema_cache:
+        if schema.get("id") == ui_id:
+            logger.info(f"Found UI components for ID: {ui_id}")
+            return schema
+    
+    logger.warning(f"No UI components found for ID: {ui_id}")
+    return None
+
 
 def process_chat(request: ChatRequest):
     """
     Process a chat request and generate a response using the RAG chain.
     First translates any non-English input to English using translation_api.py.
+    Then uses RAG to provide context info and UI components for the response.
     
     Args:
         request: The ChatRequest object containing the prompt and session information
@@ -43,8 +78,15 @@ def process_chat(request: ChatRequest):
     Returns:
         A dictionary containing the response and UI tags
     """
+    # Initialize RAG chain builder at the beginning
+    rag_chain_builder = RAGChainBuilder(llm_type=LLM_TYPE, model_name=LLM_MODEL)
+    logger.info("Initialized RAG chain builder")
+    
     prompt_text = request.prompt
-    logger.info(f"Received chat request with prompt: '{prompt_text}'")
+    session_id = request.session_id
+    chat_history = request.chat_history if hasattr(request, 'chat_history') and request.chat_history else []
+    
+    logger.info(f"Received chat request with prompt: '{prompt_text}' for session: {session_id}")
     
     if not prompt_text:
         logger.warning("Empty prompt received")
@@ -52,14 +94,23 @@ def process_chat(request: ChatRequest):
     
     # First, pass the prompt to the translation API to handle non-English inputs
     try:
-        translation_url = "http://localhost:8004/translate"  # Updated to use port 8004 where translation API is running
+        translation_url = "http://localhost:8004/translate"  # Translation API endpoint
         logger.info(f"Sending prompt to translation API at {translation_url}")
+        
+        # Format chat history for translation API
+        formatted_chat_history = [
+            {"role": msg.get("role", "user"), "content": msg.get("content", "")} 
+            for msg in chat_history
+        ]
         
         # Prepare the request for translation service
         translation_request = {
             "tool": "chat",
             "type": "translation",
-            "input": {"text": prompt_text, "chat_history": []}
+            "input": {
+                "text": prompt_text, 
+                "chat_history": formatted_chat_history
+            }
         }
         logger.debug(f"Translation request: {json.dumps(translation_request)}")
         
@@ -70,18 +121,123 @@ def process_chat(request: ChatRequest):
             translation_result = response.json()
             logger.debug(f"Translation result: {json.dumps(translation_result)}")
             
-            detected_lang = translation_result.get("input", {}).get("detected_lang")
-            logger.info(f"Detected language: {detected_lang}")
+            # Extract information from translation API response
+            input_data = translation_result.get("input", {})
+            detected_lang = input_data.get("detected_lang")
+            english_input = input_data.get("english_input", prompt_text)
+            translated_response = input_data.get("translated_text")
+            audio_response_path = input_data.get("audio_response_path")
             
-            if detected_lang != "english":
+            logger.info(f"Detected language: {detected_lang}")
+            logger.info(f"NLP Layer Response - Full JSON: {json.dumps(translation_result)}")
+            logger.info(f"NLP Layer Response - Detected Language: {detected_lang}")
+            logger.info(f"NLP Layer Response - English Input: {english_input}")
+            logger.info(f"NLP Layer Response - Translated Response: {translated_response}")
+            logger.info(f"NLP Layer Response - Audio Path: {audio_response_path}")
+            
+            # If we got a translated response directly from the translation API
+            if translated_response:
+                logger.info(f"Using translated response from translation API")
+                # The translation API already processed with get_gpt_response
+                # We can now enrich this with RAG context
+                # Get the English response from the translation API response
+                english_response = english_input
+                
+                # Use the English response for RAG to fetch additional details
+                try:
+                    # Pass the English response to RAG system
+                    logger.info(f"Passing English response to RAG: {english_response}")
+                    # Use get_action_directly method for direct vector store lookup
+                    rag_response = rag_chain_builder.get_action_directly(english_response)
+                    
+                    # If no direct match, use run_prompt_with_context with a simple prompt
+                    if not rag_response:
+                        logger.info("No direct match found, using prompt-based RAG")
+                        simple_prompt = ChatPromptTemplate.from_messages([
+                            ("system", "You are a helpful assistant. Provide information based on the context."),
+                            ("human", "{query}")
+                        ])
+                        rag_response = rag_chain_builder.run_prompt_with_context(
+                            query=english_response,
+                            prompt=simple_prompt,
+                            variables={"query": english_response}
+                        )
+                    logger.info(f"RAG response: {rag_response}")
+                    
+                    # Keep the RAG response as is (not stringified)
+                    logger.info(f"RAG response: {rag_response}")
+                    
+                    # Extract action IDs from the RAG response if available
+                    if isinstance(rag_response, dict):
+                        action_id = rag_response.get("id")
+                        next_success_action_id = rag_response.get("next_success_action_id")
+                        next_err_action_id = rag_response.get("next_err_action_id")
+                        title = rag_response.get("title", "")
+                        ui_id = rag_response.get("ui_id")
+                        
+                        # Try to get UI components using the UI ID
+                        ui_components = None
+                        if ui_id:
+                            logger.info(f"Looking up UI components for UI ID: {ui_id}")
+                            ui_schema = get_ui_components_by_id(ui_id)
+                            if ui_schema:
+                                logger.info(f"Found UI schema for ID {ui_id}")
+                                ui_components = ui_schema
+                    else:
+                        action_id = None
+                        next_success_action_id = None
+                        next_err_action_id = None
+                        title = ""
+                        ui_components = None
+                    
+                    # Keep the translated response as nlp_response and RAG response as the main response
+                    response_data = {
+                        "english_response": english_response,
+                        "response": rag_response,  # RAG response as the main response
+                        "nlp_response": translated_response,  # Translated response as nlp_response
+                        "detected_language": detected_lang,
+                        "audio_url": audio_response_path,
+                        "ui_tags": ["translated_response", "rag_enriched"],
+                        "id": action_id,
+                        "next_success_action_id": next_success_action_id,
+                        "next_err_action_id": next_err_action_id,
+                        "title": title
+                    }
+                    
+                    # Add UI components if available
+                    if ui_components:
+                        response_data["ui_components"] = ui_components
+                        logger.info(f"Added UI components to response: {ui_components.get('id')}")
+                    else:
+                        logger.warning(f"No UI components found for UI ID: {ui_id if 'ui_id' in locals() else 'None'}")
+                    
+                except Exception as e:
+                    logger.error(f"Error enriching response with RAG: {e}")
+                    # Fallback to original response
+                    response_data = {
+                        "response": translated_response,
+                        "english_response": english_response,
+                        "detected_language": detected_lang,
+                        "audio_url": audio_response_path,
+                        "ui_tags": ["translated_response"]
+                    }
+                logger.info(f"Returning response from NLP layer: {json.dumps(response_data)}")
+                return response_data
+            
+            # If we only got the English translation of the input
+            if detected_lang != "english" and english_input:
                 original_prompt = prompt_text
-                prompt_text = translation_result.get("input", {}).get("english_input", prompt_text)
+                prompt_text = english_input
                 logger.info(f"Translated prompt from '{detected_lang}': '{original_prompt}' -> '{prompt_text}'")
         else:
             logger.error(f"Translation API error status {response.status_code}: {response.text}")
     except Exception as e:
-        logger.error(f"Translation API error: {str(e)}")  # Continue with original prompt if translation fails
+        logger.error(f"Translation API error: {str(e)}")
+        logger.error(traceback.format_exc())
+        # Continue with original prompt if translation fails
     
+    # If we've reached here, we need to process with RAG
+    # Either we have an English prompt or a translated prompt
     system_prompt = """
         You are an expert AI assistant for a loan onboarding application.
         Your task is to analyze the user's query, understand the semantic intent, and provide helpful information based on the retrieved context.
@@ -144,13 +300,198 @@ def process_chat(request: ChatRequest):
         
         if direct_action:
             logger.info(f"Found direct action match in vector store: {json.dumps(direct_action)}")
-            return {
-                "response": direct_action,
-                "ui_tags": ["action_match", "direct_response"]
+            
+            # If we have a detected language that's not English, we need to translate the response back
+            if 'detected_lang' in locals() and detected_lang and detected_lang.lower() != "english":
+                try:
+                    # Prepare to translate the response back to the original language
+                    translation_request = {
+                        "tool": "chat",
+                        "type": "translation",
+                        "input": {
+                            "text": json.dumps(direct_action),
+                            "target_lang": detected_lang
+                        }
+                    }
+                    
+                    # Call translation API to translate the response back
+                    logger.info(f"Translating response back to {detected_lang}")
+                    response = requests.post(translation_url, json=translation_request)
+                    
+                    if response.status_code == 200:
+                        translation_result = response.json()
+                        translated_response = translation_result.get("input", {}).get("translated_text")
+                        audio_url = translation_result.get("input", {}).get("audio_response_path")
+                        
+                        if translated_response:
+                            logger.info(f"Successfully translated response back to {detected_lang}")
+                            # Get the English response for RAG
+                            english_response = json.dumps(direct_action)
+                            
+                            try:
+                                # Pass the English response to RAG system
+                                logger.info(f"Passing English response to RAG: {english_response}")
+                                # Use get_action_directly method for direct vector store lookup
+                                rag_response = rag_chain_builder.get_action_directly(english_response)
+                                
+                                # If no direct match, use run_prompt_with_context with a simple prompt
+                                if not rag_response:
+                                    logger.info("No direct match found, using prompt-based RAG")
+                                    simple_prompt = ChatPromptTemplate.from_messages([
+                                        ("system", "You are a helpful assistant. Provide information based on the context."),
+                                        ("human", "{query}")
+                                    ])
+                                    rag_response = rag_chain_builder.run_prompt_with_context(
+                                        query=english_response,
+                                        prompt=simple_prompt,
+                                        variables={"query": english_response}
+                                    )
+                                
+                                logger.info(f"RAG response: {rag_response}")
+                                
+                                # Combine the original response with RAG details
+                            
+                                # Extract action IDs from the direct action if available
+                                if isinstance(direct_action, dict):
+                                    action_id = direct_action.get("id")
+                                    next_success_action_id = direct_action.get("next_success_action_id")
+                                    next_err_action_id = direct_action.get("next_err_action_id")
+                                    title = direct_action.get("title", "")
+                                    ui_id = direct_action.get("ui_id")
+                                    direct_action_str = json.dumps(direct_action)
+                                    
+                                    # Try to get UI components using the UI ID
+                                    ui_components = None
+                                    if ui_id:
+                                        logger.info(f"Looking up UI components for UI ID: {ui_id}")
+                                        ui_schema = get_ui_components_by_id(ui_id)
+                                        if ui_schema:
+                                            logger.info(f"Found UI schema for ID {ui_id}")
+                                            ui_components = ui_schema
+                                else:
+                                    action_id = None
+                                    next_success_action_id = None
+                                    next_err_action_id = None
+                                    title = ""
+                                    ui_components = None
+                                    direct_action_str = str(direct_action)
+                                
+                                # Create response data with all necessary fields
+                                response_data = {
+                                    "response": direct_action,  # Use direct_action as the main response (not stringified)
+                                    "english_response": english_response,
+                                    "nlp_response": translated_response,  # Use translated_response as nlp_response
+                                    "detected_language": detected_lang,
+                                    "audio_url": audio_url,
+                                    "ui_tags": ["action_match", "direct_response", "translated"],
+                                    "id": action_id,
+                                    "next_success_action_id": next_success_action_id,
+                                    "next_err_action_id": next_err_action_id,
+                                    "title": title
+                                }
+                                
+                                # Add UI components if available
+                                if ui_components:
+                                    response_data["ui_components"] = ui_components
+                                    logger.info(f"Added UI components to response: {ui_components.get('id')}")
+                                    response_data["ui_tags"].append("ui_components")
+                                else:
+                                    logger.warning(f"No UI components found for UI ID: {ui_id if 'ui_id' in locals() else 'None'}")
+                            except Exception as e:
+                                logger.error(f"Error enriching response with RAG: {e}")
+                                # Extract action IDs from the direct action if available
+                                if isinstance(direct_action, dict):
+                                    action_id = direct_action.get("id")
+                                    next_success_action_id = direct_action.get("next_success_action_id")
+                                    next_err_action_id = direct_action.get("next_err_action_id")
+                                    title = direct_action.get("title", "")
+                                else:
+                                    action_id = None
+                                    next_success_action_id = None
+                                    next_err_action_id = None
+                                    title = ""
+                                
+                                # Create response data with all necessary fields
+                                response_data = {
+                                    "response": None,  # No direct action response due to error
+                                    "english_response": english_response,
+                                    "nlp_response": translated_response,  # Use translated_response as nlp_response
+                                    "detected_language": detected_lang,
+                                    "audio_url": audio_url,
+                                    "ui_tags": ["action_match", "direct_response", "translated"],
+                                    "id": action_id,
+                                    "next_success_action_id": next_success_action_id,
+                                    "next_err_action_id": next_err_action_id,
+                                    "title": title
+                                }
+                            logger.info(f"Returning translated direct action response: {json.dumps(response_data)}")
+                            return response_data
+                except Exception as e:
+                    logger.error(f"Error translating response back: {str(e)}")
+                    # Fall back to English response if translation fails
+            
+            # Return the direct action match in English
+            # Extract action IDs from the direct action if available
+            if isinstance(direct_action, dict):
+                action_id = direct_action.get("id")
+                next_success_action_id = direct_action.get("next_success_action_id")
+                next_err_action_id = direct_action.get("next_err_action_id")
+                title = direct_action.get("title", "")
+                ui_id = direct_action.get("ui_id")
+                direct_action_str = json.dumps(direct_action)
+                
+                # Try to get UI components using the UI ID
+                ui_components = None
+                if ui_id:
+                    logger.info(f"Looking up UI components for UI ID: {ui_id}")
+                    ui_schema = get_ui_components_by_id(ui_id)
+                    if ui_schema:
+                        logger.info(f"Found UI schema for ID {ui_id}")
+                        ui_components = ui_schema
+            else:
+                action_id = None
+                next_success_action_id = None
+                next_err_action_id = None
+                title = ""
+                ui_components = None
+                direct_action_str = str(direct_action)
+            
+            # Create response data with all necessary fields
+            response_data = {
+                "response": direct_action,  # Use direct_action as the main response (not stringified)
+                "english_response": direct_action_str,
+                "nlp_response": direct_action_str,  # Use direct_action_str as nlp_response
+                "detected_language": "english",
+                "audio_url": None,
+                "ui_tags": ["action_match", "direct_response"],
+                "id": action_id,
+                "next_success_action_id": next_success_action_id,
+                "next_err_action_id": next_err_action_id,
+                "title": title
             }
+            
+            # Add UI components if available
+            if ui_components:
+                response_data["ui_components"] = ui_components
+                logger.info(f"Added UI components to response: {ui_components.get('id')}")
+                response_data["ui_tags"].append("ui_components")
+            else:
+                logger.warning(f"No UI components found for UI ID: {ui_id if 'ui_id' in locals() else 'None'}")
+            logger.info(f"Returning direct action response: {json.dumps(response_data)}")
+            return response_data
         
         # If no direct match, use the RAG chain to generate a response
         logger.info("No direct action found, using RAG chain with system prompt")
+        
+        # Add the translated prompt to the chat history for context
+        formatted_history = []
+        for msg in chat_history:
+            formatted_history.append({"role": msg.get("role", "user"), "content": msg.get("content", "")})
+        
+        # Add the current prompt
+        formatted_history.append({"role": "user", "content": prompt_text})
+        
+        # Get LLM response with RAG context
         llm_response = rag_builder.run_prompt_with_context(prompt_text, prompt)
         
         # Check if we got a valid response
@@ -161,17 +502,190 @@ def process_chat(request: ChatRequest):
                 "ui_tags": ["no_context_found"]
             }
         
-        # For non-English users, we might want to translate the response back to their language
-        # This would require additional integration with the translation API
-        # but for now we'll return the English response
+        # For non-English users, translate the response back to their language
+        if 'detected_lang' in locals() and detected_lang and detected_lang.lower() != "english":
+            try:
+                # Prepare to translate the response back to the original language
+                translation_request = {
+                    "tool": "chat",
+                    "type": "translation",
+                    "input": {
+                        "text": llm_response,
+                        "target_lang": detected_lang
+                    }
+                }
+                
+                # Call translation API to translate the response back
+                logger.info(f"Translating RAG response back to {detected_lang}")
+                response = requests.post(translation_url, json=translation_request)
+                
+                if response.status_code == 200:
+                    translation_result = response.json()
+                    translated_response = translation_result.get("input", {}).get("translated_text")
+                    audio_url = translation_result.get("input", {}).get("audio_response_path")
+                    
+                    if translated_response:
+                        logger.info(f"Successfully translated RAG response back to {detected_lang}")
+                        # Get the English response for RAG
+                        english_response = llm_response
+                        
+                        try:
+                            # Pass the English response to RAG system
+                            logger.info(f"Passing English response to RAG: {english_response}")
+                            # Use get_action_directly method for direct vector store lookup
+                            rag_response = rag_chain_builder.get_action_directly(english_response)
+                            
+                            # If no direct match, use run_prompt_with_context with a simple prompt
+                            if not rag_response:
+                                logger.info("No direct match found, using prompt-based RAG")
+                                simple_prompt = ChatPromptTemplate.from_messages([
+                                    ("system", "You are a helpful assistant. Provide information based on the context."),
+                                    ("human", "{query}")
+                                ])
+                                rag_response = rag_chain_builder.run_prompt_with_context(
+                                    query=english_response,
+                                    prompt=simple_prompt,
+                                    variables={"query": english_response}
+                                )
+                            
+                            # Extract action IDs from rag_response if it's a dict
+                            if isinstance(rag_response, dict):
+                                action_id = rag_response.get("id")
+                                next_success_action_id = rag_response.get("next_success_action_id")
+                                next_err_action_id = rag_response.get("next_err_action_id")
+                                title = rag_response.get("title", "")
+                            else:
+                                action_id = None
+                                next_success_action_id = None
+                                next_err_action_id = None
+                                title = ""
+                            
+                            logger.info(f"RAG response: {rag_response}")
+                            
+                            # Keep the translated response and RAG response separate
+                            response_data = {
+                                "response": translated_response,  # Just the translated response without RAG info
+                                "response": rag_response,  # RAG response as the main response
+                                "english_response": english_response,
+                                "nlp_response": translated_response,  # Translated response as nlp_response
+                                "detected_language": detected_lang,
+                                "audio_url": audio_url,
+                                "ui_tags": ["translated", "rag_enriched"],
+                                "id": action_id,
+                                "next_success_action_id": next_success_action_id,
+                                "next_err_action_id": next_err_action_id,
+                                "title": title
+                            }
+                        except Exception as e:
+                            logger.error(f"Error enriching response with RAG: {e}")
+                            # Fallback to original response
+                            response_data = {
+                                "response": None,  # No RAG response due to error
+                                "english_response": english_response,
+                                "nlp_response": translated_response,  # Use translated_response as nlp_response
+                                "detected_language": detected_lang,
+                                "audio_url": audio_url,
+                                "ui_tags": ["translated"],
+                                "id": None,
+                                "next_success_action_id": None,
+                                "next_err_action_id": None,
+                                "title": ""
+                            }
+                        logger.info(f"Returning translated RAG response: {json.dumps(response_data)}")
+                        return response_data
+            except Exception as e:
+                logger.error(f"Error translating RAG response back: {str(e)}")
+                # Fall back to English response if translation fails
        
-        return {
-            "response": llm_response,
-        }
+        # Return the English response if no translation was needed or if translation failed
+        try:
+            # Try to get RAG response for the English text
+            rag_response = rag_chain_builder.get_action_directly(llm_response)
+            
+            # If no direct match, use run_prompt_with_context with a simple prompt
+            if not rag_response:
+                logger.info("No direct match found, using prompt-based RAG")
+                simple_prompt = ChatPromptTemplate.from_messages([
+                    ("system", "You are a helpful assistant. Provide information based on the context."),
+                    ("human", "{query}")
+                ])
+                rag_response = rag_chain_builder.run_prompt_with_context(
+                    query=llm_response,
+                    prompt=simple_prompt,
+                    variables={"query": llm_response}
+                )
+            
+            # Extract action IDs and UI ID from the RAG response if available
+            if isinstance(rag_response, dict):
+                action_id = rag_response.get("id")
+                next_success_action_id = rag_response.get("next_success_action_id")
+                next_err_action_id = rag_response.get("next_err_action_id")
+                title = rag_response.get("title", "")
+                ui_id = rag_response.get("ui_id")
+                
+                # Try to get UI components using the UI ID
+                ui_components = None
+                if ui_id:
+                    logger.info(f"Looking up UI components for UI ID: {ui_id}")
+                    ui_schema = get_ui_components_by_id(ui_id)
+                    if ui_schema:
+                        logger.info(f"Found UI schema for ID {ui_id}")
+                        ui_components = ui_schema
+            else:
+                action_id = None
+                next_success_action_id = None
+                next_err_action_id = None
+                title = ""
+                ui_components = None
+                
+            logger.info(f"RAG response for English: {rag_response}")
+            
+            # Construct the response data
+            response_data = {
+                "response": rag_response,  # Use rag_response as the main response (not stringified)
+                "english_response": llm_response,  # Set english_response to the original response
+                "nlp_response": llm_response,  # Use llm_response as nlp_response
+                "detected_language": "english",
+                "audio_url": None,
+                "ui_tags": ["rag_enriched"],
+                "id": action_id,
+                "next_success_action_id": next_success_action_id,
+                "next_err_action_id": next_err_action_id,
+                "title": title
+            }
+            
+            # Add UI components if available
+            if ui_components:
+                response_data["ui_components"] = ui_components
+                logger.info(f"Added UI components to response: {ui_components.get('id')}")
+                response_data["ui_tags"].append("ui_components")
+            else:
+                logger.warning(f"No UI components found for UI ID: {ui_id if 'ui_id' in locals() else 'None'}")
+                
+            logger.info(f"Returning English RAG response: {json.dumps(response_data)}")
+            return response_data
+            
+        except Exception as e:
+            logger.error(f"Error getting RAG response for English: {e}")
+            response_data = {
+                "response": None,  # No RAG response due to error
+                "english_response": llm_response,  # Set english_response to the original response
+                "nlp_response": llm_response,  # Use llm_response as nlp_response
+                "detected_language": "english",
+                "audio_url": None,
+                "ui_tags": [],
+                "id": None,
+                "next_success_action_id": None,
+                "next_err_action_id": None,
+                "title": ""
+            }
+        
+        logger.info(f"Returning English RAG response: {json.dumps(response_data)}")
+        return response_data
         
     except Exception as e:
-        print(f"Error in process_chat: {str(e)}")
-        traceback.print_exc()
+        logger.error(f"Error in process_chat: {str(e)}")
+        logger.error(traceback.format_exc())
         return {
             "response": f"An error occurred while processing your request: {str(e)}",
             "ui_tags": ["error"]

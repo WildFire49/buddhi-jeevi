@@ -51,6 +51,16 @@ def get_action_schema():
         "api_detail_id": "api_otp_verification_001"
     },
     {
+        "id":"customer-photo",
+        "stage_name":"Customer Photo",
+        "desc_for_llm":"Screen to upload or capture Customer Photo",
+        "action_type":"PRIMARY_KYC_SCREEN",
+        "next_err_action_id":"primary-kyc",
+        "next_success_action_id":"prospect-info",
+        "ui_id":"ui_customer_photo_001",
+        "api_detail_id":"api_customer_photo_001"
+    },
+    {
         "id":"primary-kyc",
         "stage_name":"Primary KYC",
         "desc_for_llm":"Screen to enter Customer Primary KYC (Voter ID or PAN) using a document dropdown and Upload KYC Image. User wants to confirm primary KYC using a document dropdown.",
@@ -736,6 +746,94 @@ def get_ui_schema():
             ]
         },
         {
+            "id": "ui_customer_photo_001",
+            "session_id": "session_customer_photo_001",
+            "screen_id": "customer_photo_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "title_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Customer Recent Photo",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        },
+                        {
+                            "id": "photo_instruction",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Capture customer recent photo",
+                                "text_size": "16sp",
+                                "text_color": "#333333",
+                                "text_align": "left",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "customer_photo_upload",
+                            "component_type": "image_capture",
+                            "properties": {
+                                "title": "Customer Photo",
+                                "instructions": "Take a clear photo of the customer",
+                                "max_images": 1,
+                                "min_images": 1,
+                                "page_limit": 1,
+                                "allow_gallery": True,
+                                "require_document_type": False,
+                                "margin_bottom": "24dp",
+                                "document_types": [
+                                    {
+                                        "value": "recent_photo",
+                                        "label": "Recent Customer Photo",
+                                        "max_pages": 1
+                                    }
+                                ],
+                                "validation": {
+                                    "required": True
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit Photo",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/customer-photo",
+                                    "method": "POST",
+                                    "collect_fields": ["customer_photo_upload"],
+                                    "action_id": "customer-photo",
+                                    "next_success_action_id": "prospect-info",
+                                    "next_err_action_id": "primary-kyc"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "ui_primary_kyc_001",
             "session_id": "session_primary_kyc_001",
             "screen_id": "primary_kyc_screen",
@@ -847,7 +945,7 @@ def get_ui_schema():
                             "id": "title_text",
                             "component_type": "text",
                             "properties": {
-                                "text": "Prospect Info",
+                                "text": "Secondary KYC",
                                 "text_size": "24sp",
                                 "text_color": "#000000",
                                 "text_style": "bold",
@@ -1002,6 +1100,19 @@ def get_api_schema():
                     "endpoint_path": "/api/select-flow",
                     "request_payload_template": {
                         "flow_choice": "{{flow_choice}}"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "api_customer_photo_001",
+            "type": "API",
+            "api_details": [
+                {
+                    "http_method": "POST",
+                    "endpoint_path": "/api/customer-photo",
+                    "request_payload_template": {
+                        "customer_photo": "{{customer_photo_upload}}"
                     }
                 }
             ]

@@ -50,7 +50,7 @@ class RAGChainBuilder:
             client = chromadb.HttpClient(host='3.6.132.24', port=8000)
             
             # Check if the collection exists
-            collection_name = "onboarding_flow_v12"
+            collection_name = "onboarding_flow_v13"
             collections = client.list_collections()
             collection_names = [c.name for c in collections]
             print(f"Available collections: {collection_names}")

@@ -121,12 +121,27 @@ async def chat(request: ChatRequest):
         # Pass through all data from the NLP layer
         if isinstance(response_content, dict):
             # Extract all the fields we need
-            response_text = response_content.get("response", "")
+            response_obj = response_content.get("response", {})
             english_response = response_content.get("english_response", None)
             nlp_response = response_content.get("nlp_response", None)
             detected_language = response_content.get("detected_language", None)
             audio_url = response_content.get("audio_url", None)
             nlp_ui_tags = response_content.get("ui_tags", [])
+            
+            # Check if UI components are embedded in the response object or at the top level
+            if isinstance(response_obj, dict) and "ui_components" in response_obj:
+                ui_components = response_obj.get("ui_components")
+                print(f"Found UI components embedded in response object: {ui_components.get('id') if ui_components else None}")
+            else:
+                # If UI components are not in the response object, check if they're at the top level
+                ui_components = response_content.get("ui_components")
+                if ui_components:
+                    # If UI components are at the top level, also embed them in the response object
+                    if isinstance(response_obj, dict):
+                        response_obj["ui_components"] = ui_components
+                        response_obj["screen_id"] = ui_components.get("screen_id")
+                        response_obj["type"] = response_obj.get("action_type")
+                        print(f"Embedded UI components in response object: {ui_components.get('id') if ui_components else None}")
             
             # Re-extract action IDs from the response content as they might be at the top level
             # This ensures we get the action IDs even if they weren't extracted earlier
@@ -138,15 +153,13 @@ async def chat(request: ChatRequest):
             print(f"Final extracted values - Action ID: {action_id}, Next Success: {next_success_action_id}, Next Error: {next_err_action_id}")
             print(f"English Response: {english_response}, NLP Response: {nlp_response is not None}")
             
-            # Set UI tags
-            combined_ui_tags = nlp_ui_tags
-            if ui_components:
-                combined_ui_tags.append("ui_components")
+            # Set UI tags - avoid duplicates
+            combined_ui_tags = list(set(nlp_ui_tags))
             
             # Return the formatted response with all data from NLP layer
             return ChatResponse(
                 session_id=session_id,
-                response=response_text,
+                response=response_obj,  # Use the full response object with embedded UI components
                 english_response=english_response,
                 detected_language=detected_language,
                 audio_url=audio_url,

@@ -3,6 +3,7 @@ import os
 import json
 import traceback
 import requests
+import copy
 import logging
 from dotenv import load_dotenv
 
@@ -23,7 +24,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from schemas import ChatRequest, ChatResponse
 from rag_chain_builder import RAGChainBuilder
 from langchain_core.prompts import ChatPromptTemplate
-from database_v2 import get_ui_schema
+from database_v2 import get_ui_schema, get_action_schema
 
 # Load environment variables
 load_dotenv()
@@ -35,12 +36,89 @@ LLM_MODEL = os.getenv("LLM_MODEL", "llama3" if LLM_TYPE == "ollama" else "gpt-3.
 # Cache for UI components
 _ui_schema_cache = None
 
-def get_ui_components_by_id(ui_id):
+def clean_component_ids(component):
     """
-    Retrieve UI components by UI ID from the database
+    Recursively process component IDs to preserve timestamp suffixes
+    and fix any duplicate properties issues
+    
+    Args:
+        component: The UI component to clean
+        
+    Returns:
+        The cleaned component
+    """
+    if not isinstance(component, dict):
+        return component
+    
+    # Preserve the ID with timestamp suffix
+    if "id" in component:
+        component_id = component["id"]
+        # No need to modify the ID, we want to preserve the timestamp suffix
+    
+    # Fix duplicate properties issue
+    if "properties" in component and isinstance(component["properties"], dict):
+        # Check if properties contains a nested properties key (duplicate)
+        if "properties" in component["properties"]:
+            nested_props = component["properties"]["properties"]
+            if isinstance(nested_props, dict):
+                # Merge the nested properties with the outer properties
+                for key, value in nested_props.items():
+                    if key not in component["properties"] or key == "action":
+                        component["properties"][key] = value
+                # Remove the duplicate properties
+                component["properties"].pop("properties")
+        
+        # Handle action properties
+        if "action" in component["properties"] and isinstance(component["properties"]["action"], dict):
+            action = component["properties"]["action"]
+            # Check for nested action
+            if "action" in action and isinstance(action["action"], dict):
+                nested_action = action["action"]
+                # Merge the nested action with the outer action
+                for key, value in nested_action.items():
+                    action[key] = value
+                # Remove the duplicate action
+                action.pop("action")
+            
+            # Add action IDs and navigation properties for buttons
+            if component.get("component_type") == "button":
+                # For video consent screen buttons
+                if "submit_form" in action.get("type", "") and "consent" in action.get("endpoint", ""):
+                    action["action_id"] = "video-consent"
+                    action["next_success_action_id"] = "mobile-verification"
+                    action["next_err_action_id"] = "video-consent"
+                    action["type"] = "navigate_to"
+                # For other buttons, add default navigation properties if not present
+                else:
+                    if "action_id" not in action:
+                        action["action_id"] = "welcome"
+                    if "next_success_action_id" not in action:
+                        action["next_success_action_id"] = "mobile-verification"
+                    if "next_err_action_id" not in action:
+                        action["next_err_action_id"] = "welcome"
+    
+    # Process children recursively
+    if "children" in component and isinstance(component["children"], list):
+        for child in component["children"]:
+            clean_component_ids(child)
+    
+    # Process ui_components recursively
+    if "ui_components" in component and isinstance(component["ui_components"], list):
+        for ui_component in component["ui_components"]:
+            clean_component_ids(ui_component)
+    
+    return component
+
+# Variable to store the direct action match from the vector store
+direct_action_match = None
+
+def get_ui_components_by_id(ui_id, action_id=None):
+    """
+    Retrieve UI components by UI ID from the database and enrich with action properties
     
     Args:
         ui_id: The UI ID to look for
+        action_id: Optional action ID to get additional properties from action schema
         
     Returns:
         The UI components structure or None if not found
@@ -57,13 +135,102 @@ def get_ui_components_by_id(ui_id):
             return None
     
     # Find the UI components by ID
+    ui_schema = None
     for schema in _ui_schema_cache:
         if schema.get("id") == ui_id:
             logger.info(f"Found UI components for ID: {ui_id}")
-            return schema
+            ui_schema = copy.deepcopy(schema)
+            break
     
-    logger.warning(f"No UI components found for ID: {ui_id}")
-    return None
+    if not ui_schema:
+        logger.warning(f"No UI components found for ID: {ui_id}")
+        return None
+    
+    # If action_id is provided, enrich the UI components with action properties
+    if action_id:
+        try:
+            # Get the action schema
+            action_schema = None
+            for action in get_action_schema():
+                if action.get("id") == action_id:
+                    action_schema = action
+                    break
+            
+            if action_schema:
+                logger.info(f"Found action schema for ID: {action_id}")
+                
+                # Find buttons in the UI components and enrich their actions
+                def enrich_button_actions(component):
+                    if isinstance(component, dict):
+                        if component.get("component_type") == "button" and "properties" in component:
+                            if "action" in component["properties"] and isinstance(component["properties"]["action"], dict):
+                                # Add action properties to the button action
+                                action = component["properties"]["action"]
+                                
+                                # Get action ID from the direct action response if available
+                                direct_action_id = None
+                                direct_next_success_action_id = None
+                                direct_next_err_action_id = None
+                                
+                                # Check if we have a direct action match from the vector store
+                                try:
+                                    # Access the global direct_action_match variable
+                                    global direct_action_match
+                                    if direct_action_match and isinstance(direct_action_match, dict):
+                                        direct_action_id = direct_action_match.get("id")
+                                        direct_next_success_action_id = direct_action_match.get("next_success_action_id")
+                                        direct_next_err_action_id = direct_action_match.get("next_err_action_id")
+                                        logger.info(f"Using direct action match: {direct_action_id}")
+                                except Exception as e:
+                                    logger.warning(f"Could not get direct action match: {e}")
+                                
+                                # Use direct action match if available, otherwise use action schema
+                                action["action_id"] = direct_action_id or action_schema.get("id")
+                                action["next_success_action_id"] = direct_next_success_action_id or action_schema.get("next_success_action_id")
+                                action["next_err_action_id"] = direct_next_err_action_id or action_schema.get("next_err_action_id")
+                                
+                                logger.info(f"Enriched button action with action properties: {action}")
+                        
+                        # Process children recursively
+                        if "children" in component and isinstance(component["children"], list):
+                            for child in component["children"]:
+                                enrich_button_actions(child)
+                
+                # Process all UI components
+                if "ui_components" in ui_schema and isinstance(ui_schema["ui_components"], list):
+                    for component in ui_schema["ui_components"]:
+                        enrich_button_actions(component)
+        except Exception as e:
+            logger.error(f"Error enriching UI components with action properties: {e}")
+    
+    # Add timestamp suffixes to component IDs
+    def add_timestamp_to_ids(component):
+        if not isinstance(component, dict):
+            return component
+        
+        # Add timestamp suffix to ID if it exists
+        if "id" in component:
+            import time
+            timestamp = int(time.time())
+            component["id"] = f"{component['id']}${timestamp}"
+        
+        # Process children recursively
+        if "children" in component and isinstance(component["children"], list):
+            for child in component["children"]:
+                add_timestamp_to_ids(child)
+        
+        # Process ui_components recursively
+        if "ui_components" in component and isinstance(component["ui_components"], list):
+            for ui_component in component["ui_components"]:
+                add_timestamp_to_ids(ui_component)
+        
+        return component
+    
+    # Add timestamp suffixes to component IDs
+    ui_schema = add_timestamp_to_ids(ui_schema)
+    
+    # Clean component IDs before returning
+    return clean_component_ids(ui_schema)
 
 
 def process_chat(request: ChatRequest):
@@ -179,7 +346,8 @@ def process_chat(request: ChatRequest):
                         ui_components = None
                         if ui_id:
                             logger.info(f"Looking up UI components for UI ID: {ui_id}")
-                            ui_schema = get_ui_components_by_id(ui_id)
+                            # We already have action_id from rag_response above
+                            ui_schema = get_ui_components_by_id(ui_id, action_id)
                             if ui_schema:
                                 logger.info(f"Found UI schema for ID {ui_id}")
                                 ui_components = ui_schema
@@ -301,6 +469,10 @@ def process_chat(request: ChatRequest):
         if direct_action:
             logger.info(f"Found direct action match in vector store: {json.dumps(direct_action)}")
             
+            # Set the global direct_action_match variable for use in get_ui_components_by_id
+            global direct_action_match
+            direct_action_match = direct_action
+            
             # If we have a detected language that's not English, we need to translate the response back
             if 'detected_lang' in locals() and detected_lang and detected_lang.lower() != "english":
                 try:
@@ -364,7 +536,8 @@ def process_chat(request: ChatRequest):
                                     ui_components = None
                                     if ui_id:
                                         logger.info(f"Looking up UI components for UI ID: {ui_id}")
-                                        ui_schema = get_ui_components_by_id(ui_id)
+                                        action_id = direct_action.get("id")
+                                        ui_schema = get_ui_components_by_id(ui_id, action_id)
                                         if ui_schema:
                                             logger.info(f"Found UI schema for ID {ui_id}")
                                             ui_components = ui_schema
@@ -424,8 +597,11 @@ def process_chat(request: ChatRequest):
                                     "next_err_action_id": next_err_action_id,
                                     "title": title
                                 }
-                            logger.info(f"Returning translated direct action response: {json.dumps(response_data)}")
-                            return response_data
+                                
+                                logger.info(f"Returning translated direct action response: {json.dumps(response_data)}")
+                                return response_data
+                        else:
+                            logger.error(f"Translation API returned no translated text")
                 except Exception as e:
                     logger.error(f"Error translating response back: {str(e)}")
                     # Fall back to English response if translation fails
@@ -563,14 +739,27 @@ def process_chat(request: ChatRequest):
                             logger.info(f"RAG response: {rag_response}")
                             
                             # Keep the translated response and RAG response separate
+                            # Create a response object that includes UI components if available
+                            response_obj = rag_response.copy() if isinstance(rag_response, dict) else {}
+                            
+                            # If UI ID exists in the response, fetch and embed UI components
+                            if isinstance(rag_response, dict) and "ui_id" in rag_response:
+                                ui_id = rag_response.get("ui_id")
+                                action_id = rag_response.get("id")
+                                ui_components = get_ui_components_by_id(ui_id, action_id)
+                                if ui_components:
+                                    response_obj["ui_components"] = ui_components
+                                    response_obj["screen_id"] = ui_components.get("screen_id")
+                                    response_obj["type"] = rag_response.get("action_type")
+                                    # Don't include ui_components at the top level of response_data
+                            
                             response_data = {
-                                "response": translated_response,  # Just the translated response without RAG info
-                                "response": rag_response,  # RAG response as the main response
+                                "response": response_obj,  # Enhanced response with UI components
                                 "english_response": english_response,
                                 "nlp_response": translated_response,  # Translated response as nlp_response
                                 "detected_language": detected_lang,
                                 "audio_url": audio_url,
-                                "ui_tags": ["translated", "rag_enriched"],
+                                "ui_tags": ["translated", "rag_enriched"] + (["ui_components"] if "ui_components" in response_obj else []),
                                 "id": action_id,
                                 "next_success_action_id": next_success_action_id,
                                 "next_err_action_id": next_err_action_id,
@@ -640,26 +829,32 @@ def process_chat(request: ChatRequest):
                 
             logger.info(f"RAG response for English: {rag_response}")
             
+            # Create an enhanced response object that includes UI components
+            response_obj = rag_response.copy() if isinstance(rag_response, dict) else {}
+            
+            # Embed UI components directly in the response object if available
+            if ui_components:
+                response_obj["ui_components"] = ui_components
+                response_obj["screen_id"] = ui_components.get("screen_id")
+                response_obj["type"] = rag_response.get("action_type") if isinstance(rag_response, dict) else None
+                logger.info(f"Embedded UI components in response object: {ui_components.get('id')}")
+                # Don't include ui_components at the top level of response_data
+            
             # Construct the response data
             response_data = {
-                "response": rag_response,  # Use rag_response as the main response (not stringified)
+                "response": response_obj,  # Enhanced response with UI components embedded
                 "english_response": llm_response,  # Set english_response to the original response
                 "nlp_response": llm_response,  # Use llm_response as nlp_response
                 "detected_language": "english",
                 "audio_url": None,
-                "ui_tags": ["rag_enriched"],
+                "ui_tags": ["rag_enriched"] + (["ui_components"] if "ui_components" in response_obj else []),
                 "id": action_id,
                 "next_success_action_id": next_success_action_id,
                 "next_err_action_id": next_err_action_id,
                 "title": title
             }
             
-            # Add UI components if available
-            if ui_components:
-                response_data["ui_components"] = ui_components
-                logger.info(f"Added UI components to response: {ui_components.get('id')}")
-                response_data["ui_tags"].append("ui_components")
-            else:
+            if not "ui_components" in response_obj:
                 logger.warning(f"No UI components found for UI ID: {ui_id if 'ui_id' in locals() else 'None'}")
                 
             logger.info(f"Returning English RAG response: {json.dumps(response_data)}")

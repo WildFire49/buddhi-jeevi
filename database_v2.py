@@ -523,8 +523,7 @@ def get_ui_schema():
                     ]
                 }
             ]
-        },
-        
+        },  
         {
             "id": "ui_user_details_001",
             "session_id": "session_details_001",
@@ -649,173 +648,172 @@ def get_ui_schema():
                         }
                     ]
                 },
-            
+            ]
+        },
+        {
+            "id": "ui_select_flow_001",
+            "session_id": "session_select_flow_001",
+            "screen_id": "select_flow_screen",
+            "ui_components": [
                 {
-                    "id": "ui_select_flow_001",
-                    "session_id": "session_select_flow_001",
-                    "screen_id": "select_flow_screen",
-                    "ui_components": [
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "center",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
                         {
-                            "id": "main_container",
-                            "component_type": "column",
+                            "id": "flow_title",
+                            "component_type": "text",
                             "properties": {
-                                "padding": "20dp",
-                                "background_color": "#FFFFFF",
-                                "vertical_arrangement": "center",
-                                "horizontal_alignment": "stretch"
-                            },
-                            "children": [
-                                {
-                                    "id": "flow_title",
-                                    "component_type": "text",
-                                    "properties": {
-                                        "text": "What would you like to do?",
-                                        "text_size": "24sp",
-                                        "text_color": "#000000",
-                                        "text_style": "bold",
-                                        "text_align": "center",
-                                        "margin_bottom": "32dp"
-                                    }
-                                },
-                                {
-                                    "id": "onboarding_button",
-                                    "component_type": "button",
-                                    "properties": {
-                                        "text": "Onboarding",
-                                        "background_color": "#007AFF",
-                                        "text_color": "#FFFFFF",
-                                        "text_size": "16sp",
-                                        "corner_radius": "8dp",
-                                        "padding": "16dp",
-                                        "margin_bottom": "16dp",
-                                        "action": {
-                                            "type": "navigate_to",
-                                            "endpoint": "/api/select-flow",
-                                            "method": "POST",
-                                            "action_id": "select-flow",
-                                            "next_success_action_id": "video-consent",
-                                            "next_err_action_id": "select-flow"
-                                        }
-                                    }
-                                },
-                                {
-                                    "id": "collections_button",
-                                    "component_type": "button",
-                                    "properties": {
-                                        "text": "Collections",
-                                        "background_color": "#34C759",
-                                        "text_color": "#FFFFFF",
-                                        "text_size": "16sp",
-                                        "corner_radius": "8dp",
-                                        "padding": "16dp",
-                                        "action": {
-                                            "type": "navigate_to",
-                                            "endpoint": "/api/select-flow",
-                                            "method": "POST",
-                                            "extra_payload": {
-                                                "flow_choice": "collections"
-                                            },
-                                            "action_id": "select-flow",
-                                            "next_success_action_id": "video-consent",
-                                            "next_err_action_id": "select-flow"
-                                        }
-                                    }
+                                "text": "What would you like to do?",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "32dp"
+                            }
+                        },
+                        {
+                            "id": "onboarding_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Onboarding",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "margin_bottom": "16dp",
+                                "action": {
+                                    "type": "navigate_to",
+                                    "endpoint": "/api/select-flow",
+                                    "method": "POST",
+                                    "action_id": "select-flow",
+                                    "next_success_action_id": "video-consent",
+                                    "next_err_action_id": "select-flow"
                                 }
-                            ]
+                            }
+                        },
+                        {
+                            "id": "collections_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Collections",
+                                "background_color": "#34C759",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "navigate_to",
+                                    "endpoint": "/api/select-flow",
+                                    "method": "POST",
+                                    "extra_payload": {
+                                        "flow_choice": "collections"
+                                    },
+                                    "action_id": "select-flow",
+                                    "next_success_action_id": "video-consent",
+                                    "next_err_action_id": "select-flow"
+                                }
+                            }
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "id": "ui_prospect_info_001",
+            "session_id": "session_prospect_info_001",
+            "screen_id": "prospect_info_screen",
+            "ui_components": [
                 {
-                    "id": "ui_prospect_info_001",
-                    "session_id": "session_prospect_info_001",
-                    "screen_id": "prospect_info_screen",
-                    "ui_components": [
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
                         {
-                            "id": "main_container",
-                            "component_type": "column",
+                            "id": "title_text",
+                            "component_type": "text",
                             "properties": {
-                                "padding": "20dp",
-                                "background_color": "#FFFFFF",
-                                "vertical_arrangement": "top",
-                                "horizontal_alignment": "stretch"
-                            },
-                            "children": [
-                                {
-                                    "id": "title_text",
-                                    "component_type": "text",
-                                    "properties": {
-                                        "text": "Prospect Info",
-                                        "text_size": "24sp",
-                                        "text_color": "#000000",
-                                        "text_style": "bold",
-                                        "text_align": "center",
-                                        "margin_bottom": "24dp"
+                                "text": "Prospect Info",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        },
+                        {
+                            "id": "kyc_instruction",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Confirm Secondary KYC",
+                                "text_size": "16sp",
+                                "text_color": "#333333",
+                                "text_align": "left",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "document_dropdown",
+                            "component_type": "dropdown",
+                            "properties": {
+                                "hint": "Select Document",
+                                "title": "Select Document for KYC",
+                                "margin_bottom": "32dp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "options": [
+                                    {
+                                        "value": "",
+                                        "label": "-- Select Document --"
+                                    },
+                                    {
+                                        "value": "voter_id",
+                                        "label": "Voter ID"
+                                    },
+                                    {
+                                        "value": "pan",
+                                        "label": "PAN"
                                     }
-                                },
-                                {
-                                    "id": "kyc_instruction",
-                                    "component_type": "text",
-                                    "properties": {
-                                        "text": "Confirm Secondary KYC",
-                                        "text_size": "16sp",
-                                        "text_color": "#333333",
-                                        "text_align": "left",
-                                        "margin_bottom": "16dp"
-                                    }
-                                },
-                                {
-                                    "id": "document_dropdown",
-                                    "component_type": "dropdown",
-                                    "properties": {
-                                        "hint": "Select Document",
-                                        "title": "Select Document for KYC",
-                                        "margin_bottom": "32dp",
-                                        "background_color": "#F5F5F5",
-                                        "corner_radius": "8dp",
-                                        "options": [
-                                            {
-                                                "value": "",
-                                                "label": "-- Select Document --"
-                                            },
-                                            {
-                                                "value": "voter_id",
-                                                "label": "Voter ID"
-                                            },
-                                            {
-                                                "value": "pan",
-                                                "label": "PAN"
-                                            }
-                                        ],
-                                        "default_value": "",
-                                        "validation": {
-                                            "required": True,
-                                            "custom_error": "Please select a valid document"
-                                        }
-                                    }
-                                },
-                                {
-                                    "id": "submit_button",
-                                    "component_type": "button",
-                                    "properties": {
-                                        "text": "Submit",
-                                        "background_color": "#007AFF",
-                                        "text_color": "#FFFFFF",
-                                        "text_size": "16sp",
-                                        "text_style": "bold",
-                                        "corner_radius": "8dp",
-                                        "padding": "16dp",
-                                        "action": {
-                                            "type": "submit_form",
-                                            "endpoint": "/api/submit-prospect-info",
-                                            "method": "POST",
-                                            "collect_fields": ["document_dropdown"],
-                                            "action_id": "prospect-info",
-                                            "next_success_action_id": "video-consent",
-                                            "next_err_action_id": "prospect-info"
-                                        }
-                                    }
+                                ],
+                                "default_value": "",
+                                "validation": {
+                                    "required": True,
+                                    "custom_error": "Please select a valid document"
                                 }
-                            ]
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/submit-prospect-info",
+                                    "method": "POST",
+                                    "collect_fields": ["document_dropdown"],
+                                    "action_id": "prospect-info",
+                                    "next_success_action_id": "video-consent",
+                                    "next_err_action_id": "prospect-info"
+                                }
+                            }
                         }
                     ]
                 }

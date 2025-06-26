@@ -146,22 +146,17 @@ async def chat(request_obj: Request, chat_request: ChatRequest):
         # Extract the response and UI components
         response_content = result.get("response", {})
         
-        # For /chat API, ui_components should be an object with nested ui_components array to match database schema
+        # For /chat API, ui_components should be a flat structure, not nested or duplicated
         if isinstance(response_content, dict) and "ui_components" in response_content:
             ui_components = response_content.get("ui_components", [])
             
-            # If ui_components is already an array (which it is now), wrap it in an object structure 
-            if isinstance(ui_components, list) and len(ui_components) > 0:
-                # Use the exact database schema values as specified by the user
-                wrapper = {
-                    "id": response_content.get("ui_id"),  # Use ui_id for id field
-                    "session_id": response_content.get("session_id", f"session_{response_content.get('id', 'unknown')}_001"),  # Format: session_{id}_001
-                    "screen_id": response_content.get("screen_id"),  # Use original screen_id
-                    "ui_components": ui_components  # Nest the array here
-                }
-                # Replace the array with our wrapped object
-                response_content["ui_components"] = wrapper
-                print(f"Wrapped ui_components array in object structure for /chat API")
+            # Make sure ui_components is directly accessible and not nested
+            if isinstance(ui_components, dict) and "ui_components" in ui_components:
+                # Extract the inner ui_components array to avoid nesting
+                ui_components = ui_components.get("ui_components", [])
+                # Update the response to use the flat structure
+                response_content["ui_components"] = ui_components
+                print(f"Flattened ui_components structure for /chat API")
         else:
             ui_components = []
         
@@ -174,20 +169,20 @@ async def chat(request_obj: Request, chat_request: ChatRequest):
         # Log the response type for debugging
         print(f"Response type: {type(response_content)}, Action ID: {action_id}")
         
-        # Create updated UI components for ui_tags with IDs appended with timestamp
-        updated_components = update_component_ids(ui_components)
+        # For ui_tags, we need to ensure we're working with the flattened ui_components
+        # before updating the IDs
+        flat_ui_components = ui_components
         
-        # For /chat API, ui_tags should be an array of UI components (not an object)
-        if isinstance(updated_components, list):
-            ui_tags_array = updated_components
-        elif isinstance(ui_components, list) and len(ui_components) > 0:
-            # Extract UI components from the object structure if needed
-            if isinstance(ui_components, dict) and "ui_components" in ui_components:
-                ui_tags_array = update_component_ids(ui_components["ui_components"])
-            else:
-                ui_tags_array = update_component_ids(ui_components)
+        # Create updated UI components for ui_tags with IDs appended with timestamp
+        # Make sure we're working with a list
+        if isinstance(flat_ui_components, list):
+            ui_tags_array = update_component_ids(flat_ui_components)
         else:
-            ui_tags_array = []
+            # If somehow we still have a dict with nested ui_components
+            if isinstance(flat_ui_components, dict) and "ui_components" in flat_ui_components:
+                ui_tags_array = update_component_ids(flat_ui_components["ui_components"])
+            else:
+                ui_tags_array = []
         
         # Create the response object
         response = ChatResponse(

@@ -33,7 +33,7 @@ def get_action_schema():
     {
         "id": "mobile-verification",
         "stage_name": "Mobile Number Verification",
-        "desc_for_llm": "Screen for verifying customer's mobile number. Takes 10-digit input and validates.",
+        "desc_for_llm": "Screen for mobile number verifications and verifying customer's mobile number. Takes 10-digit input and validates. Enter Customer Mobile Number to verify.",
         "action_type": "MOBILE_VERIFICATION_SCREEN",
         "next_err_action_id": "verification-error-screen",
         "next_success_action_id": "otp-verification-screen",
@@ -228,6 +228,193 @@ def get_ui_schema():
             ]
         },
         {
+            "id": "ui_mobile_verification_001",
+            "session_id": "session_mobile_verification_001",
+            "screen_id": "mobile_verification_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "mobile_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Mobile Verification",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "16dp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "form_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "phone_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your phone number",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "phone",
+                                "max_length": 10,
+                                "validation": {
+                                    "required": True,
+                                    "pattern": "^[0-9]{10}$",
+                                    "custom_error": "Please enter a valid 10-digit phone number"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "row",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_arrangement": "space_between"
+                    },
+                    "children": [
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Verify Mobile",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "weight": 1,
+                                "margin_start": "8dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/submit-data",
+                                    "method": "POST",
+                                    "collect_fields": ["phone_input"],
+                                    "action_id": "ui_mobile_verification_001",
+                                    "next_success_action_id": "otp-verification-screen",
+                                    "next_err_action_id": "verification-error-screen"
+                                }
+                            }
+                        }
+                    ]
+                }]
+        },
+        {
+            "id": "ui_otp_verification_001",
+            "session_id": "session_otp_verification_001",
+            "screen_id": "otp_verification_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "otp_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "OTP Verification",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "16dp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "form_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "otp_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your OTP",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "phone",
+                                "max_length": 10,
+                                "validation": {
+                                    "required": True
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "row",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_arrangement": "space_between"
+                    },
+                    "children": [
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Verify OTP",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "weight": 1,
+                                "margin_start": "8dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/submit-data",
+                                    "method": "POST",
+                                    "collect_fields": ["otp_input"],
+                                    "action_id": "otp-verification",
+                                    "next_success_action_id": "prospect-info",
+                                    "next_err_action_id": "otp-verification"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "ui_login_screen_001",
             "session_id": "session_login_001",
             "screen_id": "login_screen",
@@ -337,6 +524,7 @@ def get_ui_schema():
                 }
             ]
         },
+        
         {
             "id": "ui_user_details_001",
             "session_id": "session_details_001",
@@ -452,174 +640,16 @@ def get_ui_schema():
                                     "type": "submit_form",
                                     "endpoint": "/api/user-details",
                                     "method": "POST",
-                                    "collect_fields": ["customer_name", "mobile_number"]
+                                    "collect_fields": ["customer_name", "mobile_number"],
+                                    "action_id": "user-details",
+                                    "next_success_action_id": "prospect-info",
+                                    "next_err_action_id": "user-details"
                                 }
                             }
                         }
                     ]
                 },
-                {
-                    "id": "ui_mobile_verification_001",
-                    "session_id": "session_mobile_verification_001",
-                    "screen_id": "mobile_verification_screen",
-                    "ui_components": [
-                        {
-                            "id": "header_container",
-                            "component_type": "column",
-                            "properties": {
-                                "padding": "16dp",
-                                "background_color": "#FFFFFF",
-                                "vertical_arrangement": "top",
-                                "horizontal_alignment": "center"
-                            },
-                            "children": [
-                                {
-                                    "id": "verification_title",
-                                    "component_type": "text",
-                                    "properties": {
-                                        "text": "Add Customer Mobile Number",
-                                        "text_size": "24sp",
-                                        "text_color": "#000000",
-                                        "text_style": "bold",
-                                        "text_align": "center",
-                                        "margin_bottom": "24dp"
-                                    }
-                                }
-                            ]   
-                        },
-                        {
-                            "id": "form_container",
-                            "component_type": "column",
-                            "properties": {
-                                "padding": "16dp",
-                                "vertical_arrangement": "top",
-                                "horizontal_alignment": "stretch"
-                            },
-                            "children": [
-                                {
-                                    "id": "mobile_number_input",
-                                    "component_type": "text_input",
-                                    "properties": {
-                                        "hint": "Enter Mobile Number",
-                                        "text_size": "16sp",
-                                        "background_color": "#F5F5F5",
-                                        "corner_radius": "8dp",
-                                        "padding": "12dp",
-                                        "margin_bottom": "24dp",
-                                        "input_type": "phone",
-                                        "max_length": 10,
-                                        "validation": {
-                                            "required": True,
-                                            "pattern": "^[0-9]{10}$",
-                                            "custom_error": "Enter a valid 10-digit mobile number"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "id": "ui_otp_verification_001",
-                    "session_id": "session_otp_verification_001",
-                    "screen_id": "otp_verification_screen",
-                    "ui_components": [
-                        {
-                            "id": "header_container",
-                            "component_type": "column",
-                            "properties": {
-                                "padding": "16dp",
-                                "background_color": "#FFFFFF",
-                                "vertical_arrangement": "top",
-                                "horizontal_alignment": "center"
-                            },
-                            "children": [
-                                {
-                                    "id": "otp_title",
-                                    "component_type": "text",
-                                    "properties": {
-                                        "text": "Enter Verification Code",
-                                        "text_size": "24sp",
-                                        "text_color": "#000000",
-                                        "text_style": "bold",
-                                        "text_align": "center",
-                                        "margin_bottom": "16dp"
-                                    }
-                                },
-                                {
-                                    "id": "otp_info_text",
-                                    "component_type": "text",
-                                    "properties": {
-                                        "text": "We have sent the code to your mobile",
-                                        "text_size": "16sp",
-                                        "text_color": "#666666",
-                                        "text_align": "center",
-                                        "margin_bottom": "24dp"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "id": "form_container",
-                            "component_type": "column",
-                            "properties": {
-                                "padding": "16dp",
-                                "vertical_arrangement": "top",
-                                "horizontal_alignment": "stretch"
-                            },
-                            "children": [
-                                {
-                                    "id": "otp_input",
-                                    "component_type": "text_input",
-                                    "properties": {
-                                        "hint": "Enter OTP",
-                                        "text_size": "16sp",
-                                        "background_color": "#F5F5F5",
-                                        "corner_radius": "8dp",
-                                        "padding": "12dp",
-                                        "margin_bottom": "24dp",
-                                        "input_type": "number",
-                                        "max_length": 6,
-                                        "validation": {
-                                            "required": True,
-                                            "pattern": "^[0-9]{4,6}$",
-                                            "custom_error": "Enter a valid 4 to 6 digit OTP"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "id": "button_container",
-                            "component_type": "column",
-                            "properties": {
-                                "padding": "16dp",
-                                "horizontal_alignment": "stretch"
-                            },
-                            "children": [
-                                {
-                                    "id": "verify_otp_button",
-                                    "component_type": "button",
-                                    "properties": {
-                                        "text": "Verify OTP",
-                                        "background_color": "#007AFF",
-                                        "text_color": "#FFFFFF",
-                                        "text_size": "16sp",
-                                        "text_style": "bold",
-                                        "corner_radius": "8dp",
-                                        "padding": "16dp",
-                                        "action": {
-                                            "type": "submit_form",
-                                            "endpoint": "/api/verify-otp",
-                                            "method": "POST",
-                                            "collect_fields": ["otp_input"]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
+            
                 {
                     "id": "ui_select_flow_001",
                     "session_id": "session_select_flow_001",
@@ -662,7 +692,6 @@ def get_ui_schema():
                                             "type": "navigate_to",
                                             "endpoint": "/api/select-flow",
                                             "method": "POST",
-                                            "collect_fields": ["flow_choice"],
                                             "action_id": "select-flow",
                                             "next_success_action_id": "video-consent",
                                             "next_err_action_id": "select-flow"

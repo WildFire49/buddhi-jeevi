@@ -8,10 +8,15 @@ from middleware import validate_api_key
 from utils.util import update_component_ids
 from schemas import (
     ChatRequest, DataSubmitRequest, DataSubmitResponse,
-    NextActionItem, ChatResponse, KeyValuePair
+    NextActionItem, ChatResponse, KeyValuePair, ImageUploadResponse,
+    SignedUrlRequest, SignedUrlResponse
 )
 from request_handler.submit_request_handler import submit_data
 from request_handler.chat_request_handler import process_chat
+from storage.minio_service import MinioService
+from fastapi import File, UploadFile, Form
+from typing import List, Dict, Any
+from pydantic import BaseModel
 
 # Load environment variables
 load_dotenv()
@@ -190,6 +195,130 @@ async def submit_endpoint(request: DataSubmitRequest):
             next_action_ui_components=[]
         )
 
+
+# Initialize MinIO service
+minio_service = MinioService()
+
+@app.post("/upload-images")
+async def upload_images(files: List[UploadFile] = File(...)):
+    """
+    Upload multiple images to MinIO storage
+    
+    Args:
+        files: List of files to upload
+        
+    Returns:
+        ImageUploadResponse: Response with image IDs
+    """
+    try:
+        # Check if files were provided
+        if not files:
+            return ImageUploadResponse(
+                status="failure",
+                message="No files were provided",
+                image_ids=[],
+                errors=["No files were provided"]
+            )
+        
+        # Process each file
+        image_ids = []
+        errors = []
+        
+        for file in files:
+            try:
+                # Read file content
+                file_content = await file.read()
+                
+                # Check if it's an image
+                content_type = file.content_type
+                
+                # Upload to MinIO
+                image_id = minio_service.upload_file(
+                    file_data=file_content,
+                    file_name=file.filename,
+                    content_type=content_type
+                )
+                
+                # Add to list of image IDs
+                image_ids.append(image_id)
+                
+            except Exception as e:
+                print(f"Error uploading {file.filename}: {str(e)}")
+                errors.append(f"Error uploading {file.filename}: {str(e)}")
+        
+        # Prepare response
+        if image_ids:
+            return ImageUploadResponse(
+                status="success" if not errors else "partial_success",
+                message=f"Successfully uploaded {len(image_ids)} images" + 
+                        (f" with {len(errors)} errors" if errors else ""),
+                image_ids=image_ids,
+                errors=errors
+            )
+        else:
+            return ImageUploadResponse(
+                status="failure",
+                message="Failed to upload any images",
+                image_ids=[],
+                errors=errors
+            )
+            
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return ImageUploadResponse(
+            status="failure",
+            message=f"Error processing upload: {str(e)}",
+            image_ids=[],
+            errors=[str(e)]
+        )
+
+@app.post("/get-signed-url")
+async def get_signed_url(request: SignedUrlRequest):
+    """
+    Generate a signed URL for accessing an object in MinIO
+    
+    Args:
+        request: SignedUrlRequest with object_key
+        
+    Returns:
+        SignedUrlResponse with the signed URL or error
+    """
+    try:
+        # Get the object key from the request
+        object_key = request.object_key
+        
+        if not object_key:
+            return SignedUrlResponse(
+                status="failure",
+                message="Object key is required",
+                error="Missing object key"
+            )
+        
+        # Get the signed URL from MinIO service
+        url = minio_service.get_file_url(object_key)
+        
+        if url:
+            return SignedUrlResponse(
+                status="success",
+                message="Signed URL generated successfully",
+                url=url
+            )
+        else:
+            return SignedUrlResponse(
+                status="failure",
+                message="Failed to generate signed URL",
+                error="Object not found or error generating URL"
+            )
+            
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return SignedUrlResponse(
+            status="failure",
+            message=f"Error generating signed URL: {str(e)}",
+            error=str(e)
+        )
 
 # Start the server when this file is run directly
 if __name__ == "__main__":

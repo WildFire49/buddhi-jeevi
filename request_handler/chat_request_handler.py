@@ -19,64 +19,71 @@ LLM_TYPE = os.getenv("LLM_TYPE", "ollama").lower()  # "ollama" or "openai"
 LLM_MODEL = os.getenv("LLM_MODEL", "llama3" if LLM_TYPE == "ollama" else "gpt-3.5-turbo")
 
 
-def process_chat(request: ChatRequest):
+def process_chat(chat_request: ChatRequest):
     """
-    Process a chat request and generate a response using the RAG chain.
+    Process a chat request and return a response with UI components and action details.
     
     Args:
-        request: The ChatRequest object containing the prompt and session information
+        chat_request: ChatRequest object containing the user's prompt and session_id
         
     Returns:
-        A dictionary containing the response and UI tags
+        dict: Response containing the LLM response and UI tags
     """
-    prompt_text = request.prompt
+    
+    prompt_text = chat_request.prompt.strip()
+    
     if not prompt_text:
-        print("No prompt provided in request")
         return {"response": "Please provide a prompt or question.", "ui_tags": []}
     
+    # Use the same comprehensive system prompt as submit handler to ensure complete action structure
     system_prompt = """
-        You are an expert AI assistant for a loan onboarding application.
-        Your task is to analyze the user's query, understand the semantic intent, and provide helpful information based on the retrieved context.
+        You are a UI component and workflow extractor. Your task is to extract specific information from the provided context and return a complete action structure.
         
-        **Context:**
-        {context}
+        CRITICAL INSTRUCTIONS:
+        1. Extract the current action's UI components from the context
+        2. Find the next_success_action_id for the current action
+        3. Extract ONLY the UI components that belong to the next_success_action_id - DO NOT include multiple UI schemas
+        4. NEVER hallucinate or substitute values - copy all properties and URLs exactly as they appear
+        5. NEVER use placeholder values like "example.com" - use the exact URLs from the source data
+        6. PRESERVE ALL ORIGINAL TEXT VALUES - do not modify titles, headings, or any text content
+        7. Temperature is set to 0 - be deterministic and precise
         
-        **Instructions:**
-        Based on the context above, provide a JSON object with the following keys:
-
-        - "ui_components": The COMPLETE UI components structure from the context. This is very important - if you detect intent related to prospect information, customer data, or KYC, you MUST include the full UI component structure, not just references.
-        - "id": action_id. If the user is asking about prospect info, use the corresponding prospect info ID.
-        - "ui_id": ui_id. For prospect info or KYC related queries, use the appropriate ui_id (e.g., ui_prospect_info_001).
-        - "screen_id": screen_id.
-        - "type": type.
-        - "title": add some suited text related to title.
-        - next_success_action_id: The ID of the next action to be performed.
-        - next_err_action_id: The ID of the next action to be performed.
+        TITLE AND TEXT PRESERVATION RULES:
+        - If a UI component has a "title" field, copy it EXACTLY as it appears in the source
+        - If a text component has a "text" property, copy it EXACTLY without modification
+        - DO NOT generate descriptive titles like "UI Components related to..." - use original values only
+        - DO NOT rephrase, summarize, or modify any text content from the source data
+        - The title field is displayed to end users in the frontend - it must be the original value
         
-        IMPORTANT INSTRUCTION FOR UI SCHEMAS:
-        - When a user asks about prospect information, adding customer data, or KYC processes (even without mentioning exact IDs), you MUST return the complete UI schema with all components.
-        - Do not just return a description or reference - return the ENTIRE ui_components structure as found in the context.
-        - Match on semantic intent, not just explicit ID mentions. For example, "add prospect info", "secondary kyc", "customer information" should all retrieve the complete UI schema.
+        REQUIRED OUTPUT STRUCTURE:
+        You must return a JSON object with the following structure:
+        {{
+            "ui_components": [array of UI components for current action],
+            "id": "action-id",
+            "ui_id": "ui_action_id_001", 
+            "screen_id": "action-screen-id",
+            "type": "action",
+            "title": "Action Title (exactly as in source)",
+            "next_success_action_id": "next-action-id",
+            "next_err_action_id": "error-action-id"
+        }}
         
-        Format your response in a clear, structured way that will be easy for the user to understand.
-        If a piece of information is not available in the context, use a null value for that key.
-        Only output the JSON object, with no additional text or explanation.
+        STEP-BY-STEP EXTRACTION PROCESS:
+        1. Identify the current action and its complete metadata
+        2. Extract all UI components for the current action
+        3. Find the next_success_action_id and next_err_action_id from the action metadata
+        4. Copy the action's id, ui_id, screen_id, type, and title exactly as they appear
+        5. Ensure all text values and properties are copied EXACTLY from the source
         
-            "id": "user-details",
-            "stage_name": "User Details Screen",
-            "desc_for_llm": "User details collection screen for customer name and mobile number.",
-            "action_type": "USER_DETAILS_SCREEN",
-            "next_err_action_id": "details-error-screen",
-            "next_success_action_id": "dashboard-screen",
-            "ui_id": "ui_user_details_001",
-            "api_detail_id": "api_user_details_001"
+        VALIDATION RULES:
+        - ALL text content must be copied exactly from source data without modification
+        - Include all required fields: id, ui_id, screen_id, type, title, next_success_action_id, next_err_action_id
+        - ui_components must be an array containing the complete UI schema for the current action
         
+        Context: {context}
+        Query: {query}
         
-           "id": "ui_welcome_screen_001",
-            "type": "UI",
-            "session_id": "session_welcome_001",
-            "screen_id": "welcome_screen",
-            "ui_components":[]
+        Return the complete action structure as JSON:
     """
     
     prompt = ChatPromptTemplate.from_messages([

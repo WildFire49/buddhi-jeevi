@@ -1,6 +1,7 @@
 import uuid
 import json
 import os
+import time
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,7 +21,6 @@ from schemas import (
 )
 from request_handler.submit_request_handler import submit_data
 from request_handler.chat_request_handler import process_chat
-from storage.minio_service import MinioService
 from fastapi import File, UploadFile, Form
 from typing import List, Dict, Any
 from pydantic import BaseModel
@@ -146,36 +146,54 @@ async def chat(request_obj: Request, chat_request: ChatRequest):
         # Extract the response and UI components
         response_content = result.get("response", {})
         
-        # Extract UI components if they exist in the response
-        ui_components = []
+        # For /chat API, ui_components should be an object with nested ui_components array to match database schema
         if isinstance(response_content, dict) and "ui_components" in response_content:
             ui_components = response_content.get("ui_components", [])
-            # Ensure ui_components is a list before trying to get its length
-            if ui_components is not None:
-                print(f"Found {len(ui_components)} UI components")
-            else:
-                print("UI components is None, using empty list")
-                ui_components = []
+            
+            # If ui_components is already an array (which it is now), wrap it in an object structure 
+            if isinstance(ui_components, list) and len(ui_components) > 0:
+                # Use the exact database schema values as specified by the user
+                wrapper = {
+                    "id": response_content.get("ui_id"),  # Use ui_id for id field
+                    "session_id": response_content.get("session_id", f"session_{response_content.get('id', 'unknown')}_001"),  # Format: session_{id}_001
+                    "screen_id": response_content.get("screen_id"),  # Use original screen_id
+                    "ui_components": ui_components  # Nest the array here
+                }
+                # Replace the array with our wrapped object
+                response_content["ui_components"] = wrapper
+                print(f"Wrapped ui_components array in object structure for /chat API")
+        else:
+            ui_components = []
         
         # Extract action IDs if they exist
-        action_id = None
-        next_success_action_id = None
-        next_err_action_id = None
-        title= None
-        if isinstance(response_content, dict):
-            action_id = response_content.get("id")
-            next_success_action_id = response_content.get("next_success_action_id")
-            next_err_action_id = response_content.get("next_err_action_id")
-            title = response_content.get("title", "")
+        action_id = response_content.get("id")
+        next_success_action_id = response_content.get("next_success_action_id")
+        next_err_action_id = response_content.get("next_err_action_id")
+        title= response_content.get("title", "")
 
         # Log the response type for debugging
         print(f"Response type: {type(response_content)}, Action ID: {action_id}")
+        
+        # Create updated UI components for ui_tags with IDs appended with timestamp
+        updated_components = update_component_ids(ui_components)
+        
+        # For /chat API, ui_tags should be an array of UI components (not an object)
+        if isinstance(updated_components, list):
+            ui_tags_array = updated_components
+        elif isinstance(ui_components, list) and len(ui_components) > 0:
+            # Extract UI components from the object structure if needed
+            if isinstance(ui_components, dict) and "ui_components" in ui_components:
+                ui_tags_array = update_component_ids(ui_components["ui_components"])
+            else:
+                ui_tags_array = update_component_ids(ui_components)
+        else:
+            ui_tags_array = []
         
         # Create the response object
         response = ChatResponse(
             session_id=session_id,
             response=response_content,
-            ui_tags=update_component_ids(ui_components),
+            ui_tags=ui_tags_array,  # Use the array
             action_id=action_id,
             next_success_action_id=next_success_action_id,
             next_err_action_id=next_err_action_id,
@@ -246,11 +264,49 @@ async def submit_endpoint(request_obj: Request, submit_request: DataSubmitReques
         print(f"Received vector_results: {type(vector_results)}")
         
         # Initialize empty values
-        ui_data = {}
+        ui_data = []
         next_actions = []
         
-        ui_data = vector_results.get('ui_components', [])
-        next_action_ui_components = vector_results.get('next_action_ui_components', [])
+        # Extract UI components if they exist in the response
+        if isinstance(vector_results, dict) and "ui_components" in vector_results:
+            raw_ui_components = vector_results.get("ui_components", [])
+            
+            # Ensure ui_components is always an array
+            if isinstance(raw_ui_components, dict):
+                # If it's a single object, wrap it in an array
+                ui_data = [raw_ui_components]
+                print(f"Converted single UI component object to array with 1 item")
+            elif isinstance(raw_ui_components, list):
+                ui_data = raw_ui_components
+                print(f"Found {len(ui_data)} UI components in array")
+            else:
+                print("UI components is neither dict nor list, using empty array")
+                ui_data = []
+            
+            # Transform to consistent frontend structure
+            ui_data = transform_ui_schema_to_frontend_structure(ui_data)
+            print(f"Transformed UI components to frontend structure")
+        
+        # Ensure next_action_ui_components is always an array
+        next_action_ui_components = []
+        if isinstance(vector_results, dict) and "next_action_ui_components" in vector_results:
+            raw_next_action_ui_components = vector_results.get("next_action_ui_components", [])
+            
+            # Ensure next_action_ui_components is always an array
+            if isinstance(raw_next_action_ui_components, dict):
+                # If it's a single object, wrap it in an array
+                next_action_ui_components = [raw_next_action_ui_components]
+                print(f"Converted single next action UI component object to array with 1 item")
+            elif isinstance(raw_next_action_ui_components, list):
+                next_action_ui_components = raw_next_action_ui_components
+                print(f"Found {len(next_action_ui_components)} next action UI components in array")
+            else:
+                print("Next action UI components is neither dict nor list, using empty array")
+                next_action_ui_components = []
+            
+            # Transform to consistent frontend structure
+            next_action_ui_components = transform_ui_schema_to_frontend_structure(next_action_ui_components)
+            print(f"Transformed next action UI components to frontend structure")
         
         # Create the response object
         response = DataSubmitResponse(
@@ -525,6 +581,84 @@ async def get_signed_url(request_obj: Request, signed_request: SignedUrlRequest)
         )
         
         return response
+
+def transform_ui_schema_to_frontend_structure(ui_components):
+    """
+    Transform ChromaDB UI schema structure to expected frontend structure.
+    Converts nested 'ui_components' to 'components' and ensures consistent structure.
+    """
+    if not ui_components:
+        return []
+    
+    transformed_components = []
+    
+    for component in ui_components:
+        if isinstance(component, dict):
+            # Create the expected frontend structure
+            transformed_component = {
+                "id": component.get("id", "unknown"),
+                "type": "screen",  # Default type for UI components
+            }
+            
+            # Check if this is a ChromaDB UI schema structure (has nested ui_components)
+            if "ui_components" in component:
+                # Transform nested ui_components to components
+                nested_components = component["ui_components"]
+                transformed_component["components"] = transform_nested_components(nested_components)
+            elif "components" in component:
+                # Already in correct structure
+                transformed_component["components"] = component["components"]
+            else:
+                # Single component, wrap in components array
+                transformed_component["components"] = [component]
+            
+            transformed_components.append(transformed_component)
+        else:
+            # Handle non-dict components
+            transformed_components.append(component)
+    
+    return transformed_components
+
+def transform_nested_components(nested_components):
+    """
+    Transform nested UI components from ChromaDB format to frontend format.
+    """
+    if not nested_components:
+        return []
+    
+    transformed = []
+    
+    for component in nested_components:
+        if isinstance(component, dict):
+            # Transform ChromaDB component structure to frontend structure
+            frontend_component = {
+                "id": component.get("id", "unknown"),
+                "type": component.get("component_type", "unknown"),
+            }
+            
+            # Add properties as direct fields for frontend
+            properties = component.get("properties", {})
+            if properties:
+                # Map common properties to frontend structure
+                if "text" in properties:
+                    frontend_component["label"] = properties["text"]
+                if "hint" in properties:
+                    frontend_component["placeholder"] = properties["hint"]
+                if "validation" in properties:
+                    frontend_component["validation"] = properties["validation"]
+                if "action" in properties:
+                    frontend_component["action"] = properties["action"]
+            
+            # Handle children recursively
+            if "children" in component:
+                frontend_component["children"] = transform_nested_components(component["children"])
+            
+            transformed.append(frontend_component)
+        else:
+            transformed.append(component)
+    
+    return transformed
+
 # app.add_middleware(APILoggerMiddleware)
 # Start the server when this file is run directly
 

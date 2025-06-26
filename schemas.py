@@ -47,9 +47,8 @@ class DataSubmitResponse(BaseModel):
     status: str
     message: str
     errors: List[str] = []
-    ui_data: Dict[str, Any] = {}  # UI schema data
-    api_data: Dict[str, Any] = {}  # API schema data
-    next_actions: List[NextActionItem] = []  # List of next action items
+    ui_data: List[Any] = []  # UI schema data
+    next_action_ui_components: List[Any] = []  # List of next action items
 
 class ChatResponse(BaseModel):
     session_id: str = Field(..., description="The session ID for the ongoing conversation.")

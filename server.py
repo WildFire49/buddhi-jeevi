@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from rag_chain_builder import RAGChainBuilder
 from tools import VectorDBTools
 from middleware import validate_api_key
-
+from utils.util import update_component_ids
 from schemas import (
     ChatRequest, DataSubmitRequest, DataSubmitResponse,
     NextActionItem, ChatResponse, KeyValuePair
@@ -110,7 +110,7 @@ async def chat(request: ChatRequest):
         return ChatResponse(
             session_id=session_id,
             response=response_content,
-            ui_tags=ui_components,
+            ui_tags=update_component_ids(ui_components),
             action_id=action_id,
             next_success_action_id=next_success_action_id,
             next_err_action_id=next_err_action_id,
@@ -147,9 +147,6 @@ async def submit_endpoint(request: DataSubmitRequest):
             message="Data field is required for submissions.",
             errors=["Data field is required"],
             ui_data={},
-            api_data={},
-            action_data={},
-            next_action={},
             next_actions=[]
         )
     
@@ -165,52 +162,21 @@ async def submit_endpoint(request: DataSubmitRequest):
         
         # Initialize empty values
         ui_data = {}
-        api_data = {}
         next_actions = []
         
-        # Process the results if they exist
-        if vector_results and isinstance(vector_results, dict):
-            # Extract UI components
-            ui_data = vector_results.get('ui_components', {})
-            print(f"UI data: {ui_data}")
-            
-            # Extract API details
-            api_data = vector_results.get('api_details', {})
-            print(f"API data: {api_data}")
-            
-            # Extract next action ID and create NextActionItem
-            next_action_id = vector_results.get('next_action_id')
-            if next_action_id:
-                next_actions = [NextActionItem(
-                    next_action_id=str(next_action_id),
-                    suggestion_text=f"Continue to step {next_action_id}"
-                )]
-        else:
-            print("No vector results or invalid format")
-            
-        # If no next actions were found, provide default options
-        if not next_actions:
-            next_actions = [
-                NextActionItem(
-                    next_action_id="review_submission",
-                    suggestion_text="Review your submission"
-                ),
-                NextActionItem(
-                    next_action_id="submit_another",
-                    suggestion_text="Submit another form"
-                )
-            ]
+        ui_data = vector_results.get('ui_components', [])
+        next_action_ui_components = vector_results.get('next_action_ui_components', [])
         
         # Prepare the response with all schema data
         return DataSubmitResponse(
             session_id=session_id,
             status="success",
             message="Data processed successfully",
-            errors=[],
-            ui_data=ui_data,
-            api_data=api_data,
-            next_actions=next_actions
+            errors=[],  
+            ui_data=update_component_ids(ui_data),
+            next_action_ui_components=update_component_ids(next_action_ui_components)
         )
+        
     except Exception as e:
         print(f"Error processing submission: {str(e)}")
         import traceback
@@ -220,9 +186,8 @@ async def submit_endpoint(request: DataSubmitRequest):
             status="failure",
             message=f"Error processing submission: {str(e)}",
             errors=[str(e)],
-            ui_data={},
-            api_data={},
-            next_actions=[]
+            ui_data=[],  # Ensure this is an empty dict, not a list
+            next_action_ui_components=[]
         )
 
 

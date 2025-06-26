@@ -46,7 +46,7 @@ def get_action_schema():
         "desc_for_llm": "Screen for entering OTP sent to user's mobile number. OTP verification screen. Confirm OTP. Validate OTP",
         "action_type": "OTP_VERIFICATION_SCREEN",
         "next_err_action_id": "otp-verification",
-        "next_success_action_id": "prospect-info",
+        "next_success_action_id": "customer-photo",
         "ui_id": "ui_otp_verification_001",
         "api_detail_id": "api_otp_verification_001"
     },
@@ -425,7 +425,7 @@ def get_ui_schema():
                                     "method": "POST",
                                     "collect_fields": ["otp_input"],
                                     "action_id": "otp-verification",
-                                    "next_success_action_id": "prospect-info",
+                                    "next_success_action_id": "customer-photo",
                                     "next_err_action_id": "otp-verification"
                                 }
                             }

@@ -5,7 +5,7 @@ class user_metadata:
     user_mobile: str
     user_password: str
     user_created_at: str
-
+    
 class customer_metadata:
     mobile_number: str
     customer_name: str
@@ -22,7 +22,6 @@ class user_customer_metadata:
     user_customer_id: str
     is_deleted: bool
 
-
 class customer_stage_metadata:
     stage_id: str
     customer_id: str
@@ -31,5 +30,3 @@ class customer_stage_metadata:
     stage_updated_at: str
     is_deleted: bool
     stage_data: dict
-
-

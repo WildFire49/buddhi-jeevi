@@ -12,8 +12,46 @@ services:
     environment:
       - CHROMA_HOST=3.6.132.24
       - CHROMA_PORT=8000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_USERNAME=budhii
+      - REDIS_PASSWORD=budhii
+      - MINIO_ENDPOINT=http://3.6.132.24
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=SWMSC2SQP1ICJ0I84N81
+      - MINIO_SECRET_KEY=bXwJ+wFwjpb9qP1S85bVsuXceO4oJtNK7+rZCS15
+      - MINIO_BUCKET=llm-recordings
     volumes:
       - ./data:/app/data
+    restart: unless-stopped
+    networks:
+      - buddhi-network
+    depends_on:
+      - redis
+      - minio
+      
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass budhii --user budhii on +@all ~* >budhii
+    ports:
+      - "6379:6379"
+    volumes:
+      - buddhi-cache:/data
+    restart: unless-stopped
+    networks:
+      - buddhi-network
+      
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=ROOTUSER
+      - MINIO_ROOT_PASSWORD=ROOTPASS123
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
     restart: unless-stopped
     networks:
       - buddhi-network
@@ -21,3 +59,9 @@ services:
 networks:
   buddhi-network:
     driver: bridge
+
+volumes:
+  buddhi-cache:
+    driver: local
+  minio-data:
+    driver: local

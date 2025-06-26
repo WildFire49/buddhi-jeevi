@@ -146,28 +146,22 @@ async def chat(request_obj: Request, chat_request: ChatRequest):
         # Extract the response and UI components
         response_content = result.get("response", {})
         
-        # Extract UI components if they exist in the response
-        ui_components = []
-        if isinstance(response_content, dict) and "ui_components" in response_content:
-            ui_components = response_content.get("ui_components", [])
-            # Ensure ui_components is a list before trying to get its length
-            if ui_components is not None:
-                print(f"Found {len(ui_components)} UI components")
-            else:
-                print("UI components is None, using empty list")
-                ui_components = []
-        
         # Extract action IDs if they exist
         action_id = None
         next_success_action_id = None
         next_err_action_id = None
         title= None
-        if isinstance(response_content, dict):
-            action_id = response_content.get("id")
-            next_success_action_id = response_content.get("next_success_action_id")
-            next_err_action_id = response_content.get("next_err_action_id")
-            title = response_content.get("title", "")
-
+        ui_components = []
+        if response_content.get("ui_components"):
+            ui_components = response_content.pop("ui_components",[])
+        if response_content.get("action_id"):
+            action_id = response_content.pop("id")
+        if response_content.get("next_success_action_id"):
+            next_success_action_id = response_content.pop("next_success_action_id")
+        if response_content.get("next_err_action_id"):
+            next_err_action_id = response_content.pop("next_err_action_id")
+        if response_content.get("title"):
+            title = response_content.pop("title")
         # Log the response type for debugging
         print(f"Response type: {type(response_content)}, Action ID: {action_id}")
         
@@ -218,28 +212,7 @@ async def submit_endpoint(request_obj: Request, submit_request: DataSubmitReques
         "data_count": len(submit_request.data) if submit_request.data else 0
     }
     
-    # Process the submitted data
-    if not submit_request.data:
-        error_response = DataSubmitResponse(
-            session_id=session_id,
-            status="failure",
-            message="Data field is required for submissions.",
-            errors=["Data field is required"],
-            ui_data={},
-            next_action_ui_components=[]
-        )
-        return send_api_response(request_obj, error_response, 400, request_data=request_data)
-    
-    try:
-        # Convert the list of KeyValuePair to a dictionary for processing if needed
-        data_dict = {item.key: item.value for item in submit_request.data}
-        
-        # Add some of the data to the request_data for logging (limit to avoid huge logs)
-        data_sample = {}
-        for key, value in list(data_dict.items())[:5]:  # Only log first 5 items
-            data_sample[key] = str(value)[:50] + "..." if isinstance(value, str) and len(value) > 50 else value
-        request_data["data_sample"] = data_sample
-        
+    try:        
         # Search for relevant data in the vector database based on action_id
         print(f"Calling submit_data with action_id: {action_id}")
         vector_results = submit_data(submit_request)

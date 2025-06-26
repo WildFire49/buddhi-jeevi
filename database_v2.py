@@ -3,7 +3,7 @@ def get_action_schema():
     {
         "id": "welcome",
         "stage_name": "Welcome Screen",
-        "desc_for_llm": "Simple welcome screen with app name and proceed button., hey, hello, goodmornig",
+        "desc_for_llm": "Simple welcome screen with app name and proceed button, hey, hello, goodmorning, I want to start Onboarding. I want to start journey",
         "action_type": "WELCOME_SCREEN",
         "next_err_action_id": "welcome",
         "next_success_action_id": "select-flow",
@@ -13,7 +13,7 @@ def get_action_schema():
     {
         "id": "select-flow",
         "stage_name": "Select Flow",
-        "desc_for_llm": "Screen that allows the user to select either the Onboarding or Collections flow.",
+        "desc_for_llm": "Screen that allows the user to select either the Onboarding or Collections flow. I want to choose change Flow or Onboarding, Select Activity, user wants to choose activity ",
         "action_type": "FLOW_SELECTION_SCREEN",
         "next_err_action_id": "select-flow",
         "next_success_action_id": "video-consent",
@@ -23,7 +23,7 @@ def get_action_schema():
     {
         "id": "video-consent",
         "stage_name": "Video Consent",
-        "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing.",
+        "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing. User wants to wants to give consent for loan and agree to it.",
         "action_type": "VIDEO_CONSENT_SCREEN",
         "next_err_action_id": "video-consent",
         "next_success_action_id": "mobile-verification",
@@ -33,7 +33,7 @@ def get_action_schema():
     {
         "id": "mobile-verification",
         "stage_name": "Mobile Number Verification",
-        "desc_for_llm": "Screen for mobile number verifications and verifying customer's mobile number. Takes 10-digit input and validates. Enter Customer Mobile Number to verify.",
+        "desc_for_llm": "Screen for mobile number verifications and verifying customer's mobile number. Takes 10-digit input and validates. Enter Customer Mobile Number to verify. Mobile number verifications",
         "action_type": "MOBILE_VERIFICATION_SCREEN",
         "next_err_action_id": "verification-error-screen",
         "next_success_action_id": "otp-verification-screen",
@@ -43,7 +43,7 @@ def get_action_schema():
     {
         "id": "otp-verification",
         "stage_name": "OTP Verification Screen",
-        "desc_for_llm": "Screen for entering OTP sent to user's mobile number.",
+        "desc_for_llm": "Screen for entering OTP sent to user's mobile number. OTP verification screen. Confirm OTP. Validate OTP",
         "action_type": "OTP_VERIFICATION_SCREEN",
         "next_err_action_id": "otp-verification",
         "next_success_action_id": "prospect-info",
@@ -53,7 +53,7 @@ def get_action_schema():
     {
         "id": "prospect-info",
         "stage_name": "Prospect Info",
-        "desc_for_llm": "Screen to confirm secondary KYC using a document dropdown.",
+        "desc_for_llm": "Screen to confirm secondary KYC using a document dropdown. User wants to confirm secondary KYC using a document dropdown.",
         "action_type": "PROSPECT_INFO_SCREEN",
         "next_err_action_id": "prospect-info",
         "next_success_action_id": "video-consent",
@@ -63,7 +63,7 @@ def get_action_schema():
     {
         "id": "login",
         "stage_name": "Login Screen",
-        "desc_for_llm": "User login screen with username and password inputs.",
+        "desc_for_llm": "User login screen with username and password inputs. User wants to login with username and password.",
         "action_type": "LOGIN_SCREEN",
         "next_err_action_id": "login-error-screen",
         "next_success_action_id": "user-details-screen",
@@ -73,7 +73,7 @@ def get_action_schema():
     {
         "id": "user-details",
         "stage_name": "User Details Screen",
-        "desc_for_llm": "User details collection screen for customer name and mobile number.",
+        "desc_for_llm": "User details collection screen for customer name and mobile number. User wants to enter customer name and mobile number.",
         "action_type": "USER_DETAILS_SCREEN",
         "next_err_action_id": "details-error-screen",
         "next_success_action_id": "dashboard-screen",
@@ -139,7 +139,7 @@ def get_ui_schema():
                                     "type": "navigate_to",
                                     "screen": "login-screen",
                                     "action_id": "welcome",
-                                    "next_success_action_id": "video-consent",
+                                    "next_success_action_id": "select-flow",
                                     "next_err_action_id": "welcome"
                                 }
                             }
@@ -370,7 +370,7 @@ def get_ui_schema():
                                 "padding": "12dp",
                                 "margin_bottom": "16dp",
                                 "input_type": "phone",
-                                "max_length": 10,
+                                "max_length": 4,
                                 "validation": {
                                     "required": True
                                 }

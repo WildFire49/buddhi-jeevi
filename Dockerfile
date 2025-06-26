@@ -14,8 +14,8 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy and install requirements
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt requirements-db.txt ./
+RUN pip install --no-cache-dir -r requirements.txt -r requirements-db.txt
 
 # Create cache directory and pre-download the sentence-transformer model
 RUN mkdir -p /app/.embeddings_cache

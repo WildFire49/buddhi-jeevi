@@ -21,6 +21,11 @@ services:
       - MINIO_ACCESS_KEY=SWMSC2SQP1ICJ0I84N81
       - MINIO_SECRET_KEY=bXwJ+wFwjpb9qP1S85bVsuXceO4oJtNK7+rZCS15
       - MINIO_BUCKET=llm-recordings
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=budhhi-jivi
+      - POSTGRES_PASSWORD=budhhi-jivi
+      - POSTGRES_DB=budhhi-jivi
     volumes:
       - ./data:/app/data
     restart: unless-stopped
@@ -29,6 +34,7 @@ services:
     depends_on:
       - redis
       - minio
+      - postgres
       
   redis:
     image: redis:7-alpine
@@ -47,14 +53,45 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      - MINIO_ROOT_USER=ROOTUSER
-      - MINIO_ROOT_PASSWORD=ROOTPASS123
+      - MINIO_ROOT_USER=SWMSC2SQP1ICJ0I84N81
+      - MINIO_ROOT_PASSWORD=bXwJ+wFwjpb9qP1S85bVsuXceO4oJtNK7+rZCS15
     volumes:
       - minio-data:/data
     command: server /data --console-address ":9001"
     restart: unless-stopped
     networks:
       - buddhi-network
+      
+  postgres:
+    image: postgres:14
+    container_name: buddhi-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=budhhi-jivi
+      - POSTGRES_PASSWORD=budhhi-jivi
+      - POSTGRES_DB=budhhi-jivi
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - buddhi-network
+      
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: buddhi-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@buddhi.com
+      - PGADMIN_DEFAULT_PASSWORD=budhhi-jivi
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    restart: unless-stopped
+    networks:
+      - buddhi-network
+    depends_on:
+      - postgres
 
 networks:
   buddhi-network:
@@ -64,4 +101,8 @@ volumes:
   buddhi-cache:
     driver: local
   minio-data:
+    driver: local
+  postgres-data:
+    driver: local
+  pgadmin-data:
     driver: local

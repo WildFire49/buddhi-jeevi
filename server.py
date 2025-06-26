@@ -2,10 +2,17 @@ import uuid
 import json
 import os
 from dotenv import load_dotenv
+from fastapi import FastAPI, File, UploadFile, HTTPException, Request, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Dict, List, Any, Optional
+from storage.minio_service import MinioService
 from rag_chain_builder import RAGChainBuilder
 from tools import VectorDBTools
-from middleware import validate_api_key
+from middleware.validate_api_key import validate_api_key
+from middleware.api_logger import log_api_call_background
+from database.models import init_db
 from utils.util import update_component_ids
+from utils.api_utils import send_api_response, extract_request_body
 from schemas import (
     ChatRequest, DataSubmitRequest, DataSubmitResponse,
     NextActionItem, ChatResponse, KeyValuePair, ImageUploadResponse,
@@ -17,6 +24,7 @@ from storage.minio_service import MinioService
 from fastapi import File, UploadFile, Form
 from typing import List, Dict, Any
 from pydantic import BaseModel
+
 
 # Load environment variables
 load_dotenv()
@@ -55,6 +63,24 @@ app.add_middleware(
 # --- API Key Validation Middleware ---
 app.middleware("http")(validate_api_key)
 
+# --- API Logger Middleware ---
+# app.add_middleware(APILoggerMiddleware)
+
+# --- Initialize Database ---
+try:
+    # Check if psycopg2 is available
+    try:
+        import psycopg2
+        print("psycopg2 is installed, initializing database...")
+        init_db()
+    except ImportError:
+        print("psycopg2 is not installed. API logging to database will be disabled.")
+        print("To enable database logging, install psycopg2-binary package.")
+except Exception as e:
+    print(f"Error initializing database: {e}")
+    print("API will continue to run, but database logging may not work.")
+    # Continue running the app even if DB init fails
+
 # --- In-memory state management ---
 # In a production app, you'd use Redis, a DB, or another persistent store.
 
@@ -63,25 +89,59 @@ app.middleware("http")(validate_api_key)
 
 # --- API Endpoint ---
 @app.post("/chat")
-async def chat(request: ChatRequest):
+async def chat(request_obj: Request, chat_request: ChatRequest):
     """
     Main endpoint to chat with the loan onboarding agent.
     It manages the conversation state based on the session_id.
     """
-    session_id = request.session_id or str(uuid.uuid4())
+    session_id = chat_request.session_id or str(uuid.uuid4())
+    
+    # Prepare request data for logging
+    request_data = {
+        "session_id": session_id,
+        "type": chat_request.type,
+        "prompt": chat_request.prompt[:100] + "..." if chat_request.prompt and len(chat_request.prompt) > 100 else chat_request.prompt,
+        "has_data": chat_request.data is not None
+    }
 
     # Validate request data based on type
-    if request.type and request.type.upper() == "FORM_DATA" and request.data is None:
-        raise HTTPException(status_code=400, detail="Data field is required for FORM_DATA requests.")
-    elif request.type and request.type.upper() == "PROMPT" and request.prompt is None:
-        raise HTTPException(status_code=400, detail="Prompt field is required for PROMPT requests.")
-    elif not request.prompt:
-        raise HTTPException(status_code=400, detail="Prompt field is required for all chat requests.")
+    if chat_request.type and chat_request.type.upper() == "FORM_DATA" and chat_request.data is None:
+        error_response = ChatResponse(
+            session_id=session_id,
+            response="Data field is required for FORM_DATA requests.",
+            ui_tags=[],
+            action_id=None,
+            next_success_action_id=None,
+            next_err_action_id=None
+        )
+        return send_api_response(request_obj, error_response, 400, request_data=request_data)
+        
+    elif chat_request.type and chat_request.type.upper() == "PROMPT" and chat_request.prompt is None:
+        error_response = ChatResponse(
+            session_id=session_id,
+            response="Prompt field is required for PROMPT requests.",
+            ui_tags=[],
+            action_id=None,
+            next_success_action_id=None,
+            next_err_action_id=None
+        )
+        return send_api_response(request_obj, error_response, 400, request_data=request_data)
+        
+    elif not chat_request.prompt:
+        error_response = ChatResponse(
+            session_id=session_id,
+            response="Prompt field is required for all chat requests.",
+            ui_tags=[],
+            action_id=None,
+            next_success_action_id=None,
+            next_err_action_id=None
+        )
+        return send_api_response(request_obj, error_response, 400, request_data=request_data)
 
     try:
         # Process the chat request using our handler
-        print(f"Processing chat request with prompt: {request.prompt[:50]}...")
-        result = process_chat(request)
+        print(f"Processing chat request with prompt: {chat_request.prompt[:50]}...")
+        result = process_chat(chat_request)
         
         # Extract the response and UI components
         response_content = result.get("response", {})
@@ -111,8 +171,8 @@ async def chat(request: ChatRequest):
         # Log the response type for debugging
         print(f"Response type: {type(response_content)}, Action ID: {action_id}")
         
-        # Return the formatted response
-        return ChatResponse(
+        # Create the response object
+        response = ChatResponse(
             session_id=session_id,
             response=response_content,
             ui_tags=update_component_ids(ui_components),
@@ -121,13 +181,17 @@ async def chat(request: ChatRequest):
             next_err_action_id=next_err_action_id,
             title=title 
         )
+        
+        # Send the response with logging
+        return send_api_response(request_obj, response, 200, request_data=request_data)
+        
     except Exception as e:
         print(f"Error processing chat request: {str(e)}")
         import traceback
         traceback.print_exc()
         
-        # Return an error response
-        return ChatResponse(
+        # Create error response
+        error_response = ChatResponse(
             session_id=session_id,
             response=f"An error occurred while processing your request: {str(e)}",
             ui_tags=[],
@@ -135,34 +199,50 @@ async def chat(request: ChatRequest):
             next_success_action_id=None,
             next_err_action_id=None
         )
+        
+        # Send the error response with logging
+        return send_api_response(request_obj, error_response, 500, request_data=request_data)
 
 @app.post("/submit")
-async def submit_endpoint(request: DataSubmitRequest):
+async def submit_endpoint(request_obj: Request, submit_request: DataSubmitRequest):
     """
     Endpoint to submit form data as an array of key-value pairs.
     """
-    session_id = request.session_id or str(uuid.uuid4())
-    action_id = request.action_id
+    session_id = submit_request.session_id or str(uuid.uuid4())
+    action_id = submit_request.action_id
+    
+    # Prepare request data for logging
+    request_data = {
+        "session_id": session_id,
+        "action_id": action_id,
+        "data_count": len(submit_request.data) if submit_request.data else 0
+    }
     
     # Process the submitted data
-    if not request.data:
-        return DataSubmitResponse(
+    if not submit_request.data:
+        error_response = DataSubmitResponse(
             session_id=session_id,
             status="failure",
             message="Data field is required for submissions.",
             errors=["Data field is required"],
             ui_data={},
-            next_actions=[]
+            next_action_ui_components=[]
         )
+        return send_api_response(request_obj, error_response, 400, request_data=request_data)
     
     try:
         # Convert the list of KeyValuePair to a dictionary for processing if needed
-        data_dict = {item.key: item.value for item in request.data}
+        data_dict = {item.key: item.value for item in submit_request.data}
+        
+        # Add some of the data to the request_data for logging (limit to avoid huge logs)
+        data_sample = {}
+        for key, value in list(data_dict.items())[:5]:  # Only log first 5 items
+            data_sample[key] = str(value)[:50] + "..." if isinstance(value, str) and len(value) > 50 else value
+        request_data["data_sample"] = data_sample
         
         # Search for relevant data in the vector database based on action_id
-        # This now returns a dictionary with ui_components, api_details, and next_action_id
         print(f"Calling submit_data with action_id: {action_id}")
-        vector_results = submit_data(request)
+        vector_results = submit_data(submit_request)
         print(f"Received vector_results: {type(vector_results)}")
         
         # Initialize empty values
@@ -172,8 +252,8 @@ async def submit_endpoint(request: DataSubmitRequest):
         ui_data = vector_results.get('ui_components', [])
         next_action_ui_components = vector_results.get('next_action_ui_components', [])
         
-        # Prepare the response with all schema data
-        return DataSubmitResponse(
+        # Create the response object
+        response = DataSubmitResponse(
             session_id=session_id,
             status="success",
             message="Data processed successfully",
@@ -182,43 +262,74 @@ async def submit_endpoint(request: DataSubmitRequest):
             next_action_ui_components=update_component_ids(next_action_ui_components)
         )
         
+        # Send the response with logging
+        return send_api_response(request_obj, response, 200, request_data=request_data)
+        
     except Exception as e:
         print(f"Error processing submission: {str(e)}")
         import traceback
         traceback.print_exc()
-        return DataSubmitResponse(
+        
+        # Create error response
+        error_response = DataSubmitResponse(
             session_id=session_id,
             status="failure",
             message=f"Error processing submission: {str(e)}",
             errors=[str(e)],
-            ui_data=[],  # Ensure this is an empty dict, not a list
+            ui_data=[],  # Ensure this is an empty list
             next_action_ui_components=[]
         )
+        
+        # Send the error response with logging
+        return send_api_response(request_obj, error_response, 500, request_data=request_data)
 
 
 # Initialize MinIO service
 minio_service = MinioService()
 
 @app.post("/upload-images")
-async def upload_images(files: List[UploadFile] = File(...)):
+async def upload_images(request: Request, files: List[UploadFile] = File(...)):
     """
     Upload multiple images to MinIO storage
     
     Args:
+        request: The request object
         files: List of files to upload
         
     Returns:
         ImageUploadResponse: Response with image IDs
     """
+    # Capture request information for logging
+    method = request.method
+    endpoint = request.url.path
+    user_id = request.headers.get("X-API-Key", None)  # Or extract from your auth system
+    
+    # Capture request body for logging
+    request_data = {}
+    for i, file in enumerate(files):
+        request_data[f"file_{i}"] = file.filename
+    
     try:
         # Check if files were provided
         if not files:
-            return ImageUploadResponse(
+            response = ImageUploadResponse(
                 status="failure",
                 message="No files were provided",
                 image_ids=[],
                 errors=["No files were provided"]
             )
+            
+            # Log the API call
+            log_api_call_background(
+                user_id=user_id,
+                endpoint=endpoint,
+                method=method,
+                request_data=request_data,
+                response_data=response.dict(),
+                status_code=422  # Unprocessable Entity
+            )
+            
+            return response
         
         # Process each file
         image_ids = []
@@ -248,79 +359,175 @@ async def upload_images(files: List[UploadFile] = File(...)):
         
         # Prepare response
         if image_ids:
-            return ImageUploadResponse(
+            response = ImageUploadResponse(
                 status="success" if not errors else "partial_success",
                 message=f"Successfully uploaded {len(image_ids)} images" + 
                         (f" with {len(errors)} errors" if errors else ""),
                 image_ids=image_ids,
                 errors=errors
             )
+            
+            # Log the API call
+            log_api_call_background(
+                user_id=user_id,
+                endpoint=endpoint,
+                method=method,
+                request_data=request_data,
+                response_data=response.dict(),
+                status_code=200  # Success
+            )
+            
+            return response
         else:
-            return ImageUploadResponse(
+            response = ImageUploadResponse(
                 status="failure",
                 message="Failed to upload any images",
                 image_ids=[],
                 errors=errors
             )
             
+            # Log the API call
+            log_api_call_background(
+                user_id=user_id,
+                endpoint=endpoint,
+                method=method,
+                request_data=request_data,
+                response_data=response.dict(),
+                status_code=400  # Bad Request
+            )
+            
+            return response
+            
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return ImageUploadResponse(
+        
+        response = ImageUploadResponse(
             status="failure",
             message=f"Error processing upload: {str(e)}",
             image_ids=[],
             errors=[str(e)]
         )
+        
+        # Log the API call with error
+        log_api_call_background(
+            user_id=user_id,
+            endpoint=endpoint,
+            method=method,
+            request_data=request_data,
+            response_data=response.dict(),
+            status_code=500  # Internal Server Error
+        )
+        
+        return response
 
 @app.post("/get-signed-url")
-async def get_signed_url(request: SignedUrlRequest):
+async def get_signed_url(request_obj: Request, signed_request: SignedUrlRequest):
     """
     Generate a signed URL for accessing an object in MinIO
     
     Args:
-        request: SignedUrlRequest with object_key
+        request_obj: The FastAPI request object
+        signed_request: SignedUrlRequest with object_key
         
     Returns:
         SignedUrlResponse with the signed URL or error
     """
+    # Capture request information for logging
+    method = request_obj.method
+    endpoint = request_obj.url.path
+    user_id = request_obj.headers.get("X-API-Key", None)  # Or extract from your auth system
+    
+    # Capture request body for logging
+    request_data = {"object_key": signed_request.object_key}
+    
     try:
         # Get the object key from the request
-        object_key = request.object_key
+        object_key = signed_request.object_key
         
         if not object_key:
-            return SignedUrlResponse(
+            response = SignedUrlResponse(
                 status="failure",
                 message="Object key is required",
                 error="Missing object key"
             )
+            
+            # Log the API call
+            log_api_call_background(
+                user_id=user_id,
+                endpoint=endpoint,
+                method=method,
+                request_data=request_data,
+                response_data=response.dict(),
+                status_code=400  # Bad Request
+            )
+            
+            return response
         
         # Get the signed URL from MinIO service
         url = minio_service.get_file_url(object_key)
         
         if url:
-            return SignedUrlResponse(
+            response = SignedUrlResponse(
                 status="success",
                 message="Signed URL generated successfully",
                 url=url
             )
+            
+            # Log the API call
+            log_api_call_background(
+                user_id=user_id,
+                endpoint=endpoint,
+                method=method,
+                request_data=request_data,
+                response_data=response.dict(),
+                status_code=200  # Success
+            )
+            
+            return response
         else:
-            return SignedUrlResponse(
+            response = SignedUrlResponse(
                 status="failure",
                 message="Failed to generate signed URL",
                 error="Object not found or error generating URL"
             )
             
+            # Log the API call
+            log_api_call_background(
+                user_id=user_id,
+                endpoint=endpoint,
+                method=method,
+                request_data=request_data,
+                response_data=response.dict(),
+                status_code=404  # Not Found
+            )
+            
+            return response
+            
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return SignedUrlResponse(
+        
+        response = SignedUrlResponse(
             status="failure",
             message=f"Error generating signed URL: {str(e)}",
             error=str(e)
         )
-
+        
+        # Log the API call with error
+        log_api_call_background(
+            user_id=user_id,
+            endpoint=endpoint,
+            method=method,
+            request_data=request_data,
+            response_data=response.dict(),
+            status_code=500  # Internal Server Error
+        )
+        
+        return response
+# app.add_middleware(APILoggerMiddleware)
 # Start the server when this file is run directly
+
 if __name__ == "__main__":
     import uvicorn
     PORT = os.getenv("PORT", "8002")

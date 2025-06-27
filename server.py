@@ -30,6 +30,11 @@ from pydantic import BaseModel
 
 # Load environment variables
 load_dotenv()
+
+# Print environment variables for debugging
+print(f"API_KEY from environment: {os.getenv('API_KEY')}")
+print(f"All environment variables: {os.environ}")
+
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import HumanMessage

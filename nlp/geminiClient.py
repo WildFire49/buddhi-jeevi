@@ -7,7 +7,8 @@ import os
 load_dotenv()
 
 # For testing purposes, use a hardcoded API key if environment variable is not found
-api_key = os.getenv("GEMINI_API_KEY", "AIzaSyCR2EyilibSOXE1dZwkuE3oE05FhgFi3Bk")
+api_key = os.getenv("GEMINI_API_KEY")
+# Remove hardcoded API key and rely solely on environment variable
 if not api_key:
     raise RuntimeError("❌ GEMINI_API_KEY is missing in environment!")
 

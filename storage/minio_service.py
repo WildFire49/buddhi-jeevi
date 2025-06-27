@@ -12,11 +12,25 @@ class MinioService:
     
     def __init__(self):
         """Initialize MinIO client with environment variables"""
-        self.endpoint = os.getenv("MINIO_ENDPOINT", "3.6.132.24")
-        self.port = os.getenv("MINIO_PORT", "9000")
-        self.access_key = os.getenv("MINIO_ACCESS_KEY", "SWMSC2SQP1ICJ0I84N81")
-        self.secret_key = os.getenv("MINIO_SECRET_KEY", "bXwJ+wFwjpb9qP1S85bVsuXceO4oJtNK7+rZCS15")
-        self.bucket_name = os.getenv("MINIO_BUCKET", "buddhi-images")
+        self.endpoint = os.getenv("MINIO_ENDPOINT")
+        if not self.endpoint:
+            raise ValueError("MINIO_ENDPOINT environment variable not set")
+            
+        self.port = os.getenv("MINIO_PORT")
+        if not self.port:
+            raise ValueError("MINIO_PORT environment variable not set")
+            
+        self.access_key = os.getenv("MINIO_ACCESS_KEY")
+        if not self.access_key:
+            raise ValueError("MINIO_ACCESS_KEY environment variable not set")
+            
+        self.secret_key = os.getenv("MINIO_SECRET_KEY")
+        if not self.secret_key:
+            raise ValueError("MINIO_SECRET_KEY environment variable not set")
+            
+        self.bucket_name = os.getenv("MINIO_BUCKET")
+        if not self.bucket_name:
+            raise ValueError("MINIO_BUCKET environment variable not set")
         self.secure = os.getenv("MINIO_SECURE", "false").lower() == "true"
         
         # Parse the endpoint URL properly

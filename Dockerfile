@@ -54,11 +54,15 @@ ENV TRANSFORMERS_CACHE=/app/.embeddings_cache
 ENV SENTENCE_TRANSFORMERS_HOME=/app/.embeddings_cache
 ENV HF_HOME=/app/.embeddings_cache
 
-# Expose the port the app runs on
+# Expose both server and translation API ports
 EXPOSE 8002
+EXPOSE 8004
+
+# Make the run_services.py script executable
+RUN chmod +x run_services.py
 
 # Switch to the non-root user
 USER app
 
-# Command to run the application
-CMD ["python", "server.py"]
+# Command to run both services
+CMD ["python", "run_services.py"]

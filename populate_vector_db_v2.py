@@ -88,7 +88,7 @@ def _prepare_ui_schema_text(ui_schema):
 
 def populate_vector_db():
     """Populate the vector database with action schemas, UI schemas, and API schemas"""
-    collection_name = "onboarding_flow_v14"  # Match the collection name used in rag_chain_builder.py
+    collection_name = "onboarding_flow_v15"  # Match the collection name used in rag_chain_builder.py
 
     # Initialize HuggingFace embeddings
     embeddings = get_embedding()

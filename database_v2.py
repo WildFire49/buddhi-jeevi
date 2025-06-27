@@ -35,8 +35,8 @@ def get_action_schema():
         "stage_name": "Mobile Number Verification",
         "desc_for_llm": "Screen for mobile number verifications and verifying customer's mobile number. Takes 10-digit input and validates. Enter Customer Mobile Number to verify. Mobile number verifications",
         "action_type": "MOBILE_VERIFICATION_SCREEN",
-        "next_err_action_id": "verification-error-screen",
-        "next_success_action_id": "otp-verification-screen",
+        "next_err_action_id": "mobile-verification",
+        "next_success_action_id": "otp-verification",
         "ui_id": "ui_mobile_verification_001",
         "api_detail_id": "api_mobile_verification_001"
     },
@@ -55,30 +55,39 @@ def get_action_schema():
         "stage_name":"Customer Photo",
         "desc_for_llm":"Screen to upload or capture Customer Photo",
         "action_type":"PRIMARY_KYC_SCREEN",
-        "next_err_action_id":"primary-kyc",
-        "next_success_action_id":"prospect-info",
+        "next_err_action_id":"customer-photo",
+        "next_success_action_id":"secondry-kyc-document-selector",
         "ui_id":"ui_customer_photo_001",
         "api_detail_id":"api_customer_photo_001"
     },
     {
-        "id":"primary-kyc",
+        "id":"pan_input",
         "stage_name":"Primary KYC",
         "desc_for_llm":"Screen to enter Customer Primary KYC (Voter ID or PAN) using a document dropdown and Upload KYC Image. User wants to confirm primary KYC using a document dropdown.",
         "action_type":"PRIMARY_KYC_SCREEN",
-        "next_err_action_id":"primary-kyc",
-        "next_success_action_id":"prospect-info",
-        "ui_id":"ui_primary_kyc_001",
-        "api_detail_id":"api_primary_kyc_001"
+        "next_err_action_id":"pan_input",
+        "next_success_action_id":"aadhar_capture_info",
+        "ui_id":"ui_pan_input_001",
+        "api_detail_id":"api_ekyc_001"
+    },{
+        "id":"vtrid_input",
+        "stage_name":"Primary KYC",
+        "desc_for_llm":"Screen to enter Customer Primary KYC (Voter ID or PAN) using a document dropdown and Upload KYC Image. User wants to confirm primary KYC using a document dropdown.",
+        "action_type":"PRIMARY_KYC_SCREEN",
+        "next_err_action_id":"vtrid_input",
+        "next_success_action_id":"aadhar_capture_info",
+        "ui_id":"ui_vtrid_input_001",
+        "api_detail_id":"api_ekyc_001"
     },
     {
-        "id": "prospect-info",
+        "id": "secondry-kyc-document-selector",
         "stage_name": "Prospect Info",
         "desc_for_llm": "Screen to confirm secondary KYC using a document dropdown. User wants to confirm secondary KYC using a document dropdown.",
         "action_type": "PROSPECT_INFO_SCREEN",
-        "next_err_action_id": "prospect-info",
-        "next_success_action_id": "video-consent",
+        "next_err_action_id": "secondry-kyc-document-selector",
+        "next_success_action_id": "customer_basic_details",
         "ui_id": "ui_prospect_info_001",
-        "api_detail_id": "api_prospect_info_001"
+        "api_detail_id": "secondry_kyc_document_info_001"
     },
     {
         "id": "login",
@@ -99,6 +108,26 @@ def get_action_schema():
         "next_success_action_id": "dashboard-screen",
         "ui_id": "ui_user_details_001",
         "api_detail_id": "api_user_details_001"
+    },
+    {
+        "id": "aadhar_capture_info",
+        "stage_name": "Aadhar Capture Info Screen",
+        "desc_for_llm": "User aadhar info, AADHAR CAPTURE INFO SCREEN, AADHAR NUMBER, aadhar number",
+        "action_type": "AADHAR_CAPTURE_INFO_SCREEN",
+        "next_err_action_id": "aadhar_capture_info",
+        "next_success_action_id": "customer_basic_details",
+        "ui_id": "aadhar_capture_info_001",
+        "api_detail_id": "api_aadhar_capture_info_001"
+    },
+    {
+        "id": "customer_basic_details",
+        "stage_name": "Prospect Onboarding Screen",
+        "desc_for_llm": "User name, dob, address, prospect onboarding screen",
+        "action_type": "customer_basic_details_SCREEN",
+        "next_err_action_id": "customer_basic_details",
+        "next_success_action_id": "dashboard-screen",
+        "ui_id": "ui_customer_basic_details_001",
+        "api_detail_id": "api_customer_basic_details_001"
     }
 ]
 
@@ -332,9 +361,9 @@ def get_ui_schema():
                                     "endpoint": "/api/submit-data",
                                     "method": "POST",
                                     "collect_fields": ["phone_input"],
-                                    "action_id": "ui_mobile_verification_001",
-                                    "next_success_action_id": "otp-verification-screen",
-                                    "next_err_action_id": "verification-error-screen"
+                                    "action_id": "mobile-verification",
+                                    "next_success_action_id": "otp-verification",
+                                    "next_err_action_id": "mobile-verification"
                                 }
                             }
                         }
@@ -661,7 +690,6 @@ def get_ui_schema():
                                     "method": "POST",
                                     "collect_fields": ["customer_name", "mobile_number"],
                                     "action_id": "user-details",
-                                    "next_success_action_id": "prospect-info",
                                     "next_err_action_id": "user-details"
                                 }
                             }
@@ -824,8 +852,7 @@ def get_ui_schema():
                                     "method": "POST",
                                     "collect_fields": ["customer_photo_upload"],
                                     "action_id": "customer-photo",
-                                    "next_success_action_id": "prospect-info",
-                                    "next_err_action_id": "primary-kyc"
+                                    "next_success_action_id": "secondry-kyc-document-selector",
                                 }
                             }
                         }
@@ -834,7 +861,7 @@ def get_ui_schema():
             ]
         },
         {
-            "id": "ui_primary_kyc_001",
+            "id": "ui_pan_input_001",
             "session_id": "session_primary_kyc_001",
             "screen_id": "primary_kyc_screen",
             "ui_components": [
@@ -904,7 +931,7 @@ def get_ui_schema():
                             "id": "submit_button",
                             "component_type": "button",
                             "properties": {
-                                "text": "Submit PAN Card",
+                                "text": "Submit Voter ID Card",
                                 "background_color": "#4CAF50",
                                 "text_color": "#FFFFFF",
                                 "text_size": "16sp",
@@ -916,9 +943,102 @@ def get_ui_schema():
                                     "endpoint": "/api/pan/upload",
                                     "method": "POST",
                                     "collect_fields": ["pan_number_input", "pan_card_upload"],
-                                    "action_id": "primary-kyc",
-                                    "next_success_action_id": "prospect-info",
-                                    "next_err_action_id": "primary-kyc"
+                                    "action_id": "pan_input",
+                                    "next_success_action_id": "aadhar_capture_info",
+                                    "next_err_action_id": "pan_input"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "ui_vtrid_input_001",
+            "session_id": "session_primary_kyc_001",
+            "screen_id": "primary_kyc_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF"
+                    },
+                    "children": [
+                        {
+                            "id": "instruction_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Upload Voter ID Card",
+                                "text_size": "20sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "vtrid_number_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter Voter ID Number",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "max_length": 10,
+                                "validation": {
+                                    "required": True,
+                                    "pattern": "^[0-9]{13}$",
+                                    "custom_error": "Please enter a valid Voter ID number (e.g., 1234567890123)"
+                                }
+                            }
+                        },
+                        {
+                            "id": "vtrid_card_upload",
+                            "component_type": "image_capture",
+                            "properties": {
+                                "title": "Voter ID Card Image",
+                                "instructions": "Take a clear photo of your Voter ID card",
+                                "max_images": 2,
+                                "min_images": 1,
+                                "page_limit": 1,
+                                "allow_gallery": True,
+                                "require_document_type": False,
+                                "margin_bottom": "24dp",
+                                "document_types": [
+                                    {
+                                        "value": "vtrid",
+                                        "label": "Voter ID Card",
+                                        "max_pages": 2
+                                    }
+                                ],
+                                "validation": {
+                                    "required": True
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit Voter ID Card",
+                                "background_color": "#4CAF50",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/vtrid/upload",
+                                    "method": "POST",
+                                    "collect_fields": ["vtrid_number_input", "vtrid_card_upload"],
+                                    "action_id": "vtrid_input",
+                                    "next_success_action_id": "aadhar_capture_info",
+                                    "next_err_action_id": "vtrid_input"
                                 }
                             }
                         }
@@ -979,11 +1099,11 @@ def get_ui_schema():
                                         "label": "-- Select Document --"
                                     },
                                     {
-                                        "value": "voter_id",
+                                        "value": "vtrid_input",
                                         "label": "Voter ID"
                                     },
                                     {
-                                        "value": "pan",
+                                        "value": "pan_input",
                                         "label": "PAN"
                                     }
                                 ],
@@ -1007,12 +1127,199 @@ def get_ui_schema():
                                 "padding": "16dp",
                                 "action": {
                                     "type": "submit_form",
-                                    "endpoint": "/api/submit-prospect-info",
+                                    "endpoint": "/api/submit-secondry-kyc-document-selector",
                                     "method": "POST",
                                     "collect_fields": ["document_dropdown"],
-                                    "action_id": "prospect-info",
-                                    "next_success_action_id": "video-consent",
-                                    "next_err_action_id": "prospect-info"
+                                    "action_id": "secondry-kyc-document-selector",
+                                    "next_success_action_id": "customer_basic_details",
+                                    "next_err_action_id": "secondry-kyc-document-selector"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "aadhar_capture_info_001",
+            "session_id": "session_aadhar_capture_info_001",
+            "screen_id": "aadhar_capture_info_screen",
+            "ui_components": [
+                {
+                "id": "header_container",
+                "component_type": "column",
+                "properties": {
+                    "padding": "16dp",
+                    "background_color": "#FFFFFF",
+                    "vertical_arrangement": "top",
+                    "horizontal_alignment": "center"
+                },
+                "children": [
+                    {
+                    "id": "mobile_title",
+                    "component_type": "text",
+                    "properties": {
+                        "text": "Aadhaar Verification",
+                        "text_size": "24sp",
+                        "text_color": "#000000",
+                        "text_style": "bold",
+                        "text_align": "center",
+                        "margin_bottom": "16dp"
+                    }
+                    },
+                    {
+                    "id": "adhar_inout",
+                    "component_type": "text_input",
+                    "properties": {
+                        "hint": "Enter Aadhaar phone number",
+                        "text_size": "16sp",
+                        "background_color": "#F5F5F5",
+                        "corner_radius": "8dp",
+                        "padding": "12dp",
+                        "margin_bottom": "16dp",
+                        "input_type": "text",
+                        "max_length": 12,
+                        "validation": {
+                        "required": True,
+                        "pattern": "^[2-9]{1}[0-9]{11}$",
+                        "custom_error": "Please enter a valid 10-digit phone number"
+                        }
+                    }
+                    },
+                    {
+                    "id": "submit_button",
+                    "component_type": "button",
+                    "properties": {
+                        "text": "Verify Aadhaar",
+                        "background_color": "#007AFF",
+                        "text_color": "#FFFFFF",
+                        "text_size": "16sp",
+                        "text_style": "bold",
+                        "corner_radius": "8dp",
+                        "padding": "16dp",
+                        "weight": 1,
+                        "margin_start": "8dp",
+                        "action": {
+                        "type": "submit_form",
+                        "endpoint": "/api/submit-data",
+                        "method": "POST",
+                        "collect_fields": [
+                            "adhar_inout"
+                        ],
+                        "action_id": "user-detail-screen-001",
+                        "next_success_action_id": "ui_customer_basic_details_001",
+                        "next_err_action_id": "verification-error-screen"
+                        }
+                    }
+                    }
+                ]
+                }
+            ]
+        },
+        {
+            "id": "ui_customer_basic_details_001",
+            "session_id": "session_12345",
+            "screen_id": "customer_basic_details",
+            "ui_components": [
+                {
+                    "id": "registration_form",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "form_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Prospect Information",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        },
+                        {
+                            "id": "name_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your full name",
+                                "title": "Full Name",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "validation": {
+                                    "required": True,
+                                    "pattern": "^[a-zA-Z\\s]+$",
+                                    "custom_error": "Please enter a valid name (letters and spaces only)"
+                                }
+                            }
+                        },
+                        {
+                            "id": "dob_picker",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your date of birth(dd/MM/yyyy)",
+                                "title": "Date of birth",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "validation": {
+                                    "required": True,
+                                    "pattern": "^(0[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[0-2])[-/]\\d{4}$",
+                                    "custom_error": "Please enter a date of birth."
+                                }
+                            }
+                        },
+                        {
+                            "id": "address_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your complete address",
+                                "title": "Address",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "24dp",
+                                "input_type": "text",
+                                    "max_lines": 3,
+                                "min_lines": 2,
+                                "validation": {
+                                    "required": True,
+                                    "custom_error": "Please enter a complete address "
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit Registration",
+                                "background_color": "#4CAF50",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "action_id": "ui_aadhar_verification_001",
+                                    "next_success_action_id": "otp-verification-screen",
+                                    "next_err_action_id": "verification-error-screen",
+                                    "type": "submit_form",
+                                    "endpoint": "/api/user/register",
+                                    "method": "POST",
+                                    "collect_fields": ["name_input", "dob_picker", "address_input"]
                                 }
                             }
                         }
@@ -1079,12 +1386,12 @@ def get_api_schema():
             ]
         },
         {
-            "id": "api_prospect_info_001",
+            "id": "secondry_kyc_document_info_001",
             "type": "API",
             "api_details": [
                 {
                     "http_method": "POST",
-                    "endpoint_path": "/api/submit-prospect-info",
+                    "endpoint_path": "/api/submit-secondry-kyc-document-selector",
                     "request_payload_template": {
                         "document_type": "{{document_dropdown}}"
                     }
@@ -1118,7 +1425,7 @@ def get_api_schema():
             ]
         },
         {
-            "id": "api_primary_kyc_001",
+            "id": "api_pan_input_001",
             "type": "API",
             "api_details": [
                 {
@@ -1127,6 +1434,34 @@ def get_api_schema():
                     "request_payload_template": {
                         "pan_number": "{{pan_number_input}}",
                         "pan_card_image": "{{pan_card_upload}}"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "api_aadhar_capture_info_001",
+            "type": "API",
+            "api_details": [
+                {
+                    "http_method": "POST",
+                    "endpoint_path": "/api/aadharNumber",
+                    "request_payload_template": {
+                        "adhar_inout": "{{adhar_inout}}",
+                    }
+                }
+            ]
+        },
+        {
+            "id": "api_customer_basic_details_001",
+            "type": "API",
+            "api_details": [
+                {
+                    "http_method": "POST",
+                    "endpoint_path": "/api/prospect-onboarding",
+                    "request_payload_template": {
+                        "name": "{{name_input}}",
+                        "dob": "{{dob_picker}}",
+                        "address": "{{address_input}}"
                     }
                 }
             ]

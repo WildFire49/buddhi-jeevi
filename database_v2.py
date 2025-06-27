@@ -21,11 +21,11 @@ def get_action_schema():
         "api_detail_id": "api_select_flow_001"
     },
     {
-        "id": "welcome",
+        "id": "video-consent",
         "stage_name": "Video Consent",
         "desc_for_llm": "Consent screen with video component and a button to capture user agreement after viewing. User wants to wants to give consent for loan and agree to it.",
         "action_type": "VIDEO_CONSENT_SCREEN",
-        "next_err_action_id": "welcome",
+        "next_err_action_id": "video-consent",
         "next_success_action_id": "mobile-verification",
         "ui_id": "ui_video_consent_001",
         "api_detail_id": "api_video_consent_001"

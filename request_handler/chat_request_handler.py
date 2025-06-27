@@ -249,9 +249,9 @@ def process_chat(chat_request: ChatRequest):
     rag_chain_builder = RAGChainBuilder(llm_type=LLM_TYPE, model_name=LLM_MODEL)
     logger.info("Initialized RAG chain builder")
     
-    prompt_text = request.prompt
-    session_id = request.session_id
-    chat_history = request.chat_history if hasattr(request, 'chat_history') and request.chat_history else []
+    prompt_text = chat_request.prompt
+    session_id = chat_request.session_id
+    chat_history = chat_request.chat_history if hasattr(chat_request, 'chat_history') and chat_request.chat_history else []
     
     logger.info(f"Received chat request with prompt: '{prompt_text}' for session: {session_id}")
     
@@ -887,8 +887,18 @@ def process_chat(chat_request: ChatRequest):
         logger.error(f"Error in process_chat: {str(e)}")
         logger.error(traceback.format_exc())
         return {
+            "session_id": chat_request.session_id,
             "response": f"An error occurred while processing your request: {str(e)}",
-            "ui_tags": ["error"]
+            "english_response": f"Error: {str(e)}",
+            "detected_language": None,
+            "audio_url": None,
+            "nlp_response": None,
+            "ui_tags": ["error"],
+            "ui_components": None,
+            "action_id": None,
+            "next_success_action_id": None,
+            "next_err_action_id": None,
+            "title": None
         }
 
 

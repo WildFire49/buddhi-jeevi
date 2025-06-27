@@ -80,3 +80,28 @@ class ChatResponse(BaseModel):
     next_success_action_id: Optional[str] = Field(None, description="The ID of the next action to be performed on success.")
     next_err_action_id: Optional[str] = Field(None, description="The ID of the next action to be performed on error.")
     title: Optional[str] = Field(None, description="The title of the action.")
+
+
+class OCRRequest(BaseModel):
+    object_id: str = Field(..., description="The MinIO object ID of the image to process")
+    session_id: Optional[str] = Field(None, description="Optional session ID for tracking")
+
+class OCRMatchRequest(BaseModel):
+    object_id: str = Field(..., description="The MinIO object ID of the image to process")
+    expected_text: str = Field(..., description="The text to match against the OCR result")
+    threshold: float = Field(0.5, description="Similarity threshold (0-1) for matching")
+    session_id: Optional[str] = Field(None, description="Optional session ID for tracking")
+
+class OCRResponse(BaseModel):
+    success: bool = Field(..., description="Whether the OCR operation was successful")
+    object_id: str = Field(..., description="The MinIO object ID of the processed image")
+    text: Optional[str] = Field(None, description="The extracted text from the image")
+    image_url: Optional[str] = Field(None, description="URL to access the image")
+    error: Optional[str] = Field(None, description="Error message if the operation failed")
+
+class OCRMatchResponse(BaseModel):
+    success: bool = Field(..., description="Whether the match operation was successful")
+    object_id: str = Field(..., description="The MinIO object ID of the processed image")
+    image_url: Optional[str] = Field(None, description="URL to access the image")
+    match_result: Optional[Dict[str, Any]] = Field(None, description="Match results with similarity score and status")
+    error: Optional[str] = Field(None, description="Error message if the operation failed")

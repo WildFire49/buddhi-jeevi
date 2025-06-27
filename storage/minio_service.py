@@ -12,7 +12,7 @@ class MinioService:
     
     def __init__(self):
         """Initialize MinIO client with environment variables"""
-        self.endpoint = os.getenv("MINIO_ENDPOINT", "localhost")
+        self.endpoint = os.getenv("MINIO_ENDPOINT", "3.6.132.24")
         self.port = os.getenv("MINIO_PORT", "9000")
         self.access_key = os.getenv("MINIO_ACCESS_KEY", "SWMSC2SQP1ICJ0I84N81")
         self.secret_key = os.getenv("MINIO_SECRET_KEY", "bXwJ+wFwjpb9qP1S85bVsuXceO4oJtNK7+rZCS15")

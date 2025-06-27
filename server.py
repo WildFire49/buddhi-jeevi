@@ -17,10 +17,12 @@ from utils.api_utils import send_api_response, extract_request_body
 from schemas import (
     ChatRequest, DataSubmitRequest, DataSubmitResponse,
     NextActionItem, ChatResponse, KeyValuePair, ImageUploadResponse,
-    SignedUrlRequest, SignedUrlResponse
+    SignedUrlRequest, SignedUrlResponse, OCRRequest, OCRResponse,
+    OCRMatchRequest, OCRMatchResponse
 )
 from request_handler.submit_request_handler import submit_data
 from request_handler.chat_request_handler import process_chat
+from multimedia.ocr_service import OCRService
 from fastapi import File, UploadFile, Form
 from typing import List, Dict, Any
 from pydantic import BaseModel
@@ -140,8 +142,8 @@ async def chat(request_obj: Request, chat_request: ChatRequest):
 
     try:
         # Process the chat request using our handler
-        print(f"Processing chat request with prompt: {request.prompt[:50]}...")
-        response_content = process_chat(request)
+        print(f"Processing chat request with prompt: {chat_request.prompt[:50]}...")
+        response_content = process_chat(chat_request)
         
         # Debug the full response content
         print(f"Full response content from chat_request_handler: {response_content}")
@@ -766,6 +768,104 @@ def transform_ui_schema_to_flat_structure(ui_components):
     
     # Fallback
     return []
+
+@app.post("/ocr/extract")
+async def ocr_extract(request_obj: Request, ocr_request: OCRRequest):
+    """
+    Extract text from an image using OCR
+    """
+    # Prepare request data for logging
+    request_data = {
+        "object_id": ocr_request.object_id,
+        "session_id": ocr_request.session_id
+    }
+    
+    try:
+        # Initialize OCR service
+        ocr_service = OCRService()
+        
+        # Process the image
+        result = ocr_service.process_image(ocr_request.object_id)
+        
+        # Create response
+        response = OCRResponse(
+            success=result.get("success", False),
+            object_id=ocr_request.object_id,
+            text=result.get("text"),
+            image_url=result.get("image_url"),
+            error=result.get("error")
+        )
+        
+        # Send response with appropriate status code
+        status_code = 200 if result.get("success", False) else 400
+        return send_api_response(request_obj, response, status_code, request_data=request_data)
+        
+    except Exception as e:
+        print(f"Error processing OCR request: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        
+        # Create error response
+        error_response = OCRResponse(
+            success=False,
+            object_id=ocr_request.object_id,
+            error=f"Error processing OCR request: {str(e)}"
+        )
+        
+        # Send the error response with logging
+        return send_api_response(request_obj, error_response, 500, request_data=request_data)
+
+@app.post("/ocr/match")
+async def ocr_match(request_obj: Request, match_request: OCRMatchRequest):
+    """
+    Match expected text against OCR results from an image
+    """
+    # Prepare request data for logging
+    request_data = {
+        "object_id": match_request.object_id,
+        "expected_text": match_request.expected_text,
+        "threshold": match_request.threshold,
+        "session_id": match_request.session_id
+    }
+    
+    try:
+        # Initialize OCR service
+        ocr_service = OCRService()
+        
+        # Match text from the image
+        result = ocr_service.match_text(
+            match_request.object_id,
+            match_request.expected_text,
+            match_request.threshold
+        )
+        
+        # Create response
+        response = OCRMatchResponse(
+            success=result.get("success", False),
+            object_id=match_request.object_id,
+            image_url=result.get("image_url"),
+            match_result=result.get("match_result"),
+            error=result.get("error")
+        )
+        
+        # Send response with appropriate status code
+        status_code = 200 if result.get("success", False) else 400
+        return send_api_response(request_obj, response, status_code, request_data=request_data)
+        
+    except Exception as e:
+        print(f"Error processing OCR match request: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        
+        # Create error response
+        error_response = OCRMatchResponse(
+            success=False,
+            object_id=match_request.object_id,
+            error=f"Error processing OCR match request: {str(e)}"
+        )
+        
+        # Send the error response with logging
+        return send_api_response(request_obj, error_response, 500, request_data=request_data)
 
 # Start the server when this file is run directly
 

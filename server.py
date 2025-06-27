@@ -140,64 +140,118 @@ async def chat(request_obj: Request, chat_request: ChatRequest):
 
     try:
         # Process the chat request using our handler
-        print(f"Processing chat request with prompt: {chat_request.prompt[:50]}...")
-        result = process_chat(chat_request)
+        print(f"Processing chat request with prompt: {request.prompt[:50]}...")
+        response_content = process_chat(request)
         
-        # Extract the response and UI components
-        response_content = result.get("response", {})
+        # Debug the full response content
+        print(f"Full response content from chat_request_handler: {response_content}")
+        print(f"Response content type: {type(response_content)}")
         
-        # For /chat API, ui_components should be a flat structure, not nested or duplicated
-        if isinstance(response_content, dict) and "ui_components" in response_content:
-            ui_components = response_content.get("ui_components", [])
-            
-            # Make sure ui_components is directly accessible and not nested
-            if isinstance(ui_components, dict) and "ui_components" in ui_components:
-                # Extract the inner ui_components array to avoid nesting
-                ui_components = ui_components.get("ui_components", [])
-                # Update the response to use the flat structure
-                response_content["ui_components"] = ui_components
-                print(f"Flattened ui_components structure for /chat API")
+        if isinstance(response_content, dict):
+            print(f"Response content keys: {response_content.keys()}")
+            for key, value in response_content.items():
+                print(f"Key: {key}, Value type: {type(value)}, Value: {value if not isinstance(value, str) or len(str(value)) < 100 else value[:100] + '...'}")
         else:
-            ui_components = []
+            print(f"Response content is not a dict: {response_content}")
+        
+        # Extract UI components if they exist
+        ui_components = None
+        if isinstance(response_content, dict) and "ui_components" in response_content:
+            ui_components = response_content.get("ui_components")
+            if ui_components:
+                print(f"Found UI components with ID: {ui_components.get('id', 'unknown')}")
+            else:
+                print("UI components is None")
+                ui_components = None
         
         # Extract action IDs if they exist
-        action_id = response_content.get("id")
-        next_success_action_id = response_content.get("next_success_action_id")
-        next_err_action_id = response_content.get("next_err_action_id")
-        title= response_content.get("title", "")
+        action_id = None
+        next_success_action_id = None
+        next_err_action_id = None
+        title = None
+        
+        # Debug the response content
+        print(f"Response content keys: {response_content.keys() if isinstance(response_content, dict) else 'Not a dict'}")
+        
+        if isinstance(response_content, dict):
+            # Directly extract action IDs from the top level
+            action_id = response_content.get("id")
+            next_success_action_id = response_content.get("next_success_action_id")
+            next_err_action_id = response_content.get("next_err_action_id")
+            title = response_content.get("title", "")
 
         # Log the response type for debugging
         print(f"Response type: {type(response_content)}, Action ID: {action_id}")
         
-        # For ui_tags, we need to ensure we're working with the flattened ui_components
-        # before updating the IDs
-        flat_ui_components = ui_components
-        
-        # Create updated UI components for ui_tags with IDs appended with timestamp
-        # Make sure we're working with a list
-        if isinstance(flat_ui_components, list):
-            ui_tags_array = update_component_ids(flat_ui_components)
-        else:
-            # If somehow we still have a dict with nested ui_components
-            if isinstance(flat_ui_components, dict) and "ui_components" in flat_ui_components:
-                ui_tags_array = update_component_ids(flat_ui_components["ui_components"])
+        # Pass through all data from the NLP layer
+        if isinstance(response_content, dict):
+            # Extract all the fields we need
+            response_obj = response_content.get("response", {})
+            english_response = response_content.get("english_response", None)
+            nlp_response = response_content.get("nlp_response", None)
+            detected_language = response_content.get("detected_language", None)
+            audio_url = response_content.get("audio_url", None)
+            nlp_ui_tags = response_content.get("ui_tags", [])
+            
+            # Check if UI components are embedded in the response object or at the top level
+            if isinstance(response_obj, dict) and "ui_components" in response_obj:
+                ui_components = response_obj.get("ui_components")
+                print(f"Found UI components embedded in response object: {ui_components.get('id') if ui_components else None}")
             else:
-                ui_tags_array = []
-        
-        # Create the response object
-        response = ChatResponse(
-            session_id=session_id,
-            response=response_content,
-            ui_tags=ui_tags_array,  # Use the array
-            action_id=action_id,
-            next_success_action_id=next_success_action_id,
-            next_err_action_id=next_err_action_id,
-            title=title 
-        )
-        
-        # Send the response with logging
-        return send_api_response(request_obj, response, 200, request_data=request_data)
-        
+                # If UI components are not in the response object, check if they're at the top level
+                ui_components = response_content.get("ui_components")
+                if ui_components:
+                    # If UI components are at the top level, also embed them in the response object
+                    if isinstance(response_obj, dict):
+                        response_obj["ui_components"] = ui_components
+                        response_obj["screen_id"] = ui_components.get("screen_id")
+                        response_obj["type"] = response_obj.get("action_type")
+                        print(f"Embedded UI components in response object: {ui_components.get('id') if ui_components else None}")
+            
+            # Re-extract action IDs from the response content as they might be at the top level
+            # This ensures we get the action IDs even if they weren't extracted earlier
+            action_id = response_content.get("id", action_id)
+            next_success_action_id = response_content.get("next_success_action_id", next_success_action_id)
+            next_err_action_id = response_content.get("next_err_action_id", next_err_action_id)
+            title = response_content.get("title", title)
+            
+            print(f"Final extracted values - Action ID: {action_id}, Next Success: {next_success_action_id}, Next Error: {next_err_action_id}")
+            print(f"English Response: {english_response}, NLP Response: {nlp_response is not None}")
+            
+            # Set UI tags - avoid duplicates
+            combined_ui_tags = list(set(nlp_ui_tags))
+            
+            # Return the formatted response with all data from NLP layer
+            return ChatResponse(
+                session_id=session_id,
+                response=response_obj,  # Use the full response object with embedded UI components
+                english_response=english_response,
+                detected_language=detected_language,
+                audio_url=audio_url,
+                nlp_response=nlp_response,
+                ui_tags=combined_ui_tags,
+                ui_components=ui_components if ui_components else None,
+                action_id=action_id,
+                next_success_action_id=next_success_action_id,
+                next_err_action_id=next_err_action_id,
+                title=title 
+            )
+        else:
+            # Handle non-dict responses
+            return ChatResponse(
+                session_id=session_id,
+                response=response_content,
+                english_response=None,
+                detected_language=None,
+                audio_url=None,
+                nlp_response=None,
+                ui_tags=["ui_components"] if ui_components else [],
+                ui_components=ui_components,
+                action_id=action_id,
+                next_success_action_id=next_success_action_id,
+                next_err_action_id=next_err_action_id,
+                title=title 
+            )
     except Exception as e:
         print(f"Error processing chat request: {str(e)}")
         import traceback
@@ -207,10 +261,16 @@ async def chat(request_obj: Request, chat_request: ChatRequest):
         error_response = ChatResponse(
             session_id=session_id,
             response=f"An error occurred while processing your request: {str(e)}",
+            english_response=f"Error: {str(e)}",  # Include English version of the error
+            detected_language=None,
+            audio_url=None,
+            nlp_response=None,
             ui_tags=[],
+            ui_components=None,
             action_id=None,
             next_success_action_id=None,
-            next_err_action_id=None
+            next_err_action_id=None,
+            title=None
         )
         
         # Send the error response with logging

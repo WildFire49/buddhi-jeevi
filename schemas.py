@@ -70,7 +70,12 @@ class SignedUrlResponse(BaseModel):
 class ChatResponse(BaseModel):
     session_id: str = Field(..., description="The session ID for the ongoing conversation.")
     response: Any = Field(..., description="The agent's response - can be string or object.")
+    english_response: Optional[Any] = Field(None, description="The English response from the translation layer.")
+    detected_language: Optional[str] = Field(None, description="The detected language of the input.")
+    audio_url: Optional[str] = Field(None, description="URL to the audio response if available.")
+    nlp_response: Optional[Any] = Field(None, description="Translated NLP response from the translation layer.")
     ui_tags: Any = Field([], description="A list of UI components or tags for the frontend.")
+    ui_components: Optional[Dict[str, Any]] = Field(None, description="UI components structure for rendering UI screens.")
     action_id: Optional[str] = Field(None, description="The ID of the action being performed.")
     next_success_action_id: Optional[str] = Field(None, description="The ID of the next action to be performed on success.")
     next_err_action_id: Optional[str] = Field(None, description="The ID of the next action to be performed on error.")

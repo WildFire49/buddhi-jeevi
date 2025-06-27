@@ -55,11 +55,12 @@ COPY --from=builder /app/.embeddings_cache /app/.embeddings_cache
 # Copy application code
 COPY . .
 
-# Create directory for audio files and embeddings cache, set permissions for the non-root user
-RUN mkdir -p temp_audio && \
-    chown -R app:app /app temp_audio && \
+# Create directory for audio files, static files, and embeddings cache, set permissions for the non-root user
+RUN mkdir -p temp_audio static/audio && \
+    chown -R app:app /app temp_audio static && \
     chown -R app:app /app/.embeddings_cache && \
-    chmod -R 755 /app/.embeddings_cache
+    chmod -R 755 /app/.embeddings_cache && \
+    chmod -R 755 /app/static
 
 # Set environment variables
 ENV PATH="/opt/venv/bin:$PATH"

@@ -22,11 +22,17 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt requirements-db.txt ./
 RUN pip install --no-cache-dir -r requirements.txt -r requirements-db.txt
 
-# Create cache directory and pre-download the sentence-transformer model
+# Create cache directory and pre-download models
 RUN mkdir -p /app/.embeddings_cache
 ENV TRANSFORMERS_CACHE=/app/.embeddings_cache
 ENV SENTENCE_TRANSFORMERS_HOME=/app/.embeddings_cache
+ENV HF_HOME=/app/.embeddings_cache
+
+# Pre-download sentence transformer model
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2', cache_folder='/app/.embeddings_cache')"
+
+# Pre-download ai4bharat/indic-conformer-600m-multilingual model
+RUN python -c "from transformers import AutoModel; AutoModel.from_pretrained('ai4bharat/indic-conformer-600m-multilingual', trust_remote_code=True)"
 
 # ---- Final Stage ----
 # This stage creates the final, lean production image

@@ -4,8 +4,13 @@ FROM python:3.10-slim as builder
 
 WORKDIR /app
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    portaudio19-dev \
+    libsndfile1 \
+    ffmpeg \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
@@ -58,8 +63,8 @@ ENV HF_HOME=/app/.embeddings_cache
 EXPOSE 8002
 EXPOSE 8004
 
-# Make the run_services.py script executable
-RUN chmod +x run_services.py
+# Make the run_services.py and qc_checks.py scripts executable
+RUN chmod +x run_services.py qc_checks.py
 
 # Switch to the non-root user
 USER app

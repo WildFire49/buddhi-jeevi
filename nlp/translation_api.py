@@ -6,6 +6,10 @@ import requests
 import tempfile
 import os
 import logging
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -31,6 +35,11 @@ LANG_CODE_MAP = {
     "marathi": "mr",
     "tamil": "ta",
 }
+
+# Get MinIO endpoint for audio files from environment
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "localhost")
+# Hardcode port 8004 for audio URL
+AUDIO_URL_BASE = f"http://{MINIO_ENDPOINT}:8004"
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -110,7 +119,7 @@ async def handle_translate(req: TranslationRequest):
         chat_history.append({"role": "assistant", "content": reply})
         logger.info("Synthesizing audio response...")
         audio_path = synthesize_and_save_audio(reply, lang_code)
-        audio_url = f"http://localhost:8000{audio_path}"
+        audio_url = f"{AUDIO_URL_BASE}{audio_path}"
         logger.info(f"Audio response saved at: {audio_url}")
 
         return {
@@ -153,7 +162,7 @@ async def handle_translate(req: TranslationRequest):
 
     logger.info("Synthesizing audio response...")
     audio_path = synthesize_and_save_audio(reply_regional, lang_code)
-    audio_url = f"http://localhost:8000{audio_path}"
+    audio_url = f"{AUDIO_URL_BASE}{audio_path}"
     logger.info(f"Audio response saved at: {audio_url}")
 
     response_data = {

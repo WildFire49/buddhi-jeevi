@@ -231,28 +231,9 @@ async def submit_endpoint(request_obj: Request, submit_request: DataSubmitReques
         "data_count": len(submit_request.data) if submit_request.data else 0
     }
     
-    # Process the submitted data
-    # if not submit_request.data:
-    #     error_response = DataSubmitResponse(
-    #         session_id=session_id,
-    #         status="failure",
-    #         message="Data field is required for submissions.",
-    #         errors=["Data field is required"],
-    #         ui_data=[],
-    #         next_action_ui_components=[]
-    #     )
-    #     return send_api_response(request_obj, error_response, 400, request_data=request_data)
-    
+   
     try:
-        # Convert the list of KeyValuePair to a dictionary for processing if needed
-        data_dict = {item.key: item.value for item in submit_request.data}
-        
-        # Add some of the data to the request_data for logging (limit to avoid huge logs)
-        data_sample = {}
-        for key, value in list(data_dict.items())[:5]:  # Only log first 5 items
-            data_sample[key] = str(value)[:50] + "..." if isinstance(value, str) and len(value) > 50 else value
-        request_data["data_sample"] = data_sample
-        
+          
         # Search for relevant data in the vector database based on action_id
         print(f"Calling submit_data with action_id: {action_id}")
         vector_results = submit_data(submit_request)

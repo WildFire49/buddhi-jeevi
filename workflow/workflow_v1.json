@@ -1,0 +1,1614 @@
+[
+    {
+        "action_id": "welcome_screen",
+        "stage_name": "Welcome Screen",
+        "llm_context": {
+            "purpose": "A simple, static welcome screen that displays the application name and a button to begin the onboarding process.",
+            "entities": [
+                "welcome",
+                "greeting",
+                "start",
+                "begin",
+                "intro"
+            ],
+            "example_prompts": [
+                "hey",
+                "hello",
+                "good morning",
+                "I want to start Onboarding",
+                "start my journey",
+                "let's begin"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "select_workflow",
+            "error_action_id": "welcome_screen"
+        },
+        "api_details": {
+            "endpoint": null,
+            "method": null,
+            "collect_fields": []
+        },
+        "ui_definition": {
+            "id": "ui_welcome_screen_001",
+            "screen_id": "welcome_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "center",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "welcome_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Welcome to MiFix",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "48dp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "proceed_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Proceed",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "navigate_to",
+                                    "screen": "login-screen",
+                                    "action_id": "welcome",
+                                    "next_success_action_id": "select-flow",
+                                    "next_err_action_id": "welcome"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "select_workflow",
+        "stage_name": "Select Workflow",
+        "llm_context": {
+            "purpose": "A selection screen that presents the user with primary choices, such as starting a new 'Customer Onboarding' or managing an existing 'Collections' process.",
+            "entities": [
+                "workflow_selection",
+                "onboarding",
+                "collections",
+                "main_menu",
+                "flow_choice"
+            ],
+            "example_prompts": [
+                "select a flow",
+                "start onboarding",
+                "I need to manage collections",
+                "choose a process",
+                "what can I do?"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "video_consent",
+            "error_action_id": "select_workflow"
+        },
+        "api_details": {
+            "endpoint": "/api/select-flow",
+            "method": "POST",
+            "collect_fields": [
+                "flow_choice"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_select_flow_001",
+            "screen_id": "select_flow_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "center",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "flow_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "What would you like to do?",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "32dp"
+                            }
+                        },
+                        {
+                            "id": "onboarding_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Onboarding",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "margin_bottom": "16dp",
+                                "action": {
+                                    "type": "navigate_to",
+                                    "endpoint": "/api/select-flow",
+                                    "method": "POST",
+                                    "action_id": "select-flow",
+                                    "next_success_action_id": "video-consent",
+                                    "next_err_action_id": "select-flow"
+                                }
+                            }
+                        },
+                        {
+                            "id": "collections_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Collections",
+                                "background_color": "#34C759",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "navigate_to",
+                                    "endpoint": "/api/select-flow",
+                                    "method": "POST",
+                                    "extra_payload": {
+                                        "flow_choice": "collections"
+                                    },
+                                    "action_id": "select-flow",
+                                    "next_success_action_id": "video-consent",
+                                    "next_err_action_id": "select-flow"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "video_consent",
+        "stage_name": "Video Consent Agreement",
+        "llm_context": {
+            "purpose": "A screen that displays a consent agreement video. It requires the user to watch the video and then explicitly agree by pressing a confirmation button.",
+            "entities": [
+                "video",
+                "consent",
+                "agreement",
+                "terms_and_conditions",
+                "permission",
+                "loan"
+            ],
+            "example_prompts": [
+                "I want to give consent for the loan",
+                "I agree to the terms",
+                "show me the consent video",
+                "accept video consent"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "enter_mobile_number",
+            "error_action_id": "video_consent"
+        },
+        "api_details": {
+            "endpoint": "/api/accept-consent",
+            "method": "POST",
+            "collect_fields": []
+        },
+        "ui_definition": {
+            "id": "ui_video_consent_001",
+            "screen_id": "video_consent_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "24dp",
+                        "background_color": "#F5F5F5",
+                        "vertical_arrangement": "center",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "video_consent_heading",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Video Consent",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "12dp"
+                            }
+                        },
+                        {
+                            "id": "consent_instruction",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Show this video to the customer",
+                                "text_size": "16sp",
+                                "text_color": "#333333",
+                                "text_align": "center",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "video_player",
+                            "component_type": "video",
+                            "properties": {
+                                "video_url": "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4",
+                                "thumbnail_url": "https://example.com/video-thumbnail.jpg",
+                                "background_color": "#000000",
+                                "corner_radius": "12dp",
+                                "aspect_ratio": "16:9",
+                                "margin_bottom": "20dp",
+                                "action": {
+                                    "type": "play_video"
+                                }
+                            }
+                        },
+                        {
+                            "id": "accept_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Capture Customer Consent",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "semibold",
+                                "corner_radius": "12dp",
+                                "padding": "16dp",
+                                "enabled": true,
+                                "action": {
+                                    "type": "navigate_to",
+                                    "endpoint": "/api/accept-consent",
+                                    "method": "POST",
+                                    "action_id": "video-consent",
+                                    "next_success_action_id": "mobile-verification",
+                                    "next_err_action_id": "video-consent"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "enter_mobile_number",
+        "stage_name": "Mobile Number Verification",
+        "llm_context": {
+            "purpose": "A form for the user to enter their 10-digit mobile number to initiate an OTP verification process.",
+            "entities": [
+                "mobile_number",
+                "phone_number",
+                "verification",
+                "otp_trigger",
+                "10_digit"
+            ],
+            "example_prompts": [
+                "Enter my mobile number for verification",
+                "verify my phone",
+                "I need to input my 10-digit mobile number",
+                "send OTP"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "verify_otp",
+            "error_action_id": "enter_mobile_number"
+        },
+        "api_details": {
+            "endpoint": "/api/submit-data",
+            "method": "POST",
+            "collect_fields": [
+                "phone_input"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_mobile_verification_001",
+            "screen_id": "mobile_verification_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "mobile_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Mobile Verification",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "16dp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "form_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "phone_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your phone number",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "phone",
+                                "max_length": 10,
+                                "validation": {
+                                    "required": true,
+                                    "pattern": "^[0-9]{10}$",
+                                    "custom_error": "Please enter a valid 10-digit phone number"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "row",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_arrangement": "space_between"
+                    },
+                    "children": [
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Verify Mobile",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "weight": 1,
+                                "margin_start": "8dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/submit-data",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "phone_input"
+                                    ],
+                                    "action_id": "mobile-verification",
+                                    "next_success_action_id": "otp-verification",
+                                    "next_err_action_id": "mobile-verification"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "verify_otp",
+        "stage_name": "OTP Verification",
+        "llm_context": {
+            "purpose": "A screen with an input field for the user to enter the One-Time Password (OTP) that was sent to their mobile number for verification.",
+            "entities": [
+                "otp",
+                "one_time_password",
+                "verification_code",
+                "sms_code",
+                "confirm"
+            ],
+            "example_prompts": [
+                "enter the OTP",
+                "confirm my OTP",
+                "validate the code from my SMS",
+                "I received the OTP",
+                "submit verification code"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "capture_customer_photo",
+            "error_action_id": "verify_otp"
+        },
+        "api_details": {
+            "endpoint": "/api/submit-data",
+            "method": "POST",
+            "collect_fields": [
+                "otp_input"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_otp_verification_001",
+            "screen_id": "otp_verification_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "otp_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "OTP Verification",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "16dp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "form_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "otp_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your OTP",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "phone",
+                                "max_length": 4,
+                                "validation": {
+                                    "required": true
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "row",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_arrangement": "space_between"
+                    },
+                    "children": [
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Verify OTP",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "weight": 1,
+                                "margin_start": "8dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/submit-data",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "otp_input"
+                                    ],
+                                    "action_id": "otp-verification",
+                                    "next_success_action_id": "customer-photo",
+                                    "next_err_action_id": "otp-verification"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "capture_customer_photo",
+        "stage_name": "Capture Customer Photo",
+        "llm_context": {
+            "purpose": "A screen that activates the device camera for the user to capture a live selfie for their profile photo as part of the KYC process.",
+            "entities": [
+                "selfie",
+                "photo_capture",
+                "customer_photo",
+                "live_photo",
+                "kyc"
+            ],
+            "example_prompts": [
+                "take a selfie",
+                "capture my photo",
+                "upload my picture for kyc",
+                "customer photo screen"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "select_secondary_kyc_document",
+            "error_action_id": "capture_customer_photo"
+        },
+        "api_details": {
+            "endpoint": "/api/customer-photo",
+            "method": "POST",
+            "collect_fields": [
+                "customer_photo_upload"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_customer_photo_001",
+            "screen_id": "customer_photo_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "title_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Customer Recent Photo",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        },
+                        {
+                            "id": "photo_instruction",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Capture customer recent photo",
+                                "text_size": "16sp",
+                                "text_color": "#333333",
+                                "text_align": "left",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "customer_photo_upload",
+                            "component_type": "image_capture",
+                            "properties": {
+                                "title": "Customer Photo",
+                                "instructions": "Take a clear photo of the customer",
+                                "max_images": 1,
+                                "min_images": 1,
+                                "page_limit": 1,
+                                "allow_gallery": true,
+                                "require_document_type": false,
+                                "margin_bottom": "24dp",
+                                "document_types": [
+                                    {
+                                        "value": "recent_photo",
+                                        "label": "Recent Customer Photo",
+                                        "max_pages": 1
+                                    }
+                                ],
+                                "validation": {
+                                    "required": true
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit Photo",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/customer-photo",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "customer_photo_upload"
+                                    ],
+                                    "action_id": "customer-photo",
+                                    "next_success_action_id": "secondry-kyc-document-selector"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "pan_input",
+        "stage_name": "Primary KYC - PAN Card",
+        "llm_context": {
+            "purpose": "A form where the user enters their 10-character alpha-numeric Permanent Account Number (PAN) and uploads a clear image of their PAN card.",
+            "entities": [
+                "pan",
+                "pan_card",
+                "primary_kyc",
+                "document_upload",
+                "income_tax_id"
+            ],
+            "example_prompts": [
+                "I want to submit my PAN card",
+                "Enter PAN details",
+                "Proceed with PAN KYC",
+                "Upload my PAN card photo"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "capture_aadhaar_info",
+            "error_action_id": "pan_input"
+        },
+        "api_details": {
+            "endpoint": "/api/pan/upload",
+            "method": "POST",
+            "collect_fields": [
+                "pan_number_input",
+                "pan_card_upload"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_pan_input_001",
+            "screen_id": "primary_kyc_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF"
+                    },
+                    "children": [
+                        {
+                            "id": "instruction_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Upload PAN Card",
+                                "text_size": "20sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "pan_number_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter PAN Number",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "max_length": 10,
+                                "validation": {
+                                    "required": true,
+                                    "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
+                                    "custom_error": "Please enter a valid PAN number (e.g., ABCDE1234F)"
+                                }
+                            }
+                        },
+                        {
+                            "id": "pan_card_upload",
+                            "component_type": "image_capture",
+                            "properties": {
+                                "title": "PAN Card Image",
+                                "instructions": "Take a clear photo of your PAN card",
+                                "max_images": 2,
+                                "min_images": 1,
+                                "page_limit": 1,
+                                "allow_gallery": true,
+                                "require_document_type": false,
+                                "margin_bottom": "24dp",
+                                "document_types": [
+                                    {
+                                        "value": "pan",
+                                        "label": "PAN Card",
+                                        "max_pages": 2
+                                    }
+                                ],
+                                "validation": {
+                                    "required": true
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit Voter ID Card",
+                                "background_color": "#4CAF50",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/pan/upload",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "pan_number_input",
+                                        "pan_card_upload"
+                                    ],
+                                    "action_id": "pan_input",
+                                    "next_success_action_id": "aadhar_capture_info",
+                                    "next_err_action_id": "pan_input"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "voter_id_input",
+        "stage_name": "Primary KYC - Voter ID",
+        "llm_context": {
+            "purpose": "A form where the user enters their Elector's Photo Identity Card (EPIC) number, also known as a Voter ID, and uploads images of the front and back of the card.",
+            "entities": [
+                "voter_id",
+                "voter_card",
+                "epic",
+                "primary_kyc",
+                "document_upload",
+                "election_card"
+            ],
+            "example_prompts": [
+                "I want to use my Voter ID for KYC",
+                "Enter my EPIC number",
+                "My voter card details",
+                "How do I upload my election card?"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "capture_aadhaar_info",
+            "error_action_id": "voter_id_input"
+        },
+        "api_details": {
+            "endpoint": "/api/vtrid/upload",
+            "method": "POST",
+            "collect_fields": [
+                "vtrid_number_input",
+                "vtrid_card_upload"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_vtrid_input_001",
+            "screen_id": "primary_kyc_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF"
+                    },
+                    "children": [
+                        {
+                            "id": "instruction_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Upload Voter ID Card",
+                                "text_size": "20sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "vtrid_number_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter Voter ID Number",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "max_length": 10,
+                                "validation": {
+                                    "required": true,
+                                    "pattern": "^[0-9]{13}$",
+                                    "custom_error": "Please enter a valid Voter ID number (e.g., 1234567890123)"
+                                }
+                            }
+                        },
+                        {
+                            "id": "vtrid_card_upload",
+                            "component_type": "image_capture",
+                            "properties": {
+                                "title": "Voter ID Card Image",
+                                "instructions": "Take a clear photo of your Voter ID card",
+                                "max_images": 2,
+                                "min_images": 1,
+                                "page_limit": 1,
+                                "allow_gallery": true,
+                                "require_document_type": false,
+                                "margin_bottom": "24dp",
+                                "document_types": [
+                                    {
+                                        "value": "vtrid",
+                                        "label": "Voter ID Card",
+                                        "max_pages": 2
+                                    }
+                                ],
+                                "validation": {
+                                    "required": true
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit Voter ID Card",
+                                "background_color": "#4CAF50",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/vtrid/upload",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "vtrid_number_input",
+                                        "vtrid_card_upload"
+                                    ],
+                                    "action_id": "vtrid_input",
+                                    "next_success_action_id": "aadhar_capture_info",
+                                    "next_err_action_id": "vtrid_input"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "select_secondary_kyc_document",
+        "stage_name": "Select Secondary KYC Document",
+        "llm_context": {
+            "purpose": "A screen presenting a dropdown or list of acceptable documents (e.g., Aadhaar Card, Driving License) for the user to select as their secondary proof of identity.",
+            "entities": [
+                "secondary_kyc",
+                "document_selector",
+                "proof_of_address",
+                "aadhaar",
+                "driving_license"
+            ],
+            "example_prompts": [
+                "select my secondary kyc document",
+                "choose proof of address",
+                "I will use my aadhaar card"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "capture_prospect_basic_details",
+            "error_action_id": "select_secondary_kyc_document"
+        },
+        "api_details": {
+            "endpoint": "/api/submit-secondry-kyc-document-selector",
+            "method": "POST",
+            "collect_fields": [
+                "document_dropdown"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_prospect_info_001",
+            "screen_id": "prospect_info_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "title_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Secondary KYC",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        },
+                        {
+                            "id": "kyc_instruction",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Confirm Secondary KYC",
+                                "text_size": "16sp",
+                                "text_color": "#333333",
+                                "text_align": "left",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "document_dropdown",
+                            "component_type": "dropdown",
+                            "properties": {
+                                "hint": "Select Document",
+                                "title": "Select Document for KYC",
+                                "margin_bottom": "32dp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "options": [
+                                    {
+                                        "value": "",
+                                        "label": "-- Select Document --"
+                                    },
+                                    {
+                                        "value": "vtrid_input",
+                                        "label": "Voter ID"
+                                    },
+                                    {
+                                        "value": "pan_input",
+                                        "label": "PAN"
+                                    }
+                                ],
+                                "default_value": "",
+                                "validation": {
+                                    "required": true,
+                                    "custom_error": "Please select a valid document"
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/submit-secondry-kyc-document-selector",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "document_dropdown"
+                                    ],
+                                    "action_id": "secondry-kyc-document-selector",
+                                    "next_success_action_id": "customer_basic_details",
+                                    "next_err_action_id": "secondry-kyc-document-selector"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "login_screen",
+        "stage_name": "User Login",
+        "llm_context": {
+            "purpose": "A standard login screen with input fields for a username and password, and a 'Login' button to authenticate an existing user.",
+            "entities": [
+                "login",
+                "signin",
+                "username",
+                "password",
+                "authentication"
+            ],
+            "example_prompts": [
+                "I want to login",
+                "user login",
+                "let me sign in",
+                "enter my username and password"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "enter_new_customer_details",
+            "error_action_id": "login_screen"
+        },
+        "api_details": {
+            "endpoint": "/api/login",
+            "method": "POST",
+            "collect_fields": [
+                "username",
+                "password"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_login_screen_001",
+            "screen_id": "login_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "login_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Login",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "form_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "username",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your username",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "max_length": 50,
+                                "validation": {
+                                    "required": true,
+                                    "min_length": 3,
+                                    "pattern": "^[a-zA-Z0-9_]+$",
+                                    "custom_error": "Username should only contain letters, numbers and underscore"
+                                }
+                            }
+                        },
+                        {
+                            "id": "password",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your password",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "24dp",
+                                "input_type": "password",
+                                "validation": {
+                                    "required": true,
+                                    "min_length": 6,
+                                    "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
+                                    "custom_error": "Password must contain uppercase, lowercase, number and special character"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "login_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Login",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/login",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "username",
+                                        "password"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "enter_new_customer_details",
+        "stage_name": "Enter New Customer Details",
+        "llm_context": {
+            "purpose": "A form for an authenticated agent to input the initial details of a new customer they are about to onboard, typically requiring the customer's full name and mobile number.",
+            "entities": [
+                "customer_details",
+                "customer_name",
+                "customer_mobile",
+                "new_customer"
+            ],
+            "example_prompts": [
+                "enter customer name and mobile number",
+                "start a new customer application",
+                "I need to input the customer's details"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "dashboard-screen",
+            "error_action_id": "enter_new_customer_details"
+        },
+        "api_details": {
+            "endpoint": "/api/user-details",
+            "method": "POST",
+            "collect_fields": [
+                "customer_name",
+                "mobile_number"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_user_details_001",
+            "screen_id": "user_details_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "details_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "User Details",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "description_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Please fill in your information",
+                                "text_size": "16sp",
+                                "text_color": "#666666",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "form_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "customer_name",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your name",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "max_length": 50,
+                                "validation": {
+                                    "required": true,
+                                    "min_length": 2,
+                                    "pattern": "^[a-zA-Z\\s]+$",
+                                    "custom_error": "Name should only contain letters and spaces"
+                                }
+                            }
+                        },
+                        {
+                            "id": "mobile_number",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your phone number",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "24dp",
+                                "input_type": "phone",
+                                "max_length": 10,
+                                "validation": {
+                                    "required": true,
+                                    "pattern": "^[0-9]{10}$",
+                                    "custom_error": "Please enter a valid 10-digit phone number"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "row",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_arrangement": "space_between"
+                    },
+                    "children": [
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "weight": 1,
+                                "margin_start": "8dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/user-details",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "customer_name",
+                                        "mobile_number"
+                                    ],
+                                    "action_id": "user-details",
+                                    "next_err_action_id": "user-details"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "capture_aadhaar_info",
+        "stage_name": "Aadhaar Card Information",
+        "llm_context": {
+            "purpose": "A screen dedicated to capturing the user's Aadhaar card information, including the 12-digit Aadhaar number and potentially uploading images of the card.",
+            "entities": [
+                "aadhaar",
+                "aadhaar_card",
+                "uidai",
+                "identity_proof",
+                "document_upload"
+            ],
+            "example_prompts": [
+                "enter my aadhar number",
+                "capture my aadhar info",
+                "upload my aadhar card",
+                "aadhar card verification"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "capture_prospect_basic_details",
+            "error_action_id": "capture_aadhaar_info"
+        },
+        "api_details": {
+            "endpoint": "/api/submit-data",
+            "method": "POST",
+            "collect_fields": [
+                "adhar_inout"
+            ]
+        },
+        "ui_definition": {
+            "id": "aadhar_capture_info_001",
+            "screen_id": "aadhar_capture_info_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "mobile_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Aadhaar Verification",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "adhar_inout",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter Aadhaar phone number",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "max_length": 12,
+                                "validation": {
+                                    "required": true,
+                                    "pattern": "^[2-9]{1}[0-9]{11}$",
+                                    "custom_error": "Please enter a valid 10-digit phone number"
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Verify Aadhaar",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "weight": 1,
+                                "margin_start": "8dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/submit-data",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "adhar_inout"
+                                    ],
+                                    "action_id": "user-detail-screen-001",
+                                    "next_success_action_id": "ui_customer_basic_details_001",
+                                    "next_err_action_id": "verification-error-screen"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "capture_prospect_basic_details",
+        "stage_name": "Prospect Basic Information",
+        "llm_context": {
+            "purpose": "A form to collect basic demographic information about a prospective customer, such as their full name, date of birth (DOB), and current residential address.",
+            "entities": [
+                "prospect_details",
+                "basic_info",
+                "full_name",
+                "date_of_birth",
+                "dob",
+                "address"
+            ],
+            "example_prompts": [
+                "prospect onboarding screen",
+                "enter my name, dob, and address",
+                "fill out the basic details form",
+                "customer basic information"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "dashboard-screen",
+            "error_action_id": "capture_prospect_basic_details"
+        },
+        "api_details": {
+            "endpoint": "/api/user/register",
+            "method": "POST",
+            "collect_fields": [
+                "name_input",
+                "dob_picker",
+                "address_input"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_customer_basic_details_001",
+            "screen_id": "customer_basic_details",
+            "ui_components": [
+                {
+                    "id": "registration_form",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "form_title",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Prospect Information",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        },
+                        {
+                            "id": "name_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your full name",
+                                "title": "Full Name",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "validation": {
+                                    "required": true,
+                                    "pattern": "^[a-zA-Z\\s]+$",
+                                    "custom_error": "Please enter a valid name (letters and spaces only)"
+                                }
+                            }
+                        },
+                        {
+                            "id": "dob_picker",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your date of birth(dd/MM/yyyy)",
+                                "title": "Date of birth",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "16dp",
+                                "input_type": "text",
+                                "validation": {
+                                    "required": true,
+                                    "pattern": "^(0[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[0-2])[-/]\\d{4}$",
+                                    "custom_error": "Please enter a date of birth."
+                                }
+                            }
+                        },
+                        {
+                            "id": "address_input",
+                            "component_type": "text_input",
+                            "properties": {
+                                "hint": "Enter your complete address",
+                                "title": "Address",
+                                "text_size": "16sp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "padding": "12dp",
+                                "margin_bottom": "24dp",
+                                "input_type": "text",
+                                "max_lines": 3,
+                                "min_lines": 2,
+                                "validation": {
+                                    "required": true,
+                                    "custom_error": "Please enter a complete address "
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit Registration",
+                                "background_color": "#4CAF50",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "action_id": "ui_aadhar_verification_001",
+                                    "next_success_action_id": "otp-verification-screen",
+                                    "next_err_action_id": "verification-error-screen",
+                                    "type": "submit_form",
+                                    "endpoint": "/api/user/register",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "name_input",
+                                        "dob_picker",
+                                        "address_input"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+]

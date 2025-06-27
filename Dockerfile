@@ -31,8 +31,13 @@ ENV HF_HOME=/app/.embeddings_cache
 # Pre-download sentence transformer model
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2', cache_folder='/app/.embeddings_cache')"
 
-# Pre-download ai4bharat/indic-conformer-600m-multilingual model
-RUN python -c "from transformers import AutoModel; AutoModel.from_pretrained('ai4bharat/indic-conformer-600m-multilingual', trust_remote_code=True)"
+# Pre-download ai4bharat/indic-conformer-600m-multilingual model with pinned revision
+# Using the specific revision from the logs: c9f5e5c52666853677f5384b604b0a81c49ce592
+RUN python -c "from transformers import AutoModel; AutoModel.from_pretrained('ai4bharat/indic-conformer-600m-multilingual', revision='main', trust_remote_code=True, local_files_only=False)"
+
+# Create a .cache directory to store the model files
+RUN mkdir -p /app/.cache/huggingface
+ENV HUGGINGFACE_HUB_CACHE=/app/.cache/huggingface
 
 # ---- Final Stage ----
 # This stage creates the final, lean production image
@@ -55,8 +60,9 @@ RUN addgroup --system app && adduser --system --group app
 # Copy virtual environment from builder stage
 COPY --from=builder /opt/venv /opt/venv
 
-# Copy the pre-downloaded model cache from builder stage
+# Copy the pre-downloaded model caches from builder stage
 COPY --from=builder /app/.embeddings_cache /app/.embeddings_cache
+COPY --from=builder /app/.cache/huggingface /app/.cache/huggingface
 
 # Copy application code
 COPY . .
@@ -74,6 +80,7 @@ ENV PYTHONUNBUFFERED=1
 ENV TRANSFORMERS_CACHE=/app/.embeddings_cache
 ENV SENTENCE_TRANSFORMERS_HOME=/app/.embeddings_cache
 ENV HF_HOME=/app/.embeddings_cache
+ENV HUGGINGFACE_HUB_CACHE=/app/.cache/huggingface
 
 # Expose both server and translation API ports
 EXPOSE 8002

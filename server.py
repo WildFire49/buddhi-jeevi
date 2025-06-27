@@ -71,7 +71,8 @@ app.add_middleware(
 app.middleware("http")(validate_api_key)
 
 # --- API Logger Middleware ---
-# app.add_middleware(APILoggerMiddleware)
+from middleware.api_logger import APILoggerMiddleware
+app.add_middleware(APILoggerMiddleware)
 
 # --- Initialize Database ---
 try:
@@ -101,7 +102,15 @@ async def chat(request_obj: Request, chat_request: ChatRequest):
     Main endpoint to chat with the loan onboarding agent.
     It manages the conversation state based on the session_id.
     """
+    # Log the incoming request
+    print(f"Received chat request: {chat_request.dict()}")
+    
     session_id = chat_request.session_id or str(uuid.uuid4())
+    print(f"Processing chat request for session: {session_id}")
+    
+    # Log request headers
+    headers = dict(request_obj.headers)
+    print(f"Request headers: {headers}")
     
     # Prepare request data for logging
     request_data = {

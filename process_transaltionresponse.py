@@ -54,18 +54,7 @@ def process_translation_response(response_json: Dict[str, Any]) -> TranslationRe
     return TranslationResponse(**response_json)
 
 # Example usage
-if __name__ == "__main__":
-    # Use the sample response to demonstrate the class structure
-    translation_response = process_translation_response(SAMPLE_RESPONSE)
-    
-    # Access the structured data
-    print("\nTranslation Response:")
-    print(f"Tool: {translation_response.tool}")
-    print(f"Type: {translation_response.type}")
-    print(f"Input Text: {translation_response.input.text}")
-    print(f"Detected Language: {translation_response.input.detected_lang}")
-    print(f"Translated Text: {translation_response.input.translated_text}")
-    print(f"Audio Response URL: {translation_response.input.audio_response_path}")
+def translator(text: str):
     
     # Make a live API call to get a real response
     try:
@@ -77,7 +66,7 @@ if __name__ == "__main__":
                 "tool": "translate",
                 "type": "text",
                 "input": {
-                    "text": "What documents do I need for a joint loan?",
+                    "text": text,
                     "target_lang": "en"
                 }
             }
@@ -91,8 +80,15 @@ if __name__ == "__main__":
             print(f"Detected Language: {live_response.input.detected_lang}")
             print(f"Response: {live_response.input.translated_text[:100]}...")
             print(f"Audio URL: {live_response.input.audio_response_path}")
+            return live_response.input
         else:
             print(f"API call failed with status code: {api_response.status_code}")
+            res = TranslationResponseInput(text=text, detected_lang="english", translated_text=text, english_input=text, english_response=text, audio_response_path="")
+            return res
     except Exception as e:
         print(f"Error making API call: {e}")
+        res = TranslationResponseInput(text=text, detected_lang="english", translated_text=text, english_input=text, english_response=text, audio_response_path="")
+        return res
+
+
 

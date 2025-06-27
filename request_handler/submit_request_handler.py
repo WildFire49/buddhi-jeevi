@@ -5,6 +5,7 @@ import re
 import traceback
 from dotenv import load_dotenv
 import datetime
+from credit import mail_router
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -27,6 +28,9 @@ def submit_data(request: DataSubmitRequest):
         print("No action_id provided in request")
         return []
     
+    if action_id == "capture_prospect_basic_details":
+        cedit_status = mail_router()
+    
     system_prompt = """
         You are a UI component and workflow extractor. Your task is to extract specific information from the provided context.
         
@@ -46,16 +50,16 @@ def submit_data(request: DataSubmitRequest):
         - The title field is displayed to end users in the frontend - it must be the original value
         
         STEP-BY-STEP EXTRACTION PROCESS:
-        1. Identify the current action and its UI components
-        2. Find the next_success_action_id from the current action's metadata
-        3. Search for UI components that match the next_success_action_id's ui_id pattern (e.g., if next_success_action_id is "select-flow", look for "ui_select_flow_001")
+        1. Identify the current action by action_id and its UI components
+        2. Find the next_action_id from the current action's metadata
+        3. Search for document that match the next_action_id's ui_id pattern (e.g., if next_action_id is "select-flow", look for "ui_select_flow_001")
         4. Return ONLY those specific UI components for the next action - not all possible UI schemas
         5. Ensure next_action_ui_components contains different components than ui_components
         6. Copy all text values, titles, and properties EXACTLY as they appear in the source
         
         VALIDATION RULES:
         - ui_components and next_action_ui_components MUST be different
-        - next_action_ui_components should contain ONLY the UI schema for the next_success_action_id
+        - next_action_ui_components should contain ONLY the UI schema for the next_action_id
         - ALL text content must be copied exactly from source data without modification
         
         Context: {context}
@@ -134,13 +138,14 @@ def submit_data(request: DataSubmitRequest):
         
         data = request.data
         response = api_executor(api_details, data)
-        print("api_executor", response)
+        print("api_executor", response, cedit_status)
        
         processed_results = {
             "ui_components": ui_components,
             "next_action_ui_components": next_action_ui_components,
             "api_details": api_details,
             "next_action_id": next_action_id
+
         }
         
         print(f"Found {len(processed_results)} results for action_id {action_id}")

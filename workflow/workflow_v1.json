@@ -79,9 +79,9 @@
                                 "action": {
                                     "type": "navigate_to",
                                     "screen": "login-screen",
-                                    "action_id": "welcome",
-                                    "next_success_action_id": "select-flow",
-                                    "next_err_action_id": "welcome"
+                                    "action_id": "welcome_screen",
+                                    "next_success_action_id": "select_workflow",
+                                    "next_err_action_id": "welcome_screen"
                                 }
                             }
                         }
@@ -162,32 +162,9 @@
                                     "type": "navigate_to",
                                     "endpoint": "/api/select-flow",
                                     "method": "POST",
-                                    "action_id": "select-flow",
-                                    "next_success_action_id": "video-consent",
-                                    "next_err_action_id": "select-flow"
-                                }
-                            }
-                        },
-                        {
-                            "id": "collections_button",
-                            "component_type": "button",
-                            "properties": {
-                                "text": "Collections",
-                                "background_color": "#34C759",
-                                "text_color": "#FFFFFF",
-                                "text_size": "16sp",
-                                "corner_radius": "8dp",
-                                "padding": "16dp",
-                                "action": {
-                                    "type": "navigate_to",
-                                    "endpoint": "/api/select-flow",
-                                    "method": "POST",
-                                    "extra_payload": {
-                                        "flow_choice": "collections"
-                                    },
-                                    "action_id": "select-flow",
-                                    "next_success_action_id": "video-consent",
-                                    "next_err_action_id": "select-flow"
+                                    "action_id": "select_workflow",
+                                    "next_success_action_id": "video_consent",
+                                    "next_err_action_id": "select_workflow"
                                 }
                             }
                         }
@@ -293,9 +270,9 @@
                                     "type": "navigate_to",
                                     "endpoint": "/api/accept-consent",
                                     "method": "POST",
-                                    "action_id": "video-consent",
-                                    "next_success_action_id": "mobile-verification",
-                                    "next_err_action_id": "video-consent"
+                                    "action_id": "video_consent",
+                                    "next_success_action_id": "enter_mobile_number",
+                                    "next_err_action_id": "video_consent"
                                 }
                             }
                         }
@@ -420,9 +397,9 @@
                                     "collect_fields": [
                                         "phone_input"
                                     ],
-                                    "action_id": "mobile-verification",
-                                    "next_success_action_id": "otp-verification",
-                                    "next_err_action_id": "mobile-verification"
+                                    "action_id": "enter_mobile_number",
+                                    "next_success_action_id": "verify_otp",
+                                    "next_err_action_id": "enter_mobile_number"
                                 }
                             }
                         }
@@ -546,9 +523,9 @@
                                     "collect_fields": [
                                         "otp_input"
                                     ],
-                                    "action_id": "otp-verification",
-                                    "next_success_action_id": "customer-photo",
-                                    "next_err_action_id": "otp-verification"
+                                    "action_id": "verify_otp",
+                                    "next_success_action_id": "capture_customer_photo",
+                                    "next_err_action_id": "verify_otp"
                                 }
                             }
                         }
@@ -561,18 +538,16 @@
         "action_id": "capture_customer_photo",
         "stage_name": "Capture Customer Photo",
         "llm_context": {
-            "purpose": "A screen that activates the device camera for the user to capture a live selfie for their profile photo as part of the KYC process.",
+            "purpose": "A screen that activates the device camera for the user to capture a live selfie for their profile photo as part of the  process.",
             "entities": [
                 "selfie",
                 "photo_capture",
                 "customer_photo",
-                "live_photo",
-                "kyc"
+                "live_photo"
             ],
             "example_prompts": [
                 "take a selfie",
                 "capture my photo",
-                "upload my picture for kyc",
                 "customer photo screen"
             ]
         },
@@ -666,8 +641,133 @@
                                     "collect_fields": [
                                         "customer_photo_upload"
                                     ],
-                                    "action_id": "customer-photo",
-                                    "next_success_action_id": "secondry-kyc-document-selector"
+                                    "action_id": "capture_customer_photo",
+                                    "next_success_action_id": "select_secondary_kyc_document"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "select_secondary_kyc_document",
+        "stage_name": "Select Secondary KYC Document",
+        "llm_context": {
+            "purpose": "A screen presenting a dropdown or list of acceptable documents (e.g., Aadhaar Card, Driving License) for the user to select as their secondary proof of identity.",
+            "entities": [
+                "secondary_kyc",
+                "document_selector",
+                "proof_of_address",
+                "aadhaar",
+                "driving_license"
+            ],
+            "example_prompts": [
+                "select my secondary kyc document",
+                "choose proof of address",
+                "I will use my aadhaar card"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "pan_input:voter_id_input",
+            "error_action_id": "select_secondary_kyc_document"
+        },
+        "api_details": {
+            "endpoint": "/api/submit-secondry-kyc-document-selector",
+            "method": "POST",
+            "collect_fields": [
+                "document_dropdown"
+            ]
+        },
+        "ui_definition": {
+            "id": "ui_prospect_info_001",
+            "screen_id": "prospect_info_screen",
+            "ui_components": [
+                {
+                    "id": "main_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "20dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "top",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "title_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Secondary KYC",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "24dp"
+                            }
+                        },
+                        {
+                            "id": "kyc_instruction",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Confirm Secondary KYC",
+                                "text_size": "16sp",
+                                "text_color": "#333333",
+                                "text_align": "left",
+                                "margin_bottom": "16dp"
+                            }
+                        },
+                        {
+                            "id": "document_dropdown",
+                            "component_type": "dropdown",
+                            "properties": {
+                                "hint": "Select Document",
+                                "title": "Select Document for KYC",
+                                "margin_bottom": "32dp",
+                                "background_color": "#F5F5F5",
+                                "corner_radius": "8dp",
+                                "options": [
+                                    {
+                                        "value": "",
+                                        "label": "-- Select Document --"
+                                    },
+                                    {
+                                        "value": "vtrid_input",
+                                        "label": "Voter ID"
+                                    },
+                                    {
+                                        "value": "pan_input",
+                                        "label": "PAN"
+                                    }
+                                ],
+                                "default_value": "",
+                                "validation": {
+                                    "required": true,
+                                    "custom_error": "Please select a valid document"
+                                }
+                            }
+                        },
+                        {
+                            "id": "submit_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Submit",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "submit_form",
+                                    "endpoint": "/api/submit-secondry-kyc-document-selector",
+                                    "method": "POST",
+                                    "collect_fields": [
+                                        "document_dropdown"
+                                    ],
+                                    "action_id": "secondry-kyc-document-selector",
+                                    "next_success_action_id": "pan_input;voter_id_input",
+                                    "next_err_action_id": "secondry-kyc-document-selector"
                                 }
                             }
                         }
@@ -812,7 +912,6 @@
                 "voter_id",
                 "voter_card",
                 "epic",
-                "primary_kyc",
                 "document_upload",
                 "election_card"
             ],
@@ -872,7 +971,7 @@
                                 "max_length": 10,
                                 "validation": {
                                     "required": true,
-                                    "pattern": "^[0-9]{13}$",
+                                    "pattern": "^[0-9]{10}$",
                                     "custom_error": "Please enter a valid Voter ID number (e.g., 1234567890123)"
                                 }
                             }
@@ -920,435 +1019,9 @@
                                         "vtrid_number_input",
                                         "vtrid_card_upload"
                                     ],
-                                    "action_id": "vtrid_input",
-                                    "next_success_action_id": "aadhar_capture_info",
-                                    "next_err_action_id": "vtrid_input"
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-    },
-    {
-        "action_id": "select_secondary_kyc_document",
-        "stage_name": "Select Secondary KYC Document",
-        "llm_context": {
-            "purpose": "A screen presenting a dropdown or list of acceptable documents (e.g., Aadhaar Card, Driving License) for the user to select as their secondary proof of identity.",
-            "entities": [
-                "secondary_kyc",
-                "document_selector",
-                "proof_of_address",
-                "aadhaar",
-                "driving_license"
-            ],
-            "example_prompts": [
-                "select my secondary kyc document",
-                "choose proof of address",
-                "I will use my aadhaar card"
-            ]
-        },
-        "workflow_logic": {
-            "next_action_id": "capture_prospect_basic_details",
-            "error_action_id": "select_secondary_kyc_document"
-        },
-        "api_details": {
-            "endpoint": "/api/submit-secondry-kyc-document-selector",
-            "method": "POST",
-            "collect_fields": [
-                "document_dropdown"
-            ]
-        },
-        "ui_definition": {
-            "id": "ui_prospect_info_001",
-            "screen_id": "prospect_info_screen",
-            "ui_components": [
-                {
-                    "id": "main_container",
-                    "component_type": "column",
-                    "properties": {
-                        "padding": "20dp",
-                        "background_color": "#FFFFFF",
-                        "vertical_arrangement": "top",
-                        "horizontal_alignment": "stretch"
-                    },
-                    "children": [
-                        {
-                            "id": "title_text",
-                            "component_type": "text",
-                            "properties": {
-                                "text": "Secondary KYC",
-                                "text_size": "24sp",
-                                "text_color": "#000000",
-                                "text_style": "bold",
-                                "text_align": "center",
-                                "margin_bottom": "24dp"
-                            }
-                        },
-                        {
-                            "id": "kyc_instruction",
-                            "component_type": "text",
-                            "properties": {
-                                "text": "Confirm Secondary KYC",
-                                "text_size": "16sp",
-                                "text_color": "#333333",
-                                "text_align": "left",
-                                "margin_bottom": "16dp"
-                            }
-                        },
-                        {
-                            "id": "document_dropdown",
-                            "component_type": "dropdown",
-                            "properties": {
-                                "hint": "Select Document",
-                                "title": "Select Document for KYC",
-                                "margin_bottom": "32dp",
-                                "background_color": "#F5F5F5",
-                                "corner_radius": "8dp",
-                                "options": [
-                                    {
-                                        "value": "",
-                                        "label": "-- Select Document --"
-                                    },
-                                    {
-                                        "value": "vtrid_input",
-                                        "label": "Voter ID"
-                                    },
-                                    {
-                                        "value": "pan_input",
-                                        "label": "PAN"
-                                    }
-                                ],
-                                "default_value": "",
-                                "validation": {
-                                    "required": true,
-                                    "custom_error": "Please select a valid document"
-                                }
-                            }
-                        },
-                        {
-                            "id": "submit_button",
-                            "component_type": "button",
-                            "properties": {
-                                "text": "Submit",
-                                "background_color": "#007AFF",
-                                "text_color": "#FFFFFF",
-                                "text_size": "16sp",
-                                "text_style": "bold",
-                                "corner_radius": "8dp",
-                                "padding": "16dp",
-                                "action": {
-                                    "type": "submit_form",
-                                    "endpoint": "/api/submit-secondry-kyc-document-selector",
-                                    "method": "POST",
-                                    "collect_fields": [
-                                        "document_dropdown"
-                                    ],
-                                    "action_id": "secondry-kyc-document-selector",
-                                    "next_success_action_id": "customer_basic_details",
-                                    "next_err_action_id": "secondry-kyc-document-selector"
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-    },
-    {
-        "action_id": "login_screen",
-        "stage_name": "User Login",
-        "llm_context": {
-            "purpose": "A standard login screen with input fields for a username and password, and a 'Login' button to authenticate an existing user.",
-            "entities": [
-                "login",
-                "signin",
-                "username",
-                "password",
-                "authentication"
-            ],
-            "example_prompts": [
-                "I want to login",
-                "user login",
-                "let me sign in",
-                "enter my username and password"
-            ]
-        },
-        "workflow_logic": {
-            "next_action_id": "enter_new_customer_details",
-            "error_action_id": "login_screen"
-        },
-        "api_details": {
-            "endpoint": "/api/login",
-            "method": "POST",
-            "collect_fields": [
-                "username",
-                "password"
-            ]
-        },
-        "ui_definition": {
-            "id": "ui_login_screen_001",
-            "screen_id": "login_screen",
-            "ui_components": [
-                {
-                    "id": "header_container",
-                    "component_type": "column",
-                    "properties": {
-                        "padding": "16dp",
-                        "background_color": "#FFFFFF",
-                        "vertical_arrangement": "top",
-                        "horizontal_alignment": "center"
-                    },
-                    "children": [
-                        {
-                            "id": "login_title",
-                            "component_type": "text",
-                            "properties": {
-                                "text": "Login",
-                                "text_size": "24sp",
-                                "text_color": "#000000",
-                                "text_style": "bold",
-                                "text_align": "center",
-                                "margin_bottom": "24dp"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "id": "form_container",
-                    "component_type": "column",
-                    "properties": {
-                        "padding": "16dp",
-                        "vertical_arrangement": "top",
-                        "horizontal_alignment": "stretch"
-                    },
-                    "children": [
-                        {
-                            "id": "username",
-                            "component_type": "text_input",
-                            "properties": {
-                                "hint": "Enter your username",
-                                "text_size": "16sp",
-                                "background_color": "#F5F5F5",
-                                "corner_radius": "8dp",
-                                "padding": "12dp",
-                                "margin_bottom": "16dp",
-                                "input_type": "text",
-                                "max_length": 50,
-                                "validation": {
-                                    "required": true,
-                                    "min_length": 3,
-                                    "pattern": "^[a-zA-Z0-9_]+$",
-                                    "custom_error": "Username should only contain letters, numbers and underscore"
-                                }
-                            }
-                        },
-                        {
-                            "id": "password",
-                            "component_type": "text_input",
-                            "properties": {
-                                "hint": "Enter your password",
-                                "text_size": "16sp",
-                                "background_color": "#F5F5F5",
-                                "corner_radius": "8dp",
-                                "padding": "12dp",
-                                "margin_bottom": "24dp",
-                                "input_type": "password",
-                                "validation": {
-                                    "required": true,
-                                    "min_length": 6,
-                                    "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
-                                    "custom_error": "Password must contain uppercase, lowercase, number and special character"
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "id": "button_container",
-                    "component_type": "column",
-                    "properties": {
-                        "padding": "16dp",
-                        "horizontal_alignment": "stretch"
-                    },
-                    "children": [
-                        {
-                            "id": "login_button",
-                            "component_type": "button",
-                            "properties": {
-                                "text": "Login",
-                                "background_color": "#007AFF",
-                                "text_color": "#FFFFFF",
-                                "text_size": "16sp",
-                                "text_style": "bold",
-                                "corner_radius": "8dp",
-                                "padding": "16dp",
-                                "action": {
-                                    "type": "submit_form",
-                                    "endpoint": "/api/login",
-                                    "method": "POST",
-                                    "collect_fields": [
-                                        "username",
-                                        "password"
-                                    ]
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-    },
-    {
-        "action_id": "enter_new_customer_details",
-        "stage_name": "Enter New Customer Details",
-        "llm_context": {
-            "purpose": "A form for an authenticated agent to input the initial details of a new customer they are about to onboard, typically requiring the customer's full name and mobile number.",
-            "entities": [
-                "customer_details",
-                "customer_name",
-                "customer_mobile",
-                "new_customer"
-            ],
-            "example_prompts": [
-                "enter customer name and mobile number",
-                "start a new customer application",
-                "I need to input the customer's details"
-            ]
-        },
-        "workflow_logic": {
-            "next_action_id": "dashboard-screen",
-            "error_action_id": "enter_new_customer_details"
-        },
-        "api_details": {
-            "endpoint": "/api/user-details",
-            "method": "POST",
-            "collect_fields": [
-                "customer_name",
-                "mobile_number"
-            ]
-        },
-        "ui_definition": {
-            "id": "ui_user_details_001",
-            "screen_id": "user_details_screen",
-            "ui_components": [
-                {
-                    "id": "header_container",
-                    "component_type": "column",
-                    "properties": {
-                        "padding": "16dp",
-                        "background_color": "#FFFFFF",
-                        "vertical_arrangement": "top",
-                        "horizontal_alignment": "center"
-                    },
-                    "children": [
-                        {
-                            "id": "details_title",
-                            "component_type": "text",
-                            "properties": {
-                                "text": "User Details",
-                                "text_size": "24sp",
-                                "text_color": "#000000",
-                                "text_style": "bold",
-                                "text_align": "center",
-                                "margin_bottom": "16dp"
-                            }
-                        },
-                        {
-                            "id": "description_text",
-                            "component_type": "text",
-                            "properties": {
-                                "text": "Please fill in your information",
-                                "text_size": "16sp",
-                                "text_color": "#666666",
-                                "text_align": "center",
-                                "margin_bottom": "24dp"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "id": "form_container",
-                    "component_type": "column",
-                    "properties": {
-                        "padding": "16dp",
-                        "vertical_arrangement": "top",
-                        "horizontal_alignment": "stretch"
-                    },
-                    "children": [
-                        {
-                            "id": "customer_name",
-                            "component_type": "text_input",
-                            "properties": {
-                                "hint": "Enter your name",
-                                "text_size": "16sp",
-                                "background_color": "#F5F5F5",
-                                "corner_radius": "8dp",
-                                "padding": "12dp",
-                                "margin_bottom": "16dp",
-                                "input_type": "text",
-                                "max_length": 50,
-                                "validation": {
-                                    "required": true,
-                                    "min_length": 2,
-                                    "pattern": "^[a-zA-Z\\s]+$",
-                                    "custom_error": "Name should only contain letters and spaces"
-                                }
-                            }
-                        },
-                        {
-                            "id": "mobile_number",
-                            "component_type": "text_input",
-                            "properties": {
-                                "hint": "Enter your phone number",
-                                "text_size": "16sp",
-                                "background_color": "#F5F5F5",
-                                "corner_radius": "8dp",
-                                "padding": "12dp",
-                                "margin_bottom": "24dp",
-                                "input_type": "phone",
-                                "max_length": 10,
-                                "validation": {
-                                    "required": true,
-                                    "pattern": "^[0-9]{10}$",
-                                    "custom_error": "Please enter a valid 10-digit phone number"
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "id": "button_container",
-                    "component_type": "row",
-                    "properties": {
-                        "padding": "16dp",
-                        "horizontal_arrangement": "space_between"
-                    },
-                    "children": [
-                        {
-                            "id": "submit_button",
-                            "component_type": "button",
-                            "properties": {
-                                "text": "Submit",
-                                "background_color": "#007AFF",
-                                "text_color": "#FFFFFF",
-                                "text_size": "16sp",
-                                "text_style": "bold",
-                                "corner_radius": "8dp",
-                                "padding": "16dp",
-                                "weight": 1,
-                                "margin_start": "8dp",
-                                "action": {
-                                    "type": "submit_form",
-                                    "endpoint": "/api/user-details",
-                                    "method": "POST",
-                                    "collect_fields": [
-                                        "customer_name",
-                                        "mobile_number"
-                                    ],
-                                    "action_id": "user-details",
-                                    "next_err_action_id": "user-details"
+                                    "action_id": "voter_id_input",
+                                    "next_success_action_id": "capture_aadhaar_info",
+                                    "next_err_action_id": "voter_id_input"
                                 }
                             }
                         }
@@ -1452,9 +1125,9 @@
                                     "collect_fields": [
                                         "adhar_inout"
                                     ],
-                                    "action_id": "user-detail-screen-001",
-                                    "next_success_action_id": "ui_customer_basic_details_001",
-                                    "next_err_action_id": "verification-error-screen"
+                                    "action_id": "capture_aadhaar_info",
+                                    "next_success_action_id": "capture_prospect_basic_details",
+                                    "next_err_action_id": "capture_aadhaar_info"
                                 }
                             }
                         }
@@ -1484,7 +1157,7 @@
             ]
         },
         "workflow_logic": {
-            "next_action_id": "dashboard-screen",
+            "next_action_id": "credit_status_screen",
             "error_action_id": "capture_prospect_basic_details"
         },
         "api_details": {
@@ -1545,7 +1218,7 @@
                             "id": "dob_picker",
                             "component_type": "text_input",
                             "properties": {
-                                "hint": "Enter your date of birth(dd/MM/yyyy)",
+                                "hint": "Enter your date of birth(dd-MM-yyyy)",
                                 "title": "Date of birth",
                                 "text_size": "16sp",
                                 "background_color": "#F5F5F5",
@@ -1555,7 +1228,7 @@
                                 "input_type": "text",
                                 "validation": {
                                     "required": true,
-                                    "pattern": "^(0[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[0-2])[-/]\\d{4}$",
+                                    "pattern": "^(0[1-9]|[12][0-9]|3[01])[-](0[1-9]|1[0-2])[-]\\d{4}$",
                                     "custom_error": "Please enter a date of birth."
                                 }
                             }
@@ -1592,8 +1265,8 @@
                                 "corner_radius": "8dp",
                                 "padding": "16dp",
                                 "action": {
-                                    "action_id": "ui_aadhar_verification_001",
-                                    "next_success_action_id": "otp-verification-screen",
+                                    "action_id": "capture_prospect_basic_details",
+                                    "next_success_action_id": "credit_status_screen",
                                     "next_err_action_id": "verification-error-screen",
                                     "type": "submit_form",
                                     "endpoint": "/api/user/register",
@@ -1603,6 +1276,105 @@
                                         "dob_picker",
                                         "address_input"
                                     ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "action_id": "credit_status_screen",
+        "stage_name": "Credit Status Screen",
+        "llm_context": {
+            "purpose": "A simple, static cedit status screen that displays credit details.",
+            "entities": [
+                "credit",
+                "credit_status"
+            ],
+            "example_prompts": [
+                "show me my credit status",
+                "what is my credit status",
+                "credit details",
+                "credit status",
+                "credit report"
+            ]
+        },
+        "workflow_logic": {
+            "next_action_id": "credit_status_screen",
+            "error_action_id": "credit_status_screen"
+        },
+        "api_details": {
+            "endpoint": null,
+            "method": null,
+            "collect_fields": []
+        },
+        "ui_definition": {
+            "id": "ui_credit_statusn_001",
+            "screen_id": "credit_statusn",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "center",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "welcome_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Credit Status",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "48dp"
+                            }
+                        },
+                        {
+                            "id": "status_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Approved",
+                                "text_size": "24sp",
+                                "text_color": "#009900",
+                                "text_style": "bold",
+                                "text_align": "center",
+                                "margin_bottom": "48dp"
+                            }
+                        }        
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "proceed_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Proceed",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "navigate_to",
+                                    "screen": "credit-status-screen",
+                                    "action_id": "credit_status_screen",
+                                    "next_success_action_id": "select_workflow",
+                                    "next_err_action_id": "credit_status_screen"
                                 }
                             }
                         }

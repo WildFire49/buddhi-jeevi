@@ -54,7 +54,7 @@ uuid==1.30
 pytesseract>=0.3.10
 
 # Logging and monitoring
-logging>=0.5.1.2
+# logging is part of the Python standard library
 
 # Testing and QC
 pytest>=7.4.0

@@ -34,6 +34,15 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
+# Install system dependencies needed for runtime
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    portaudio19-dev \
+    libsndfile1 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create a non-root user and group
 RUN addgroup --system app && adduser --system --group app
 
@@ -63,8 +72,8 @@ ENV HF_HOME=/app/.embeddings_cache
 EXPOSE 8002
 EXPOSE 8004
 
-# Make the run_services.py and qc_checks.py scripts executable
-RUN chmod +x run_services.py qc_checks.py
+# Make the run_services.py script executable
+RUN chmod +x run_services.py
 
 # Switch to the non-root user
 USER app

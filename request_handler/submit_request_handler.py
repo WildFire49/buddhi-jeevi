@@ -28,20 +28,43 @@ def submit_data(request: DataSubmitRequest):
         return []
     
     system_prompt = """
-        You are an expert system that processes retrieved data about an application's workflow.
-        Your task is to analyze the provided context and extract specific information in a structured JSON format.
-
-        **Context:**
-        {context}
-
-        **Instructions:**
-        Based on the context above, provide a JSON object with the following keys:
-        - "ui_components": The UI components associated with the action. ui_components should be a list only
-        - "next_action_ui_components": The UI components associated with the next action ui so that i can send user next_action_ui_components to render next ui. next_action_ui_components should be a list only
-        - "api_details": The API endpoint details for the action.
-        - "next_action_id": The ID of the next action to be performed.
-        - based on the next_action_id also return ui_components for next_action
-        Only output the JSON object, with no additional text or explanation.
+        You are a UI component and workflow extractor. Your task is to extract specific information from the provided context.
+        
+        CRITICAL INSTRUCTIONS:
+        1. Extract the current action's UI components from the context
+        2. Find the next_success_action_id for the current action
+        3. Extract ONLY the UI components that belong to the next_success_action_id - DO NOT include multiple UI schemas
+        4. NEVER hallucinate or substitute values - copy all properties and URLs exactly as they appear
+        5. NEVER use placeholder values like "example.com" - use the exact URLs from the source data
+        6. Temperature is set to 0 - be deterministic and precise
+        
+        TITLE AND TEXT PRESERVATION RULES:
+        - If a UI component has a "title" field, copy it EXACTLY as it appears in the source
+        - If a text component has a "text" property, copy it EXACTLY without modification
+        - DO NOT generate descriptive titles like "UI Components related to..." - use original values only
+        - DO NOT rephrase, summarize, or modify any text content from the source data
+        - The title field is displayed to end users in the frontend - it must be the original value
+        
+        STEP-BY-STEP EXTRACTION PROCESS:
+        1. Identify the current action and its UI components
+        2. Find the next_success_action_id from the current action's metadata
+        3. Search for UI components that match the next_success_action_id's ui_id pattern (e.g., if next_success_action_id is "select-flow", look for "ui_select_flow_001")
+        4. Return ONLY those specific UI components for the next action - not all possible UI schemas
+        5. Ensure next_action_ui_components contains different components than ui_components
+        6. Copy all text values, titles, and properties EXACTLY as they appear in the source
+        
+        VALIDATION RULES:
+        - ui_components and next_action_ui_components MUST be different
+        - next_action_ui_components should contain ONLY the UI schema for the next_success_action_id
+        - ALL text content must be copied exactly from source data without modification
+        
+        Context: {context}
+        
+        Return a JSON object with:
+        - ui_components: array of current action UI components
+        - api_details: array of API details for current action
+        - next_action_id: the next_success_action_id from current action
+        - next_action_ui_components: array containing ONLY the UI components for the next_success_action_id (not multiple schemas)
         """
 
     prompt = ChatPromptTemplate.from_messages([
@@ -66,6 +89,48 @@ def submit_data(request: DataSubmitRequest):
         api_details = llm_response.get('api_details', [])
         next_action_id = llm_response.get('next_action_id')
         next_action_ui_components = llm_response.get('next_action_ui_components', [])
+        
+        # CRITICAL VALIDATION: Ensure next_action_ui_components are different
+        print(f"DEBUG: Current action_id: {action_id}")
+        print(f"DEBUG: Next action_id: {next_action_id}")
+        print(f"DEBUG: UI components count: {len(ui_components)}")
+        print(f"DEBUG: Next UI components count: {len(next_action_ui_components)}")
+        
+        # Check if components are identical (this should not happen)
+        if ui_components == next_action_ui_components:
+            print("ERROR: next_action_ui_components are identical to ui_components!")
+            print("Attempting to retrieve correct next action UI components...")
+            
+            # Force retrieval of correct next action UI components
+            if next_action_id:
+                print(f"Using targeted retrieval for next_action_id: {next_action_id}")
+                
+                try:
+                    # Use the new targeted method to get UI components
+                    targeted_components = rag_builder.get_ui_components_by_action_id(next_action_id)
+                    
+                    if targeted_components and len(targeted_components) > 0:
+                        next_action_ui_components = targeted_components
+                        print(f"Successfully retrieved {len(next_action_ui_components)} targeted components for {next_action_id}")
+                        
+                        # Verify they are different
+                        if ui_components != next_action_ui_components:
+                            print("SUCCESS: Retrieved different UI components for next action")
+                        else:
+                            print("WARNING: Targeted retrieval still returned identical components")
+                            next_action_ui_components = []
+                    else:
+                        print(f"Targeted retrieval failed for {next_action_id}, setting to empty array")
+                        next_action_ui_components = []
+                        
+                except Exception as e:
+                    print(f"Error in targeted retrieval for {next_action_id}: {e}")
+                    next_action_ui_components = []
+        
+        # Final validation
+        if ui_components == next_action_ui_components and len(next_action_ui_components) > 0:
+            print("WARNING: Still have identical components, clearing next_action_ui_components")
+            next_action_ui_components = []
         
         data = request.data
         response = api_executor(api_details, data)

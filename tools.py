@@ -59,7 +59,7 @@ class VectorDBTools:
         # Initialize Chroma vector store with onboarding_flow collection
         try:
             self.vector_store = Chroma(
-                collection_name="onboarding_flow_v7",
+                collection_name="onboarding_flow_14",
                 embedding_function=self.embeddings,
                 client=chromadb.HttpClient(
                     host="3.6.132.24",

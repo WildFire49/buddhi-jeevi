@@ -41,8 +41,6 @@ LLM_MODEL = os.getenv("LLM_MODEL", "llama3" if LLM_TYPE == "ollama" else "gpt-3.
 print(f"Initializing RAGChainBuilder with {LLM_TYPE} model: {LLM_MODEL}")
 chaiBuilder = RAGChainBuilder(llm_type=LLM_TYPE, model_name=LLM_MODEL)
 
-# Initialize the vector DB tools
-vector_tools = VectorDBTools()
 
 # --- FastAPI App Setup ---
 app = FastAPI(

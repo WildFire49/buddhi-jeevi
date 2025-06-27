@@ -3,7 +3,7 @@ import os
 import json
 import traceback
 from dotenv import load_dotenv
-
+from process_transaltionresponse import process_translation_response
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -29,7 +29,17 @@ def process_chat(chat_request: ChatRequest):
     Returns:
         dict: Response containing the LLM response and UI tags
     """
-    
+    prompt = chat_request.prompt
+    try:
+       translation_response = process_translation_response(chat_request)
+       prompt = translation_response.input.english_input
+    except Exception as e:
+        print(f"Error in process_chat: {str(e)}")
+        traceback.print_exc()
+        return {
+            "response": f"An error occurred while processing your request: {str(e)}",
+            "ui_tags": ["error"]
+        }
     prompt_text = chat_request.prompt.strip()
     
     if not prompt_text:

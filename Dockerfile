@@ -4,8 +4,13 @@ FROM python:3.10-slim as builder
 
 WORKDIR /app
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    portaudio19-dev \
+    libsndfile1 \
+    ffmpeg \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
@@ -17,11 +22,22 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt requirements-db.txt ./
 RUN pip install --no-cache-dir -r requirements.txt -r requirements-db.txt
 
-# Create cache directory and pre-download the sentence-transformer model
+# Create cache directory and pre-download models
 RUN mkdir -p /app/.embeddings_cache
 ENV TRANSFORMERS_CACHE=/app/.embeddings_cache
 ENV SENTENCE_TRANSFORMERS_HOME=/app/.embeddings_cache
+ENV HF_HOME=/app/.embeddings_cache
+
+# Pre-download sentence transformer model
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2', cache_folder='/app/.embeddings_cache')"
+
+# Pre-download ai4bharat/indic-conformer-600m-multilingual model with pinned revision
+# Using the specific revision from the logs: c9f5e5c52666853677f5384b604b0a81c49ce592
+RUN python -c "from transformers import AutoModel; AutoModel.from_pretrained('ai4bharat/indic-conformer-600m-multilingual', revision='main', trust_remote_code=True, local_files_only=False)"
+
+# Create a .cache directory to store the model files
+RUN mkdir -p /app/.cache/huggingface
+ENV HUGGINGFACE_HUB_CACHE=/app/.cache/huggingface
 
 # ---- Final Stage ----
 # This stage creates the final, lean production image
@@ -29,23 +45,34 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
+# Install system dependencies needed for runtime
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    portaudio19-dev \
+    libsndfile1 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create a non-root user and group
 RUN addgroup --system app && adduser --system --group app
 
 # Copy virtual environment from builder stage
 COPY --from=builder /opt/venv /opt/venv
 
-# Copy the pre-downloaded model cache from builder stage
+# Copy the pre-downloaded model caches from builder stage
 COPY --from=builder /app/.embeddings_cache /app/.embeddings_cache
+COPY --from=builder /app/.cache/huggingface /app/.cache/huggingface
 
 # Copy application code
 COPY . .
 
-# Create directory for audio files and embeddings cache, set permissions for the non-root user
-RUN mkdir -p temp_audio && \
-    chown -R app:app /app temp_audio && \
+# Create directory for audio files, static files, and embeddings cache, set permissions for the non-root user
+RUN mkdir -p temp_audio static/audio && \
+    chown -R app:app /app temp_audio static && \
     chown -R app:app /app/.embeddings_cache && \
-    chmod -R 755 /app/.embeddings_cache
+    chmod -R 755 /app/.embeddings_cache && \
+    chmod -R 755 /app/static
 
 # Set environment variables
 ENV PATH="/opt/venv/bin:$PATH"
@@ -53,12 +80,17 @@ ENV PYTHONUNBUFFERED=1
 ENV TRANSFORMERS_CACHE=/app/.embeddings_cache
 ENV SENTENCE_TRANSFORMERS_HOME=/app/.embeddings_cache
 ENV HF_HOME=/app/.embeddings_cache
+ENV HUGGINGFACE_HUB_CACHE=/app/.cache/huggingface
 
-# Expose the port the app runs on
+# Expose both server and translation API ports
 EXPOSE 8002
+EXPOSE 8004
+
+# Make the run_services.py script executable
+RUN chmod +x run_services.py
 
 # Switch to the non-root user
 USER app
 
-# Command to run the application
-CMD ["python", "server.py"]
+# Command to run both services
+CMD ["python", "run_services.py"]

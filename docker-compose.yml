@@ -28,6 +28,7 @@ services:
       - POSTGRES_DB=budhhi-jivi
     volumes:
       - ./data:/app/data
+      - ./static:/app/static
     restart: unless-stopped
     networks:
       - buddhi-network

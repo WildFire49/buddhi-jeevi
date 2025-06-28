@@ -5,10 +5,13 @@ import re
 import traceback
 from dotenv import load_dotenv
 import datetime
-from credit import mail_router
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Add mcp-client directory to path for importing mail_router
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'mcp-client'))
+# from credit import mail_router
 
 from schemas import DataSubmitRequest, DataSubmitResponse, KeyValuePair
 from rag_chain_builder import RAGChainBuilder
@@ -28,8 +31,17 @@ def submit_data(request: DataSubmitRequest):
         print("No action_id provided in request")
         return []
     
-    if action_id == "capture_prospect_basic_details":
-        cedit_status = mail_router()
+    # Initialize credit status variable
+    credit_status = None
+    
+    # # Check if this is the credit check action
+    # if action_id == "capture_prospect_basic_details":
+    #     try:
+    #         credit_status = mail_router()
+    #         print(f"Credit status check result: {credit_status}")
+    #     except Exception as e:
+    #         print(f"Error checking credit status: {e}")
+    #         credit_status = False
     
     system_prompt = """
         You are a UI component and workflow extractor. Your task is to extract specific information from the provided context.
@@ -138,14 +150,14 @@ def submit_data(request: DataSubmitRequest):
         
         data = request.data
         response = api_executor(api_details, data)
-        print("api_executor", response, cedit_status)
+        print("api_executor", response, credit_status)
        
         processed_results = {
             "ui_components": ui_components,
             "next_action_ui_components": next_action_ui_components,
             "api_details": api_details,
-            "next_action_id": next_action_id
-
+            "next_action_id": next_action_id,
+            "credit_status": credit_status
         }
         
         print(f"Found {len(processed_results)} results for action_id {action_id}")

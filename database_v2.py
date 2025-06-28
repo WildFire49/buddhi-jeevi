@@ -128,6 +128,16 @@ def get_action_schema():
         "next_success_action_id": "dashboard-screen",
         "ui_id": "ui_customer_basic_details_001",
         "api_detail_id": "api_customer_basic_details_001"
+    },
+    {
+        "id": "final-screen-credit-status_001",
+        "stage_name": "Final Screen Credit Status",
+        "desc_for_llm": "User name, dob, address, prospect onboarding screen",
+        "action_type": "final-screen-credit-status_SCREEN",
+        "next_err_action_id": "final-screen-credit-status_001",
+        "next_success_action_id": "dashboard-screen",
+        "ui_id": "UI_final_screen_credit_status_001",
+        "api_detail_id": "api_final_screen_credit_status_001"
     }
 ]
 
@@ -991,7 +1001,7 @@ def get_ui_schema():
                                 "max_length": 10,
                                 "validation": {
                                     "required": True,
-                                    "pattern": "^[0-9]{13}$",
+                                    "pattern": "^[0-9]{10}$",
                                     "custom_error": "Please enter a valid Voter ID number (e.g., 1234567890123)"
                                 }
                             }
@@ -1276,7 +1286,7 @@ def get_ui_schema():
                                 "input_type": "text",
                                 "validation": {
                                     "required": True,
-                                    "pattern": "^(0[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[0-2])[-/]\\d{4}$",
+                                    "pattern": "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$",
                                     "custom_error": "Please enter a date of birth."
                                 }
                             }
@@ -1313,13 +1323,74 @@ def get_ui_schema():
                                 "corner_radius": "8dp",
                                 "padding": "16dp",
                                 "action": {
-                                    "action_id": "ui_aadhar_verification_001",
-                                    "next_success_action_id": "otp-verification-screen",
+                                    "action_id": "customer_basic_details",
+                                    "next_success_action_id": "final-screen-credit-status_001",
                                     "next_err_action_id": "verification-error-screen",
                                     "type": "submit_form",
                                     "endpoint": "/api/user/register",
                                     "method": "POST",
                                     "collect_fields": ["name_input", "dob_picker", "address_input"]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "UI_final_screen_credit_status_001",
+            "type": "UI",
+            "session_id": "session_credit_status_001",
+            "screen_id": "credit_status_screen",
+            "ui_components": [
+                {
+                    "id": "header_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "background_color": "#FFFFFF",
+                        "vertical_arrangement": "center",
+                        "horizontal_alignment": "center"
+                    },
+                    "children": [
+                        {
+                            "id": "credit_status_text",
+                            "component_type": "text",
+                            "properties": {
+                                "text": "Credit Status : Approved",
+                                "text_size": "24sp",
+                                "text_color": "#000000",
+                                "text_align": "center",
+                                "margin_bottom": "48dp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "button_container",
+                    "component_type": "column",
+                    "properties": {
+                        "padding": "16dp",
+                        "horizontal_alignment": "stretch"
+                    },
+                    "children": [
+                        {
+                            "id": "proceed_button",
+                            "component_type": "button",
+                            "properties": {
+                                "text": "Continue",
+                                "background_color": "#007AFF",
+                                "text_color": "#FFFFFF",
+                                "text_size": "16sp",
+                                "text_style": "bold",
+                                "corner_radius": "8dp",
+                                "padding": "16dp",
+                                "action": {
+                                    "type": "navigate_to",
+                                    "screen": "login-screen",
+                                    "action_id": "welcome",
+                                    "next_success_action_id": "select-flow",
+                                    "next_err_action_id": "welcome"
                                 }
                             }
                         }

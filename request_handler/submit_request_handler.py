@@ -58,7 +58,7 @@ def check_prompt_by_id(action_id, isNextAction: bool = False):
         "api_details": [],
         "next_action_id": action_id_final
         }
-    add_delay(2)
+    add_delay(25)
     return processed_results     
 
 def submit_data(request: DataSubmitRequest):

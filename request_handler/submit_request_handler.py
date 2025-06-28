@@ -1,10 +1,20 @@
 import sys
 import os
 import json
-import re
-import traceback
-from dotenv import load_dotenv
+import uuid
+import time
 import datetime
+from dotenv import load_dotenv
+
+def add_delay(seconds=2):
+    """Add a deliberate delay to the execution
+    
+    Args:
+        seconds (int): Number of seconds to delay execution
+    """
+    print(f"Adding delay of {seconds} seconds...")
+    time.sleep(seconds)
+    print("Continuing execution")
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -12,7 +22,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from schemas import DataSubmitRequest, DataSubmitResponse, KeyValuePair
 from rag_chain_builder import RAGChainBuilder
 from langchain_core.prompts import ChatPromptTemplate
-
+from database_v3  import get_action_schema, get_ui_schema
 # Load environment variables
 load_dotenv()
 
@@ -20,12 +30,42 @@ load_dotenv()
 LLM_TYPE = os.getenv("LLM_TYPE", "ollama").lower()  # "ollama" or "openai"
 LLM_MODEL = os.getenv("LLM_MODEL", "llama3" if LLM_TYPE == "ollama" else "gpt-3.5-turbo")
 
+def check_prompt_by_id(action_id, isNextAction: bool = False):
+    action_schema = get_action_schema()
+    ui_schema = get_ui_schema()
+    if not action_schema or not ui_schema:
+        return None
+    if action_schema.get(action_id) is None:
+        return None
+    action = action_schema.get(action_id)
+    if not action:
+        return None
+    if isNextAction:
+        action_id_final = action.get('next_success_action_id')
+    else:
+        action_id_final = action.get('id')
+    final_action = action_schema.get(action_id_final)
+    if not final_action:
+        return None
+    ui_id = final_action.get('ui_id')
+    ui_action = ui_schema.get(ui_id)
+    if not ui_action:
+        return None
+
+    processed_results = {
+        "ui_components": ui_action.get('ui_components', []),
+        "next_action_ui_components": ui_action.get('ui_components', []),
+        "api_details": [],
+        "next_action_id": action_id_final
+        }
+    add_delay(2)
+    return processed_results     
 
 def submit_data(request: DataSubmitRequest):
     action_id = request.action_id
-    if not action_id:
-        print("No action_id provided in request")
-        return []
+    processed_results = check_prompt_by_id(action_id, True)
+    if processed_results:
+        return processed_results
     
     system_prompt = """
         You are a UI component and workflow extractor. Your task is to extract specific information from the provided context.

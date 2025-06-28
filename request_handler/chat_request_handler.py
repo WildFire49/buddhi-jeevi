@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Import from the same directory using a direct import
+from request_handler.submit_request_handler import check_prompt_by_id
+
 from schemas import ChatRequest, ChatResponse
 from rag_chain_builder import RAGChainBuilder
 from langchain_core.prompts import ChatPromptTemplate
@@ -20,6 +23,9 @@ LLM_MODEL = os.getenv("LLM_MODEL", "llama3" if LLM_TYPE == "ollama" else "gpt-3.
 
 
 def process_chat(chat_request: ChatRequest):
+    # processed_results = check_prompt_by_id(chat_request.prompt, False)
+    # if processed_results:
+    #     return processed_results
     """
     Process a chat request and return a response with UI components and action details.
     

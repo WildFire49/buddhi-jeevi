@@ -1,0 +1,216 @@
+{
+    "workflow_name": "MFI_JLG_Loan_Onboarding",
+    "description": "Microfinance JLG loan onboarding, verification, and disbursement process for MiFiX chat-based workflow.",
+    "steps": [
+        {
+            "step_id": "video_consent",
+            "step_title": "Video Consent",
+            "description": "Field officer captures customer video consent",
+            "ui_components": [
+                "video_player",
+                "button"
+            ],
+            "validations": [
+                "video_watched >= 80%"
+            ],
+            "api": {
+                "endpoint": "/api/onboarding/submit-consent",
+                "method": "POST"
+            },
+            "next_step": "mobile_otp_generation"
+        },
+        {
+            "step_id": "mobile_otp_generation",
+            "step_title": "Mobile OTP Generation",
+            "description": "Send OTP to client's mobile",
+            "ui_components": [
+                "text_input",
+                "button"
+            ],
+            "validations": [
+                "mobile_number format"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/{mobile}/generateOTP",
+                "method": "GET",
+                "params": {
+                    "type": "ONBOARDING"
+                }
+            },
+            "next_step": "mobile_otp_validation"
+        },
+        {
+            "step_id": "mobile_otp_validation",
+            "step_title": "Mobile OTP Validation",
+            "description": "Validate OTP entered by client",
+            "ui_components": [
+                "otp_field",
+                "button"
+            ],
+            "validations": [
+                "otp_format"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/validateOTP",
+                "method": "POST"
+            },
+            "next_step": "pincode_entry"
+        },
+        {
+            "step_id": "pincode_entry",
+            "step_title": "Pincode Entry",
+            "description": "Validate client's geographical location",
+            "ui_components": [
+                "number_input",
+                "button"
+            ],
+            "validations": [
+                "pincode_format"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/validateLocation",
+                "method": "POST"
+            },
+            "next_step": "aadhar_biometric"
+        },
+        {
+            "step_id": "aadhar_biometric",
+            "step_title": "Aadhaar & Biometric",
+            "description": "Perform eKYC with Aadhaar and fingerprint",
+            "ui_components": [
+                "number_input",
+                "biometric_scanner",
+                "button"
+            ],
+            "validations": [
+                "aadhar_format",
+                "biometric_match"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/generate",
+                "method": "GET"
+            },
+            "next_step": "photo_kyc_capture"
+        },
+        {
+            "step_id": "photo_kyc_capture",
+            "step_title": "Photo & KYC Document Upload",
+            "description": "Capture customer's photograph and upload KYC images",
+            "ui_components": [
+                "camera_integration",
+                "file_upload",
+                "button"
+            ],
+            "validations": [
+                "documents_uploaded"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/uploadDocuments",
+                "method": "POST"
+            },
+            "next_step": "household_entry"
+        },
+        {
+            "step_id": "household_entry",
+            "step_title": "Household Members Entry",
+            "description": "Capture household member details and KYC",
+            "ui_components": [
+                "form",
+                "button"
+            ],
+            "validations": [
+                "household_complete"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/{customer_id}/members",
+                "method": "POST"
+            },
+            "next_step": "income_loan_preference"
+        },
+        {
+            "step_id": "income_loan_preference",
+            "step_title": "Income & Loan Preference",
+            "description": "Capture income details, loan amount, consent",
+            "ui_components": [
+                "form",
+                "button"
+            ],
+            "validations": [
+                "income_complete"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/{id}/household/submit",
+                "method": "POST"
+            },
+            "next_step": "loan_eligibility"
+        },
+        {
+            "step_id": "loan_eligibility",
+            "step_title": "Loan Eligibility Calculation",
+            "description": "System computes loan eligibility",
+            "ui_components": [
+                "progress_loader"
+            ],
+            "validations": [
+                "auto_process"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/{id}/eligibility",
+                "method": "GET"
+            },
+            "next_step": "bank_details_entry"
+        },
+        {
+            "step_id": "bank_details_entry",
+            "step_title": "Bank Details Entry",
+            "description": "Capture and validate customer's bank account",
+            "ui_components": [
+                "form",
+                "button"
+            ],
+            "validations": [
+                "bank_details_valid"
+            ],
+            "api": {
+                "endpoint": "/api/main/customer/{customer_id}/account",
+                "method": "POST"
+            },
+            "next_step": "group_creation"
+        },
+        {
+            "step_id": "group_creation",
+            "step_title": "Group Formation",
+            "description": "Select group members and assign Group Head",
+            "ui_components": [
+                "multi_select_grid",
+                "dropdown",
+                "button"
+            ],
+            "validations": [
+                "group_complete"
+            ],
+            "api": {
+                "endpoint": "/api/main/group/create",
+                "method": "POST"
+            },
+            "next_step": "onboarding_complete"
+        },
+        {
+            "step_id": "onboarding_complete",
+            "step_title": "Onboarding Complete",
+            "description": "Onboarding finalized, show success message",
+            "ui_components": [
+                "success_notification",
+                "button"
+            ],
+            "validations": [
+                "completion"
+            ],
+            "api": {
+                "endpoint": "/api/main/application/status",
+                "method": "GET"
+            },
+            "next_step": null
+        }
+    ]
+}

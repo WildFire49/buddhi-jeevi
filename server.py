@@ -47,7 +47,7 @@ vector_tools = VectorDBTools()
 # --- FastAPI App Setup ---
 app = FastAPI(
     title="Loan Onboarding Agent API",
-    description="An API for interacting with the loan onboarding conversational agent.",
+    description="An API for interacting with the loan onboarding conversational agent and RAG system.",
     version="1.0.0",
 )
 
@@ -660,52 +660,9 @@ def transform_nested_components(nested_components):
     
     return transformed
 
-# app.add_middleware(APILoggerMiddleware)
-def transform_ui_schema_to_flat_structure(ui_components):
-    """
-    Transform UI components to a flat structure for the submit API.
-    Returns components directly without nesting them under a 'components' array.
-    """
-    if not ui_components:
-        return []
-    
-    # If we have a list of components, process each one
-    if isinstance(ui_components, list):
-        # Check if these are already flat components
-        if all(isinstance(comp, dict) and "component_type" in comp for comp in ui_components):
-            return ui_components
-        
-        # Otherwise, we need to extract and flatten
-        flat_components = []
-        for component in ui_components:
-            # If this is a container with nested ui_components, extract them
-            if isinstance(component, dict):
-                if "ui_components" in component:
-                    # Extract the nested components
-                    nested = component.get("ui_components", [])
-                    flat_components.extend(transform_ui_schema_to_flat_structure(nested))
-                elif "components" in component:
-                    # Extract from components array
-                    nested = component.get("components", [])
-                    flat_components.extend(transform_ui_schema_to_flat_structure(nested))
-                else:
-                    # It's a single component, add it directly
-                    flat_components.append(component)
-        
-        return flat_components
-    
-    # If we have a single component object with nested components
-    elif isinstance(ui_components, dict):
-        if "ui_components" in ui_components:
-            return transform_ui_schema_to_flat_structure(ui_components["ui_components"])
-        elif "components" in ui_components:
-            return transform_ui_schema_to_flat_structure(ui_components["components"])
-        else:
-            # It's a single component
-            return [ui_components]
-    
-    # Fallback
-    return []
+# Register RAG API endpoints
+from rag_api import register_rag_endpoints
+register_rag_endpoints(app)
 
 # Start the server when this file is run directly
 

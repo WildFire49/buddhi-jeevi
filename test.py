@@ -4,6 +4,7 @@ client = chromadb.HttpClient(host="3.6.132.24", port=8000)
 
 # List all collections
 collections = client.list_collections()
+print(collections)
 
 for c in collections:
     print(f"\n🔍 Collection: {c.name}")
